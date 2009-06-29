@@ -26,6 +26,7 @@ load 'ilab_globals.rb'
 load 'ilab_exceptions.rb'
 
 load 'lib/option_handler.rb'
+load 'lib/markup_handler.rb'
 load 'lib/gnuplot_handler.rb'
 load 'lib/stat_length.rb'
 load 'lib/prm_helper.rb'
@@ -53,7 +54,7 @@ DEFAULT_ENGINE_TYPE = :indri
 # ILab base class
 class ILab
   include ApplicationFramework , OptionHandler
-  include ILabHelper , StatLength #, MarkupHandler
+  include ILabHelper , StatLength , MarkupHandler
   include GnuplotHandler , RInterface
   attr_accessor :name, :engine
   attr_reader :rs , :qs , :rl , :ldist , :qsa , :rsa , :engine
