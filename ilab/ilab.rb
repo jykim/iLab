@@ -2,11 +2,11 @@ require 'erb'
 require 'rubygems'
 require 'ruby-debug'
 require 'enumerator'
-if ENV['HOSTNAME'] =~ /^compute/
-  require 'external/gems/RedCloth-4.0.3/lib/redcloth'  
-else
+#if ENV['HOSTNAME'] =~ /^compute/
+#  require 'external/gems/RedCloth-4.0.3/lib/redcloth'  
+#else
   require 'redcloth'
-end
+#end
 require 'test/unit'
 
 require "logger"
