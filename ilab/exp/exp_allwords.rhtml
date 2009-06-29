@@ -1,0 +1,18 @@
+/*
+*/
+=== Count of All-query-word docs by Length for Different Retrieval Method / Relevant Set
+For each length band, how many retrieved docs(relevant docs) contain all query terms?
+!<%= i.get_plot "Count(all-query-word) by Length(unit band size) 0~10000 " , "length(index terms)" , "count", :plot => count_len , :xrange =>'[0:10000]' %>!
+!<%= i.get_plot "Count(all-query-word) by Length(unit band size) " , "length(index terms)" , "count", :plot => count_len , :xrange =>'[0:]' %>!
+
+=== Precision of Retrieving All-query-word docs by Length for Different Retrieval Method / Relevant Set
+For each length band, how big portion of retrieved docs(relevant docs) contain all query terms?
+!<%= i.get_plot "Precision(all-query-word) by Length(unit band size) 0~10000 " , "length(index terms)" , "Precision", :plot => prec_len , :xrange =>'[0:10000]' %>!
+!<%= i.get_plot "Precision(all-query-word) by Length(unit band size) " , "length(index terms)" , "Precision", :plot => prec_len , :xrange =>'[0:]' %>!
+
+
+=== Recall of Retrieving All-query-word docs by Length for Different Retrieval Method / Relevant Set
+For each length band, how big portion of all-query-term docs are contained in retrieved docs(relevant docs)?
+!<%= i.get_plot "Recall(all-query-word) by Length(unit band size) 0~10000 " , "length(index terms)" , "Recall", :plot => recall_len , :xrange =>'[0:10000]' %>!
+!<%= i.get_plot "Recall(all-query-word) by Length(unit band size) " , "length(index terms)" , "Recall", :plot => recall_len , :xrange =>'[0:]' %>!
+

@@ -1,0 +1,13 @@
+
+= Training Result
+<% map_start, map_end = $r[:train].values.map{|e|e[:map_start]}, $r[:train].values.map{|e|e[:map_end]} %>
+|Set<%= $r[:train].map{|k,v| "\"Set #{k}\":../#{get_rpt_filepath(v[:expid])}" }.to_tbl%>
+|MAP (start)<%= map_start.to_tbl%>
+|MAP (end)<%= map_end.to_tbl%>
+
+ * Average Improvement : <%= [map_start.avg.r3 , map_end.avg.r3].join(" -> ") %>
+
+= Test Result
+|Method|<%=$r[:test][0]['map'].keys.sort.to_tbl%>
+<%$r[:test].each do |k,v|%>
+|<%="\"Set #{k}\":../#{get_rpt_filepath(v[:expid])}"%><%=v['map'].sort_by{|k2,v2|k2}.map{|e| e[1]}.to_tbl%><%end%>

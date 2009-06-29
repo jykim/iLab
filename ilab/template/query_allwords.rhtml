@@ -1,0 +1,9 @@
+<parameters>
+        <index><%= @index_path %></index>
+        <trecFormat>true</trecFormat>    
+        <rule>method:dirichlet,mu:1500,operator:term</rule>
+        <queryOffset><%= query_offset %></queryOffset>
+<% topics.each do |query| %>
+        <query> #filreq(#band(<%= query %>) #combine(<%= query %>)) </query>
+<% end  %>
+</parameters>

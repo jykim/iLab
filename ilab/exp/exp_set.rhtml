@@ -1,0 +1,10 @@
+/*
+== Ratio of All-query-word Docs
+<% i.rsa.each do |ds| %>
+ * For Document set '<%= ds.name %>' : <%= ds.docs.find_all{|d|d.relevance>0}.size / ds.docs.size.to_f %> (for <%= ds.docs.size %> docs)
+<% end %>
+*/
+=== Set Analysis
+<% tbl.each do |t| %>
+<%= t.map{|r| r.to_tbl}.join("\n") %>
+<% end %>

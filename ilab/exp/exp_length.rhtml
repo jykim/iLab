@@ -1,0 +1,72 @@
+= Experiment
+== Overall Performance
+|Measure<%= $i.rsa.map{|e|e.name}.to_tbl %>
+|MAP<%= map = $i.rsa.map{|e|e.avg_prec.round_at(4)}.to_tbl(:mode=>:min) %>
+
+|Measure<%= $i.rsa.map{|e|e.name}.to_tbl %>
+|Prec@10<%= $i.rsa.map{|e|e.prec_at(10).round_at(4)}.to_tbl(:mode=>:min) %>
+|Prec@25<%= $i.rsa.map{|e|e.prec_at(25).round_at(4)}.to_tbl(:mode=>:min) %>
+|Prec@50<%= $i.rsa.map{|e|e.prec_at(50).round_at(4)}.to_tbl(:mode=>:min) %>
+|Prec@100<%= $i.rsa.map{|e|e.prec_at(100).round_at(4)}.to_tbl(:mode=>:min) %>
+|Prec@1000<%= $i.rsa.map{|e|e.prec_at(1000).round_at(4)}.to_tbl(:mode=>:min) %>
+
+/*
+== Similarity to Relevant Set in Length Distribution 
+<% ldist_rl = $i.rl.ldist.to_p.to_a %>
+|Measure<%= $i.rsa.map{|e|e.name}.to_tbl %>
+<% test_rank.each do |n| %>                                                                                           
+|Similarity(Top<%=n%>)<%= sim = rs_topk[n].map{|e| (1/e.ldist.to_p.to_a.diff(ldist_rl)).round_at(4) }.to_tbl %>
+
+PCC of MAP and Similarity : <%= sim.to_a.map{|e|e.to_f}.pcc($i.rsa.map{|e|e.avg_prec}).round_at(4) %>
+<% end %>
+
+== Avg. Length by Rank
+
+!<%= $i.get_plot "Avg. Length by Rank" , "rank" , "length" , :plot => avg_len_rank %>!
+
+!<%= $i.get_plot "Avg.(90% in middle) Length by Rank" , "rank" , "length" , :plot => avg90_len_rank %>!
+
+!<%= $i.get_plot "Median Length by Rank" , "rank" , "length" , :plot => median_len_rank %>!
+
+== Precision by Rank
+
+!<%#= $i.get_plot "Precision by Rank(0-200)" , "rank" , "precision" , :plot => prec_rank , :xrange => '[0:200]'%>!
+
+!<%= $i.get_plot "Precision by Rank" , "rank" , "precision" , :plot => prec_rank %>!
+*/
+== Length Distribution for Varying Rank
+How does the length distribution change for different retrival method, with varying rank ?
+
+<% test_rank.each do |n| %>
+=== <%=n%>th Rank
+<% if $i.name != 'doe' %>
+!<%= $i.get_plot "Length Distribution at #{n}th Rank(0~1500)" , "length(index terms)" , "probability" , :plot => plot_topk[n] , :xrange => '[0:1500]', :size => $o[:plot_size] %>!
+!<%= $i.get_plot "Length Distribution at #{n}th Rank(0~2500)" , "length(index terms)" , "probability" , :plot => plot_topk[n] , :xrange => '[0:2500]', :size => $o[:plot_size] %>!
+!<%= $i.get_plot "Length Distribution at #{n}th Rank(0~2500)" , "length(index terms)" , "probability" , :plot => plot_cum_topk[n] , :xrange => '[0:2500]', :size => $o[:plot_size] %>!
+<% else %>
+!<%= $i.get_plot "Length Distribution at #{n}th Rank" , "length(index terms)" , "probability" , :plot => plot_topk[n] %>!
+<% end %>
+<% end %>
+/*
+== Precision/Recall by Rank 
+(x : rank , y : precision/recall
+How does the performance varies as we go up in the rank list?
+
+<% test_rank.each do |n| %>
+=== For Rank <%= n%>
+==== Precision by Length
+!<%= $i.get_plot "Top #{n} Prec. by Length(unit band size) 0~10000" , "length(index terms)" , "prec.", :plot => prec_len_topk[n] , :xrange =>'[0:10000]' %>!
+!<%= $i.get_plot "Top #{n} Prec. by Length(unit band size)" , "length(index terms)" , "prec.", :plot => prec_len_topk[n] , :xrange =>'[0:]' %>!
+
+==== Recall by Length
+!<%= $i.get_plot "Top #{n} Recall by Length(unit band size) 0~10000" , "length(index terms)" , "recall", :plot => recall_len_topk[n] , :xrange =>'[0:10000]' %>!
+
+!<%= $i.get_plot "Top #{n} Recall by Length(unit band size)" , "length(index terms)" , "recall", :plot => recall_len_topk[n] , :xrange =>'[0:]' %>!
+
+==== F1 by Length
+!<%= $i.get_plot "Top #{n} F1 by Length(unit band size) 0~10000" , "length(index terms)" , "F1", :plot => f1_len_topk[n] , :xrange =>'[0:10000]' %>!
+
+!<%= $i.get_plot "Top #{n} F1 by Length(unit band size)" , "length(index terms)" , "F1", :plot => f1_len_topk[n] , :xrange =>'[0:]' %>!
+
+<% end %>
+*/

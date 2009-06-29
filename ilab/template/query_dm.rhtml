@@ -1,0 +1,17 @@
+<parameters>
+        <index><%= @index_path %></index>
+        <trecFormat>true</trecFormat>    
+        <minDocLen><%=o[:minDocLen]%></minDocLen>
+        <maxDocLen><%=o[:maxDocLen]%></maxDocLen>
+<% smoothing_rule.each do |rule| %>
+        <rule><%= rule %></rule>
+<% end %>
+        <queryOffset><%= query_offset %></queryOffset>
+<% topics.each do |query| %>
+        <query>
+        #weight(0.8 #combine(<%= query %>)
+        0.1 #combine (<%= get_combination(query , '1') %>)
+        0.1 #combine (<%= get_combination(query , 'uw8') %>))
+        </query>
+<% end  %>
+</parameters>

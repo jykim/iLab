@@ -1,0 +1,65 @@
+
+p {
+text-align: justify;
+}
+
+pre {
+word-wrap:break-word;
+background-color:#EAEAEA; 
+border-color:gray; 
+border-style:dotted; 
+border-width:1px;
+font:12px;
+padding: 5;
+}
+
+code {
+	margin: 5px 0;
+	padding: 10px;
+	text-align: left;
+	display: block;
+	word-wrap:break-word;
+	font: 500 1em/1.5em 'Lucida Console', 'courier new', monospace;
+	/* white-space: pre; */
+	background: #FAFAFA;
+	border: 1px solid #f2f2f2;  
+	border-left: 3px solid #72A545;
+}
+
+blockquote {
+	margin: 15px; 	padding: 0 0 0 20px;  	
+	background-color: #FAFAFA; 
+	background-position: 8px 10px;
+	border: 1px solid #f2f2f2; 
+	border-left: 3px solid #72A545;  
+	font: bold 1.2em/1.5em "Trebuchet MS", Tahoma, sans-serif; 
+	color: #666666;	
+}
+
+
+/* start - table */
+table {
+	border-collapse: collapse;
+	margin: 10px 15px;	
+}
+th strong {
+	color: #fff;
+}
+th {
+	background: #dedede;
+	height: 25px;
+	padding-left: 11px;
+	padding-right: 11px;
+	color: #000000;
+	text-align: center;
+	border: solid 1px #666666;
+}
+tr {
+	height: 30px;
+}
+td {
+	background: #ffffff;
+	padding-left: 11px;
+	padding-right: 11px;
+	border: solid 1px #666666;
+}

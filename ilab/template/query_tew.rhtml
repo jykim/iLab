@@ -1,0 +1,17 @@
+<parameters>
+        <index><%= @index_path %></index>
+        <trecFormat>true</trecFormat>
+<% smoothing_rule.each do |rule| %>
+        <rule><%= rule %></rule>
+<% end %>
+<% working_set.each do |did| %>
+        <workingSet><%= did %></workingSet>
+<% end %>
+        <queryOffset><%= query_offset %></queryOffset>
+<% $o_tmp[:mps].each do |mps| %>
+        <query>
+        #combine (
+        <%= prior_clause%><%= get_tew_query(mps, $o_tmp) %>)
+        </query>
+<% end  %>
+</parameters>

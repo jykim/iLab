@@ -1,0 +1,12 @@
+<parameters>
+        <index><%= @index_path %></index>
+        <trecFormat>true</trecFormat>
+        <runID><%=@name%></runID>
+        <minDocLen><%=o[:minDocLen]%></minDocLen>
+        <maxDocLen><%=o[:maxDocLen]%></maxDocLen>
+        <rule><%= o[:smoothing] || 'method:dirichlet,mu:1500,operator:term' %></rule>
+        <queryOffset><%= query_offset %></queryOffset>
+<% topics.each do |query| %>
+        <query> <%= "#combine(#prior(#{o[:prior]}) #{query})" %> </query>
+<% end  %>
+</parameters>

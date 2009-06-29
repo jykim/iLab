@@ -1,0 +1,64 @@
+= Experiment
+== Summary
+
+
+== Length Distribution(LenDist)
+LenDist of collection, relevant set, result set for each retrieval method.
+
+QL takes much more of short documents than DM does.
+
+
+DM follows more of long documents, thereby following the LenDist of relevant set better than QL.
+!<%= i.get_plot "Length Distribution(6000~)" , "length(index terms)" , "probability" , :plot => plot , :xrange => '[6000:]' %>!
+
+!<%= i.get_plot "Length Distribution(6000~) wihout Relevant Set" , "length(100 index terms)" , "probability" , :plot => plot[0..-2] , :xrange => '[6000:]' %>!
+/*
+== MAP and Similarity of LenDist(SimLenDist)
+Does SimLenDist positively correlates with MAP?
+=== For Retrieval Method
+<%= i.compare_len_dist( i.rs.values << i.rl ) %>
+
+=== For Top K in Rank List
+What happens in top positions in rank list? Can we find the relation btw. SimLenDist and MAP here as well?
+<% rs_topk.to_a.sort_by{|e|e[0]}.each do |e| %>
+==== Top <%= e[0] %>
+<%= i.compare_len_dist( e[1].values << i.rl ) %>
+<% end %>
+*/
+== Precision/Recall given Length
+(x : length , y : precision/recall)
+How precisely/exhaustively does each method retrive documents for each length range?
+
+Hypothesis is:
+ * Methods with high SimLenDist is expected to show a even score throughout the length.
+ * Methods which focus on longer docs in relation to relevant set will result in low recall/high precision in longer document than in short documents.
+
+==== Precision given Length for Each Retrieval Method
+ * For short documents DM shows higher precision than QL, reflecting the fact that QL retrieves considerably more document than DM therefore may suffer from many irrelevant documents
+ * For medium-sized documents QL shows better precision than DM
+ * For long documents, DM is better again
+/*
+(Each result set is sorted by length and divided into bin of 1000 documents. Then mean length and avg. precision for each bean is plotted.)
+!<%= i.get_plot "Prec. given Length(unit bin size)" , "length(mean of bin)" , "prec.", :plot => prec_len , :xrange =>'[0:]' %>!
+*/
+(Same as above, except bin is divided by band of 100)
+!<%= i.get_plot "Prec. given Length(unit band size) 0~10000" , "length(index terms)" , "prec.", :plot => prec_len2 , :xrange =>'[0:10000]' %>!
+!<%= i.get_plot "Prec. given Length(unit band size)" , "length(index terms)" , "prec.", :plot => prec_len2 , :xrange =>'[0:]' %>!
+
+
+==== Recall given Length for Each Retrieval Method
+ * For short documents, QL shows higher recall, as expected
+ * For other length bands, DM is consistently better
+
+!<%= i.get_plot "Recall given Length(unit band size) 0~10000" , "length(index terms)" , "recall", :plot => recall_len2 , :xrange =>'[0:10000]' %>!
+
+!<%= i.get_plot "Recall given Length(unit band size)" , "length(index terms)" , "recall", :plot => recall_len2 , :xrange =>'[0:]' %>!
+
+= Future Work
+== Score(ranking) given Length
+(x : length, y : score, o : true pos, f : false pos, m : missed)
+Any correlation btw. ranking score and length?
+ * This will show a bias of system in terms of length
+  * Does LenDist of TopK set different from that of result set?
+ * Usefulness in question, as only result set will be considered
+

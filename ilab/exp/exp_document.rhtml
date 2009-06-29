@@ -1,0 +1,40 @@
+= Experiment
+== Query-wise Analysis
+<% test_qids.each do |q| %>
+<% puts "Processing Query : #{q}" %>
+
+=== Query '<%= $i.qsa[0].qh[q].text %>' (<%= q %>)
+<table>
+  <tr><%= $i.rsa.map{|rs| "<td>#{rs.name.upcase}</td>"}.join('')%></tr>
+  <tr>
+<% $i.rsa.each do |rs| %>
+  <td>
+
+<%= rs.export_docs(:title_field=>$title_field, :order_by=>'rank'){|d|q == d.qid and d.rank <= $topk} %>
+
+  </td>
+<% end %>
+</tr></table>
+
+/*
+<% $i.rs.each do |k,v| %>
+<% puts "Result Set : #{k}" %>
+==== For Retrieval Method '<%= k.upcase %>'
+ * *List of Top Documents*
+<%= v.export_docs(:order_by=>'rank'){|d|q == d.qid and d.rank < $topk} %>
+
+ * *Docs Relevant yet Missed*
+<%= $i.rl.export_docs{|d|qw_set[q][k][:fn].include?(d.did) && d.qid == q } %>
+
+ * *Docs Irrelevant yet Retrieved*
+<%= v.export_docs{|d|qw_set[q][k][:fp].include?(d.did) && d.qid == q} %>
+
+<% $i.rs.find_all{|k2,v2|k2 != k}.map{|e|e[0]}.each do |k2| %>
+ * Docs found in <%= k %> yet not in <%= k2 %>*
+<%= v.export_docs{|d|(qw_set[q][k][:rs] - qw_set[q][k2][:rs]).include?(d.did) && d.qid == q } %>
+<% end %>
+<% end %>
+*/
+
+<% end %>
+

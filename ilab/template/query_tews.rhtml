@@ -1,0 +1,13 @@
+<parameters>
+        <index><%= @index_path %></index>
+        <trecFormat>true</trecFormat>
+<% smoothing_rule.each do |rule| %>
+        <rule><%= rule %></rule>
+<% end %>
+        <queryOffset><%= query_offset %></queryOffset>
+<% topics.each do |query| %>
+        <query>
+        #weight (<%= get_prm_query(query,$o_tmp) %>)
+        </query>
+<% end  %>
+</parameters>

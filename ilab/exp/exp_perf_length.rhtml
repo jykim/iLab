@@ -1,0 +1,21 @@
+= Experiment
+Performance in a specific length range
+/*
+== By Measure
+|Measure<%= $i.rsa.map{|e|e.name}.to_tbl %>
+|MAP<%= map = $i.rsa.map{|e|e.avg_prec.round_at(4)}.to_tbl(:mode=>:max) %>
+
+|Measure<%= $i.rsa.map{|e|e.name}.to_tbl %>
+|Prec@10<%= $i.rsa.map{|e|e.prec_at(10).round_at(4)}.to_tbl(:mode=>:max) %>
+|Prec@25<%= $i.rsa.map{|e|e.prec_at(25).round_at(4)}.to_tbl(:mode=>:max) %>
+|Prec@50<%= $i.rsa.map{|e|e.prec_at(50).round_at(4)}.to_tbl(:mode=>:max) %>
+|Prec@100<%= $i.rsa.map{|e|e.prec_at(100).round_at(4)}.to_tbl(:mode=>:max) %>
+|Prec@1000<%= $i.rsa.map{|e|e.prec_at(1000).round_at(4)}.to_tbl(:mode=>:max) %>
+*/
+
+== By Result Set
+|SetName|Range|Length(center)|MAP|Prec@10|Prec@30|
+<% $i.qsa.each do |e| %>
+<%= "|#{e.name.split('_')[1]}|#{[e[:minDocLen],e[:maxDocLen]].mean}|#{e.stat['all']['map']}|#{e.stat['all']['P10']}|#{e.stat['all']['P30']}|" %><% end %>
+
+!<%= $i.get_plot "MAP in length range for varying mu" , "mu" , "MAP" , :plot => plot %>!

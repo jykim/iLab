@@ -1,0 +1,10 @@
+<DOC> 
+<DOCNO> <%= doc_id %> </DOCNO> 
+<TITLE> <%= o[:title] %> </TITLE> 
+<URL> <%= o[:url] %> </URL> 
+<ABSTRACT> <%= o[:abstract] %> </ABSTRACT> 
+<DATE> <%= o[:date] %> </DATE>
+<TEXT>
+<%= o[:text] %>
+</TEXT> 
+</DOC>

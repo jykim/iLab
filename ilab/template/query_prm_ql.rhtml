@@ -1,0 +1,16 @@
+<parameters>
+        <index><%= @index_path %></index>
+        <trecFormat>true</trecFormat>
+<% smoothing_rule.each do |rule| %>
+        <rule><%= rule %></rule>
+<% end %>
+<% working_set.each do |did| %>
+        <workingSet><%= did %></workingSet>
+<% end %>
+        <queryOffset><%= query_offset %></queryOffset>
+<% topics.each do |query| %>
+        <query>
+        #wsum(<%=1-o[:lambda]%> #combine(<%= get_prm_query(query, o) %>) <%=o[:lambda]%> #combine(<%= query%>) )
+        </query>
+<% end  %>
+</parameters>

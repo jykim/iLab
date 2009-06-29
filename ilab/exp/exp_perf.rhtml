@@ -1,0 +1,39 @@
+= Experiment
+== Overall Performance
+|Measure<%= $i.qsa.map{|e|"\"#{e.short_name}\":#{'qry_'+e.name+'.txt'}"}.to_tbl %>
+|MAP<%= map = $i.qsa.map{|e|e.stat['all']['map']}.to_tbl(:mode=>:min) %>
+|Bpref<%= bpref = $i.qsa.map{|e|e.stat['all']['bpref']}.to_tbl(:mode=>:min) %>
+|RecipRank<%= map = $i.qsa.map{|e|e.stat['all']['recip_rank']}.to_tbl(:mode=>:min) %>
+
+|Measure<%= $i.qsa.map{|e|e.short_name}.to_tbl %>
+|Prec@5<%= $i.qsa.map{|e|e.stat['all']['P5']}.to_tbl(:mode=>:min) %>
+|Prec@10<%= $i.qsa.map{|e|e.stat['all']['P10']}.to_tbl(:mode=>:min) %>
+|Prec@20<%= $i.qsa.map{|e|e.stat['all']['P20']}.to_tbl(:mode=>:min) %>
+|Prec@100<%= $i.qsa.map{|e|e.stat['all']['P100']}.to_tbl(:mode=>:min) %>
+|Prec@1000<%= $i.qsa.map{|e|e.stat['all']['P1000']}.to_tbl(:mode=>:min) %>
+
+<% if $o[:verbose] %>
+
+== Query-wise Performance
+<%= $tbl_qry.map{|e|e.to_tbl}.join("\n") %>
+
+<% $i.qsa.map{|qs|qs.name}.to_comb.each_with_index do |qs,i| %>
+<% next if $i.qs[qs[0]].stat.size != $i.qs[qs[1]].stat.size %>
+=== For <%=qs[0]%>,<%=qs[1]%>
+<% data = $plots_bar[qs.join][0][:data] %>
+ * Queries improved in <%=qs[0]%> : <%= data.find_all{|e|e>0}.size%>
+ * Average/Stdev in difference : <%= [data.mean.r3 , data.stdev.r3].join(',') %>
+<% if $sig_test.size > 0 %>
+ * "significance test":../../log/<%=$sig_test[qs.join][0]%> 
+<% end %>
+<% if $log_reg.size > 0 %>
+ * "logistic regression":../../log/<%=$log_reg[qs.join][0]%> (for query features)
+<% end %>
+/*
+!<%= $i.get_plot "MAP difference(#{qs.join(',')})" , 'query count' , 'differnce(MAP)' , :plot=>$plots_bar[qs.join] %>!
+
+!<%= $i.get_plot "MAP distribution(#{qs.join(',')})" , "MAP(#{qs[0]})" , "MAP(#{qs[1]})" , :plot=>$plots_point[qs.join] %>!
+*/
+<% end %>
+
+<% end %>
