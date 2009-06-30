@@ -1,3 +1,5 @@
+require 'lib/interface/gnuplot'
+
 module GnuplotHandler
   #Get (One/Multiple) Line Plot
   # - Table-driven

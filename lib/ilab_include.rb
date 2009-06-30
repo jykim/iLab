@@ -1,3 +1,54 @@
+require 'erb'
+require 'rubygems'
+require 'ruby-debug'
+require 'enumerator'
+#if ENV['HOSTNAME'] =~ /^compute/
+#  require 'external/gems/RedCloth-4.0.3/lib/redcloth'  
+#else
+  require 'redcloth'
+#end
+require 'test/unit'
+require "logger"
+include Test::Unit::Assertions
+
+load "exlib/globals/global.rb"
+load 'exlib/extensions/extension.rb'
+load 'exlib/extensions/probability.rb'
+load 'exlib/extensions/statistics.rb'
+
+load 'lib/ilab_loader.rb'
+load 'lib/ilab_helper.rb'
+load 'lib/ilab_globals.rb'
+load 'lib/ilab_exceptions.rb'
+
+load 'lib/extensions/ilab_extension.rb'
+load 'lib/extensions/rails_extension.rb'
+load 'lib/etc/option_handler.rb'
+load 'lib/etc/markup_handler.rb'
+load 'lib/etc/file_handler.rb'
+load 'lib/etc/trec_handler.rb'
+load 'lib/etc/stat_length.rb'
+load 'lib/etc/stemmer.rb'
+load 'lib/field/prm_helper.rb'
+load 'lib/field/gen_helper.rb'
+
+load 'lib/interface/gnuplot_interface.rb'
+load 'lib/interface/crf_interface.rb'
+load 'lib/interface/indri_interface.rb'
+load 'lib/interface/r_interface.rb'
+load 'lib/interface/yahoo_interface.rb'
+load 'lib/interface/lda_interface.rb'
+load 'lib/interface/cluster_interface.rb'
+
+load 'lib/object/document_set.rb'
+load 'lib/object/result_document_set.rb'
+load 'lib/object/relevant_document_set.rb'
+load 'lib/object/query_helper.rb'
+load 'lib/object/query.rb'
+load 'lib/object/query_set.rb'
+
+load 'app/adhoc/pd_lib.rb'
+
 #Constants with Global Scope
 
 PTN_WORD = /[a-z][\w-]*/
@@ -17,8 +68,6 @@ ENV['RAILS_ROOT'] = '/home/lifidea/rails/lifidea' if !ENV['RAILS_ROOT']
 PATH_DATA = File.join( ENV['RAILS_ROOT'],"data" )
 PATH_LOG  = File.join( ENV['RAILS_ROOT'],"log" )
 PATH_TMP  = File.join( ENV['RAILS_ROOT'],"tmp" )
-
-require "globals/global"
 
 #def empty? str
 #  str.blank?

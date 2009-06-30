@@ -196,3 +196,14 @@ class IndriInterface
     dv[2].split("\n").map{|l|l.split(" ")}.find_all{|e|e[2]!="[OOV]"}.map{|e|e[2]}.to_dist.to_p
   end
 end
+
+
+#Get Smoothing Parameter
+def get_sparam(method, param_value , field = nil, operator = 'term')
+  IndriInterface.get_sparam(method, param_value , field, operator)
+end
+
+#Get Smoothing Parameter
+def get_sparam2(method, param_hash , field = nil, operator = 'term')
+  IndriInterface.get_sparam2(method, param_hash , field, operator)
+end
