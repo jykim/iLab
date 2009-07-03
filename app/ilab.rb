@@ -7,7 +7,7 @@ DEFAULT_ENGINE_TYPE = :indri
 # ILab base class
 class ILab
   include ApplicationFramework ,StatLength , MarkupHandler,  OptionHandler
-  include ILabHelper , FileHelper, ReportHelper
+  include ILabHelper
   include GnuplotHandler , RInterface
   attr_accessor :name, :engine
   attr_reader :rs , :qs , :rl , :ldist , :qsa , :rsa , :engine
