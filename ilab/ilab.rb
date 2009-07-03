@@ -26,7 +26,7 @@ load 'ilab_globals.rb'
 load 'ilab_exceptions.rb'
 
 load 'lib/option_handler.rb'
-load 'lib/markup_handler.rb'
+load 'markup_handler.rb'
 load 'lib/gnuplot_handler.rb'
 load 'lib/stat_length.rb'
 load 'lib/prm_helper.rb'
