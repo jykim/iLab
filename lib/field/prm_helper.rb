@@ -53,6 +53,7 @@ module PRMHelper
       end
     end
     cs_scores_all = col_scores.map_hash{|k,v|[k,v.to_log]}.merge_elements.r3.sort_val
+    $top_cols ||= {} 
     $top_cols[query] ||= {}
     $top_cols[query][o[:cs_type]] = cs_scores_all[0][0]
     info "[get_map_prob] #{query} : #{cs_scores_all.inspect}"    
