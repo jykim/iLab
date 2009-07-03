@@ -201,14 +201,6 @@ end
 class Array
   include Statistics , Entropy, IRMeasure
   
-  # Collapse the outermost array
-  # [[1].[2],[[3]]].collapse -> [1,2,[3]]
-  def collapse()
-    result = []
-    each{|e|result.concat(e) if e.class == Array }
-    result
-  end
-  
   def sort_val
     sort_by{|e|e[1]}.reverse
   end

@@ -43,13 +43,15 @@ def ILabLoader.build(ilab)
   set_collection_param($col_id)
   $col_id = col_type_old if $o[:param]
   case $method
+  when 'hybrid'
+    
   #------------------ RANK LIST MERGING ---------------#
   when 'all_cs_type'
     #Top-score collection for each query
     $top_cols = {}
     # Difference for each collection score type
     CS_TYPES.each do |cs_type|
-      ilab.crt_add_query_set("#{$query_prefix}_DQL_cs#{cs_type}" , :cs_type=>cs_type, :smoothing=>$sparam)
+      #ilab.crt_add_query_set("#{$query_prefix}_DQL_cs#{cs_type}" , :cs_type=>cs_type, :smoothing=>$sparam)
       ilab.crt_add_query_set("#{$query_prefix}_PRM-S_cs#{cs_type}" , :cs_type=>cs_type, :template=>:prm, :smoothing=>$sparam)
     end
     #ilab.crt_add_query_set("#{$query_prefix}_MFLM" ,:template=>:hlm, :smoothing=>get_sparam('jm',0.5), 

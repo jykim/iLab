@@ -1,0 +1,5 @@
+<DOC> 
+<DOCNO> <%= doc_id %> </DOCNO>
+<% fields.each do |e|%>
+<%= "<#{e[:tag]}> #{e[:content]} </#{e[:tag]}>" %><% end %>
+</DOC>
