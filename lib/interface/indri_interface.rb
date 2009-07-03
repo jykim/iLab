@@ -3,7 +3,8 @@ $indri_path = ENV['INDRI']
 class IndriInterface
   DEF_SMOOTHING = ['method:dirichlet,mu:1500,operator:term','method:dirichlet,mu:4000,operator:window']
   attr_accessor :index_path, :title_field , :cf
-  include ILabHelper , OptionHandler, Math, PRMHelper
+  include ILabHelper , OptionHandler, Math
+  include FieldHelper, GenHelper, PRMHelper
   
   def initialize(name = "" , o={})
     @name = name
@@ -195,4 +196,15 @@ class IndriInterface
     dv = get_index_info("dv", dno).split(/--- .*? ---\n/)
     dv[2].split("\n").map{|l|l.split(" ")}.find_all{|e|e[2]!="[OOV]"}.map{|e|e[2]}.to_dist.to_p
   end
+end
+
+
+#Get Smoothing Parameter
+def get_sparam(method, param_value , field = nil, operator = 'term')
+  IndriInterface.get_sparam(method, param_value , field, operator)
+end
+
+#Get Smoothing Parameter
+def get_sparam2(method, param_hash , field = nil, operator = 'term')
+  IndriInterface.get_sparam2(method, param_hash , field, operator)
 end

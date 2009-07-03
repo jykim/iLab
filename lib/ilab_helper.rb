@@ -1,4 +1,27 @@
 module ILabHelper
+  def apply_ordering(arr , o)
+    o[:rlimit] = 100 if !o[:rlimit]
+    arr = arr.reverse if o[:desc]
+    if o[:limit]
+      arr[0..(o[:limit]-1)]
+    elsif o[:rlimit] && arr.size > o[:rlimit]
+      arr[(arr.size-o[:rlimit])..(arr.size-1)]
+    else
+      arr
+    end
+  end
+
+  def enclose(var)
+    if var.class == String
+      "\"#{var}\""
+    else
+      var
+    end
+  end
+private
+end
+
+module ReportHelper
   HTML_HEADER = "<link href=\"print.css\" rel=\"Stylesheet\" media=\"screen\" type=\"text/css\" />\n"
   def get_html_page(content)
     s = "<html><head><title>iLab Report for #{$col} Collection</title>"
@@ -56,19 +79,9 @@ module ILabHelper
       end
     end
   end
+end
 
-  def apply_ordering(arr , o)
-    o[:rlimit] = 100 if !o[:rlimit]
-    arr = arr.reverse if o[:desc]
-    if o[:limit]
-      arr[0..(o[:limit]-1)]
-    elsif o[:rlimit] && arr.size > o[:rlimit]
-      arr[(arr.size-o[:rlimit])..(arr.size-1)]
-    else
-      arr
-    end
-  end
-
+module FileHelper
   def fdump( dump_name , var )
     File.open( to_path(dump_name) , 'w') {|f| Marshal.dump(var , f) } ; var
   end
@@ -131,13 +144,4 @@ module ILabHelper
   def dsvwrite(file_name, var, o = {})
     fwrite(file_name, var.map{|e|e.map{|e2|o[:enclose]? enclose(e2) : e2}.join(o[:sep_col] || " ")}.join("\n"), o)
   end
-
-  def enclose(var)
-    if var.class == String
-      "\"#{var}\""
-    else
-      var
-    end
-  end
-private
 end

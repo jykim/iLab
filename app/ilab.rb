@@ -1,51 +1,4 @@
-require 'erb'
-require 'rubygems'
-require 'ruby-debug'
-require 'enumerator'
-#if ENV['HOSTNAME'] =~ /^compute/
-#  require 'external/gems/RedCloth-4.0.3/lib/redcloth'  
-#else
-  require 'redcloth'
-#end
-require 'test/unit'
-
-require "logger"
-require 'ilab_include'
-require 'lib/gnuplot.rb'
-require 'stemmer.rb'
-include Test::Unit::Assertions
-
-load 'extensions/extension.rb'
-load 'extensions/probability.rb'
-load 'extensions/statistics.rb'
-load 'ilab_extension.rb'
-load 'rails_extension.rb'
-load 'ilab_loader.rb'
-load 'ilab_helper.rb'
-load 'ilab_globals.rb'
-load 'ilab_exceptions.rb'
-
-load 'lib/option_handler.rb'
-load 'markup_handler.rb'
-load 'lib/gnuplot_handler.rb'
-load 'lib/stat_length.rb'
-load 'lib/prm_helper.rb'
-
-load 'interface/crf_interface.rb'
-load 'interface/indri_interface.rb'
-load 'interface/r_interface.rb'
-load 'interface/yahoo_interface.rb'
-load 'interface/lda_interface.rb'
-load 'interface/cluster_interface.rb'
-
-load 'object/document_set.rb'
-load 'object/result_document_set.rb'
-load 'object/relevant_document_set.rb'
-load 'object/query_helper.rb'
-load 'object/query.rb'
-load 'object/query_set.rb'
-
-load 'adhoc/pd_lib.rb'
+load 'lib/ilab_include.rb'
 
 $ilab_root ||= ENV['ILAB_ROOT']
 RUBY_CMD = "/work1/jykim/app/ruby/bin/ruby -W0 -I #$ilab_root/lib -I #$ilab_root/ilab"
@@ -53,8 +6,8 @@ DEFAULT_ENGINE_TYPE = :indri
 
 # ILab base class
 class ILab
-  include ApplicationFramework , OptionHandler
-  include ILabHelper , StatLength , MarkupHandler
+  include ApplicationFramework ,StatLength , MarkupHandler,  OptionHandler
+  include ILabHelper , FileHelper, ReportHelper
   include GnuplotHandler , RInterface
   attr_accessor :name, :engine
   attr_reader :rs , :qs , :rl , :ldist , :qsa , :rsa , :engine

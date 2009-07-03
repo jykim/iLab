@@ -1,8 +1,8 @@
-load 'object/document_set_helper.rb'
-load 'object/document.rb'
-load 'object/occurrence.rb'
-load 'object/term.rb'
-load 'object/term_relation.rb'
+load 'lib/object/document_set_helper.rb'
+load 'lib/object/document.rb'
+load 'lib/object/occurrence.rb'
+load 'lib/object/term.rb'
+load 'lib/object/term_relation.rb'
 
 Measure = Struct.new(:title , :calc_str)
 
