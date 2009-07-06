@@ -48,6 +48,7 @@ def ILabLoader.build(ilab)
   when 'all_cs_type'
     #Top-score collection for each query
     # Difference for each collection score type
+    ilab.crt_add_query_set("#{$query_prefix}_DQL", :smoothing=>$sparam)
     CS_TYPES.each do |cs_type|
       #ilab.crt_add_query_set("#{$query_prefix}_DQL_cs#{cs_type}" , :cs_type=>cs_type, :smoothing=>$sparam)
       ilab.crt_add_query_set("#{$query_prefix}_PRM-S_cs#{cs_type}" , :cs_type=>cs_type, :template=>:prm, :smoothing=>$sparam)
