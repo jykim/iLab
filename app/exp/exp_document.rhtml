@@ -5,7 +5,7 @@
 
 === Query '<%= $i.qsa[0].qh[q].text %>' (<%= q %>)
 <table>
-  <tr><%= $i.rsa.map{|rs| "<td>#{rs.name.upcase}</td>"}.join('')%></tr>
+  <tr><%= $i.rsa.map{|rs| "<td>#{rs.name.gsub($query_prefix+'_',"")}</td>"}.join('')%></tr>
   <tr>
 <% $i.rsa.each do |rs| %>
   <td>

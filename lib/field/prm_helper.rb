@@ -28,7 +28,7 @@ module PRMHelper
         end
       end
     }.to_p.smooth(0.1)
-    #info "[scale_map_prob] #{qw} : #{col_scores.r3.sort_val.inspect}"
+    debug "[scale_map_prob] #{qw} : #{col_scores.r2.sort_val.inspect}"
     #debugger
     [col_scores, mp_group.map{|col,fields|fields.to_p(col_scores[col]).sort_val}.collapse]
   end
@@ -52,10 +52,10 @@ module PRMHelper
         mps[i] = [qw, mp.find_all{|e|e[1]>0}.sort_val]
       end
     end
-    cs_scores_all = col_scores.map_hash{|k,v|[k,v.to_log]}.merge_elements.r3.sort_val
+    cs_scores_all =  col_scores.merge_by_product.to_p.r2.sort_val
     $top_cols ||= {} 
     $top_cols[query] ||= {}
-    $top_cols[query][o[:cs_type]] = cs_scores_all[0][0]
+    $top_cols[query][o[:cs_type]] = cs_scores_all[0].join(":")
     info "[get_map_prob] #{query} : #{cs_scores_all.inspect}"    
     mps.find_all{|mp|mp[1].size>0}
   end
