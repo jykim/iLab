@@ -1,6 +1,6 @@
-load 'ilab.rb'
-load 'adhoc/pd_lib.rb'
-load 'run_dih_helper.rb'
+load 'app/ilab.rb'
+load 'app/adhoc/pd_lib.rb'
+load 'app/runner/run_dih_helper.rb'
 
 init_env()
 init_collection($col)
