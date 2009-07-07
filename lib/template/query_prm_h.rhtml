@@ -4,10 +4,13 @@
 <% smoothing_rule.each do |rule| %>
         <rule><%= rule %></rule>
 <% end %>
+<% working_set.each do |did| %>
+        <workingSet><%= did %></workingSet>
+<% end %>
         <queryOffset><%= query_offset %></queryOffset>
 <% topics.each do |query| %>
         <query>
-        #combine (<%= get_hlm_query(query, o[:hlm_weights], o[:hlm_fields]) %>)
+        #wsum(<%=1-o[:lambda]%> #combine(<%= get_prm_query(query, o) %>) <%=o[:lambda]%> #combine(<%= get_hlm_query(query, o[:hlm_weights], o[:hlm_fields] ) %>) )
         </query>
 <% end  %>
 </parameters>

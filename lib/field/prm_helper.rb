@@ -38,17 +38,18 @@ module PRMHelper
   def get_map_prob(query, o={})
     return query if query.scan(/\(/).size > 0
     mps = [] ; col_scores = {}
+    fields = o[:prm_fields] || $fields
     query.split(" ").each_with_index do |qw,i|
       #Read Collection Stat.
       qw_s = kstem(qw.downcase)
-      weights = get_col_freq(:prob=>true).map_hash{|k,v|[k,v[qw_s]] if v[qw_s] && $fields.include?(k)}
+      weights = get_col_freq(:prob=>true).map_hash{|k,v|[k,v[qw_s]] if v[qw_s] && fields.include?(k)}
       if o[:cs_type]
         mps[i] = [qw]
         col_scores[qw_s], mps[i][1] = *scale_map_prob(qw_s, weights, o[:cs_type])
         #debugger
       else
         mp = weights.map_hash{|e|v=e[1]/weights.values.sum ; [e[0],((v >= 0.0001)? v : 0.0)]}
-        mp = $fields.map_hash{|f|[f, ((mp[f])? mp[f] : 0.0001)]} if o[:mp_all_fields]
+        mp = fields.map_hash{|f|[f, ((mp[f])? mp[f] : 0.0001)]} if o[:mp_all_fields]
         mps[i] = [qw, mp.find_all{|e|e[1]>0}.sort_val]
       end
     end
@@ -68,13 +69,13 @@ module PRMHelper
   end
   
   #PRM with DQL
-  def get_prm_ql2_query(query, o={})
-    mps = get_map_prob(query, o)
-    lambdas = [o[:lambda]] * mps.size
-    mps.map_with_index do |mp,i|
-      "#wsum(#{1-lambdas[i]} #{get_tew_query([mp], o)} #{lambdas[i]} #{mp[0]})"
-    end
-  end
+  #def get_prm_ql2_query(query, o={})
+  #  mps = get_map_prob(query, o)
+  #  lambdas = [o[:lambda]] * mps.size
+  #  mps.map_with_index do |mp,i|
+  #    "#wsum(#{1-lambdas[i]} #{get_tew_query([mp], o)} #{lambdas[i]} #{mp[0]})"
+  #  end
+  #end
       
   #Get query for field-level weighting
   def get_prm_query(query, o={})
@@ -84,56 +85,15 @@ module PRMHelper
     mps = mps.map{|e|[e[0], e[1].to_h.smooth(o[:mp_smooth]).to_a]} if o[:mp_smooth]
     mps.each{|e| info "[get_prm_query] #{e[0]} -> #{e[1].map{|f|[f[0],f[1].r3].join(':')}.join(' ')}"} if o[:verbose]
     return get_tew_query(mps, o)
-    
-    #return "1 #combine(#{result})" if query.split(" ").size < 2
-    #
-    ##Phrase Detection
-    #result_qfws1 = result_qfws2 = ""
-    #mps.map_cons(2).each do |e|
-    #  mp1, mp2 = e[0][1].map{|f|f[1]}, e[1][1].map{|f|f[1]}
-    #  #kld = mp1.to_smt.kld(mp2.to_smt).to_f
-    #  pmi = calc_mi( e[0][0], e[1][0] )
-    #  metric = case o[:find_phrase]
-    #           #when :kld : log2(1/kld+1.0)
-    #           when :pmi : pmi
-    #           else pmi
-    #           end
-    #  weight = (metric > 1)? 1 : 0
-    #  result_qfws1 += "#{weight} #1(#{e[0][0]} #{e[1][0]}) " if weight > 0
-    #  result_qfws2 += "#{weight} #uw1(#{e[0][0]} #{e[1][0]}) " if weight > 0
-    #  #info "[get_prm_query] kld[#{e[0][0]}-#{e[1][0]}]\t#{kld.r3}\t#{metric}\t#{pmi}"
-    #end
-    #(result_qfws1.size>0)? "0.8 #combine(#{result}) 0.1 #weight(#{result_qfws1}) 0.1 #weight(#{result_qfws2})" : "1.0 #combine(#{result})"
-  end
-
-  #Herustic PRM
-  def get_hprm_query(query, o={})
-    topf_low = o[:topf_low] || 0.6
-    topf_hi  = o[:topf_hi]  || 0.9
-    mps = get_map_prob(query, o)
-    mps_h = mps.map do |mp|
-      top_field = mp[1].sort_by{|e|e[1]}.last
-      if  top_field[1] > topf_hi
-        [mp[0],[[top_field[0],1.0]]]
-      elsif top_field[1] < topf_low  || top_field[0] == 'text' 
-        [mp[0],[['BoW',1.0]]]
-      else
-        mp
-      end
-    end
-    #info o.inspect
-    #info mps_h.inspect
-    #mps_h.each{|e| info "[get_hprm_query] #{e[0]} -> #{e[1].map{|f|[f[0],f[1].r3].join(':')}.join(' ')}"}
-    return get_tew_query(mps_h, o)
   end
 
   #PRM with DQL
-  def get_dprm_query(mps, lambdas, o={})
-    queries = mps.map_with_index do |mp,i|
-      "#wsum(#{lambdas[i]} #{get_tew_query([mp], o)} #{1-lambdas[i]} #{mp[0]})"
-    end
-    return queries.join("\n")
-  end
+  #def get_dprm_query(mps, lambdas, o={})
+  #  queries = mps.map_with_index do |mp,i|
+  #    "#wsum(#{lambdas[i]} #{get_tew_query([mp], o)} #{1-lambdas[i]} #{mp[0]})"
+  #  end
+  #  return queries.join("\n")
+  #end
 
   #Get Term-wise Element Weighting Query given Mapping Prob.
   def get_tew_query(mps, o)
@@ -150,7 +110,6 @@ module PRMHelper
       end
     end
     mps_new.map{|mp| " #wsum(#{mp[1].sort_by{|e|e[1]}.reverse.map{|e|"#{e[1].r3} #{mp[0]}"+((e[0]!="BoW")? ".(#{e[0]})":"")}.join(' ')})" }.join("\n")
-    #mps_new.map{|mp| " #wsum(#{mp[1].sort_by{|e|e[1]}.reverse.map{|e|"#{e[1].r3} #{mp[0]}.(#{e[0]})"}.join(' ')})" }.join("\n")
   end
   
   def get_hlm_query(query, weights, fields = nil)

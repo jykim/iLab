@@ -130,8 +130,8 @@ def ILabLoader.build(ilab)
   when 'baseline'
     case $col
     when 'monster'
-      #ilab.crt_add_query_set("#{$train}FLM", :template=>:hlm, :smoothing=>get_sparam('jm',0.5), :hlm_weight=>[1.0]*$fields.size)
-      ilab.crt_add_query_set("#{$train}HLM", :template=>:hlm, :smoothing=>get_sparam('jm',0.5), :hlm_weight=>$hlm_weight)
+      #ilab.crt_add_query_set("#{$train}FLM", :template=>:hlm, :smoothing=>get_sparam('jm',0.5), :hlm_weights=>[1.0]*$fields.size)
+      ilab.crt_add_query_set("#{$train}HLM", :template=>:hlm, :smoothing=>get_sparam('jm',0.5), :hlm_weights=>$hlm_weight)
       ilab.crt_add_query_set("#{$train}DQL" ,:smoothing=>get_sparam('jm',0.5))
       #ilab.crt_add_query_set("#{$train}DQL_DM" , :template=>:dm, :smoothing=>[get_sparam('jm',0.5), get_sparam('jm', 0.1, nil, 'window')])
       #ilab.crt_add_query_set("#{$train}DQL_p" ,:smoothing=>get_sparam('jm',0.5),:prior=>'length')
@@ -144,7 +144,7 @@ def ILabLoader.build(ilab)
       #ilab.crt_add_query_set("#{$train}PRM_SQ", :template=>:prm, :smoothing=>get_sparam('jm',0.5), :file_topic=>'topics.short')
     when 'imdb'
       #Full-text Query-likelihood
-      #ilab.crt_add_query_set("#{$train}HLM", :template=>:hlm, :smoothing=>nil, :hlm_weight=>$hlm_weight)      
+      #ilab.crt_add_query_set("#{$train}HLM", :template=>:hlm, :smoothing=>nil, :hlm_weights=>$hlm_weight)      
       ilab.crt_add_query_set("#{$train}DQL" ,:smoothing=>get_sparam('dirichlet',1500))
       ilab.crt_add_query_set("#{$train}HLM_x", :smoothing=>nil) #get_sparam('jm',0.1))
       #ilab.crt_add_query_set("#{$train}DQL_p" ,:smoothing=>get_sparam('jm',0.5),:prior=>'length')

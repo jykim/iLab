@@ -73,11 +73,11 @@ class DocumentSet
       #info "[export_docs] #{d.title} (#{i})"
       doc_file_name = ["doc" , File.basename(d.did)].join('_') + '.' + 'txt' #( (d.type=~/pdf/i)? 'html' : 'xml' )
       if $exp != 'adhoc'
-        doc_color = if d.relevance >  1 : "background:#00cc00" 
-                    elsif d.relevance == 1 : "background:#99FF99" 
+        doc_color = if d.relevance >  1 : "background:#222222" 
+                    elsif d.relevance == 1 : "background:#444444" 
                     elsif d.relevance == 0 : "background:#ffffff"
                     elsif d.relevance == -1 : "background:#cccccc"
-                    else "background:#999999"
+                    else "background:#aaaaaa"
                     end
       end
       doc_info = [ (defined?(d.rank))? d.rank : 'N/A' ,"\"#{d.title[0..50].gsub(/\W+/," ").strip}\":../../doc/#{doc_file_name}" ]

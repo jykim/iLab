@@ -44,6 +44,15 @@ def ILabLoader.build(ilab)
   $col_id = col_type_old if $o[:param]
   case $method
   when 'hybrid'
+    ilab.crt_add_meta_query_set("#{$query_prefix}_DQL"  , $o.merge(:smoothing=>$sparam))
+    ilab.crt_add_meta_query_set("#{$query_prefix}_PRM-S", $o.merge(:template=>:prm, :smoothing=>$sparam))
+    ilab.crt_add_meta_query_set("#{$query_prefix}_PRM-S_sem", $o.merge(:template=>:prm, :smoothing=>$sparam, 
+      :prm_fields=>$fields[2..-1]))
+    ilab.crt_add_meta_query_set("#{$query_prefix}_MFLM_tex", $o.merge(:template=>:hlm, :smoothing=>$sparam, 
+      :hlm_fields=>$fields[0..1], :hlm_weights=>$hlm_weights[0..1]))
+    ilab.crt_add_meta_query_set("#{$query_prefix}_PRM-H", $o.merge(:template=>:prm_h, :smoothing=>$sparam, 
+      :prm_fields=>$fields[2..-1], :hlm_fields=>$fields[0..1], :hlm_weights=>$hlm_weights[0..1], :lambda=>$prmd_lambda))
+    
   #------------------ RANK LIST MERGING ---------------#
   when 'all_cs_type'
     #Top-score collection for each query
@@ -54,7 +63,7 @@ def ILabLoader.build(ilab)
       ilab.crt_add_query_set("#{$query_prefix}_PRM-S_cs#{cs_type}" , :cs_type=>cs_type, :template=>:prm, :smoothing=>$sparam)
     end
     #ilab.crt_add_query_set("#{$query_prefix}_MFLM" ,:template=>:hlm, :smoothing=>get_sparam('jm',0.5), 
-    #                        :hlm_weight=>($hlm_weight || [0.1]*($fields.size)))
+    #                        :hlm_weights=>($hlm_weight || [0.1]*($fields.size)))
     #ilab.crt_add_query_set("#{$query_prefix}_PRM-D", :template=>:prm_ql ,:smoothing=>$sparam, :lambda=>$prmd_lambda)
   when 'meta'
     # Local retrieval & merge
@@ -71,29 +80,29 @@ def ILabLoader.build(ilab)
   when 'cut_words'
     [0.0,0.25,0.5,0.75].each_with_thread do |cut_ratio,i|
       ilab.crt_add_query_set("#{$query_prefix}_BM25_crr#{cut_ratio}", :template=>:hlm, :smoothing=>IndriInterface.get_field_bparam2($fields , [0.5]*$fields.size), :remote_query=>true, 
-                              :hlm_weight=>([0.1]*($fields.size)), :index_path=>"#{$index_path}_#{cut_ratio}_r" , :indri_path=>$indri_path_dih, :param_query=>"-msg_path='#{$bm25f_path}'")
+                              :hlm_weights=>([0.1]*($fields.size)), :index_path=>"#{$index_path}_#{cut_ratio}_r" , :indri_path=>$indri_path_dih, :param_query=>"-msg_path='#{$bm25f_path}'")
       ilab.crt_add_query_set("#{$query_prefix}_BM25F_crr#{cut_ratio}", :template=>:hlm, :smoothing=>IndriInterface.get_field_bparam($fields , [0.5]*$fields.size), :remote_query=>true, 
-                              :hlm_weight=>([0.1]*($fields.size)), :index_path=>"#{$index_path}_#{cut_ratio}_r", :indri_path=>$indri_path_dih, :param_query=>"-msg_path='#{$bm25f_path}'")
+                              :hlm_weights=>([0.1]*($fields.size)), :index_path=>"#{$index_path}_#{cut_ratio}_r", :indri_path=>$indri_path_dih, :param_query=>"-msg_path='#{$bm25f_path}'")
       ilab.crt_add_query_set("#{$query_prefix}_MFLM_crr#{cut_ratio}" ,:template=>:hlm ,:smoothing=>['method:jm,lambda:0.1'], :remote_query=>true, 
-                              :hlm_weight=>([0.1]*($fields.size)), :index_path=>"#{$index_path}_#{cut_ratio}_r")                            
+                              :hlm_weights=>([0.1]*($fields.size)), :index_path=>"#{$index_path}_#{cut_ratio}_r")                            
       ilab.crt_add_query_set("#{$query_prefix}_MFLMF_crr#{cut_ratio}", :template=>:hlm, :smoothing=>['method:raw','node:wsum,method:jm,lambda:0.1'], :remote_query=>true, 
-                              :hlm_weight=>([0.1]*($fields.size)), :index_path=>"#{$index_path}_#{cut_ratio}_r", :indri_path=>$indri_path_dih)
+                              :hlm_weights=>([0.1]*($fields.size)), :index_path=>"#{$index_path}_#{cut_ratio}_r", :indri_path=>$indri_path_dih)
     end
   when 'limit_fields'
     (1..$fields.size).to_a.each_with_thread do |no_fields,i|
       $fields = $fields[0..(no_fields-1)]
       ilab.crt_add_query_set("#{$query_prefix}_BM25_uf#{no_fields}", :template=>:hlm, :smoothing=>IndriInterface.get_field_bparam2($fields , [0.5]*no_fields), :remote_query=>true, 
-                              :hlm_weight=>([0.1]*($fields.size)), :indri_path=>$indri_path_dih, :param_query=>"-msg_path='#{$bm25f_path}'")
+                              :hlm_weights=>([0.1]*($fields.size)), :indri_path=>$indri_path_dih, :param_query=>"-msg_path='#{$bm25f_path}'")
       ilab.crt_add_query_set("#{$query_prefix}_BM25F_uf#{no_fields}", :template=>:hlm, :smoothing=>IndriInterface.get_field_bparam($fields , [0.5]*no_fields), :remote_query=>true, 
-                              :hlm_weight=>([0.1]*($fields.size)), :indri_path=>$indri_path_dih, :param_query=>"-msg_path='#{$bm25f_path}'")
+                              :hlm_weights=>([0.1]*($fields.size)), :indri_path=>$indri_path_dih, :param_query=>"-msg_path='#{$bm25f_path}'")
       ilab.crt_add_query_set("#{$query_prefix}_MFLM_uf#{no_fields}" ,:template=>:hlm ,:smoothing=>['method:jm,lambda:0.1'], :remote_query=>true, 
-                              :hlm_weight=>([0.1]*($fields.size)))                            
+                              :hlm_weights=>([0.1]*($fields.size)))                            
       ilab.crt_add_query_set("#{$query_prefix}_MFLMF_uf#{no_fields}", :template=>:hlm, :smoothing=>['method:raw','node:wsum,method:jm,lambda:0.1'], :remote_query=>true, 
-                              :hlm_weight=>([0.1]*($fields.size)), :indri_path=>$indri_path_dih)
+                              :hlm_weights=>([0.1]*($fields.size)), :indri_path=>$indri_path_dih)
     end
   when 'prmf_verify'
     ilab.crt_add_query_set("#{$query_prefix}_PRM-F_u", :template=>:hlm, :smoothing=>['method:raw','node:wsum,method:jm,lambda:0.1'], 
-                            :hlm_weight=>([0.1]*($fields.size)), :indri_path=>$indri_path_dih)
+                            :hlm_weights=>([0.1]*($fields.size)), :indri_path=>$indri_path_dih)
     ilab.crt_add_query_set("#{$query_prefix}_DQL", :template=>:ql, :smoothing=>get_sparam('jm','0.1'))
   when 'prmf_smt'
     [0.05,0.1,0.3,0.5,0.7,0.9].each do |lambda|
@@ -118,10 +127,10 @@ def ILabLoader.build(ilab)
   when 'bm25f_verify'
     bf = 0
     ilab.crt_add_query_set("#{$query_prefix}_BM25F_u", :template=>:hlm, :smoothing=>IndriInterface.get_field_bparam($fields , [bf]*$fields.size), 
-                            :hlm_weight=>([0.1]*($fields.size)), :indri_path=>$indri_path_dih, :param_query=>"-msg_path='#{$bm25f_path}'")
+                            :hlm_weights=>([0.1]*($fields.size)), :indri_path=>$indri_path_dih, :param_query=>"-msg_path='#{$bm25f_path}'")
     $fields = ['document']
     ilab.crt_add_query_set("#{$query_prefix}_BM25_d", :template=>:hlm, :smoothing=>IndriInterface.get_field_bparam2($fields , [bf]*$fields.size),
-                            :hlm_weight=>([0.1]*($fields.size)), :indri_path=>$indri_path_dih, :param_query=>"-msg_path='#{$bm25f_path}'")
+                            :hlm_weights=>([0.1]*($fields.size)), :indri_path=>$indri_path_dih, :param_query=>"-msg_path='#{$bm25f_path}'")
   when 'mp_noise'
     [0.0,0.5,1.0,2.0,5.0].each do |mp_noise|
       ilab.crt_add_query_set("#{$query_prefix}_PRM-S_n#{mp_noise}", :template=>:prm, :smoothing=>$sparam, :mp_noise=>mp_noise)
@@ -145,26 +154,26 @@ def ILabLoader.build(ilab)
   #------------------ DIH Project ------------------#
   when 'simple' #methods that doesn't require parameter tuning
     #ilab.crt_add_query_set("#{$query_prefix}_BM25F", :template=>:hlm, :smoothing=>$bm25f_smt, 
-    #                        :hlm_weight=>($bm25f_weight || [0.1]*($fields.size)), :indri_path=>$indri_path_dih, :param_query=>"-msg_path='#{$bm25f_path}'")
+    #                        :hlm_weights=>($bm25f_weight || [0.1]*($fields.size)), :indri_path=>$indri_path_dih, :param_query=>"-msg_path='#{$bm25f_path}'")
     ilab.crt_add_query_set("#{$query_prefix}_DQL" ,:smoothing=>$sparam)
     #ilab.crt_add_query_set("#{$query_prefix}_MFLM" ,:template=>:hlm, :smoothing=>get_sparam('jm',0.5), 
-    #                        :hlm_weight=>($hlm_weight || [0.1]*($fields.size)))
+    #                        :hlm_weights=>($hlm_weight || [0.1]*($fields.size)))
     ilab.crt_add_query_set("#{$query_prefix}_PRM-S", :template=>:prm, :smoothing=>$sparam)
     ilab.crt_add_query_set("#{$query_prefix}_PRM-D", :template=>:prm_ql ,:smoothing=>$sparam, :lambda=>$prmd_lambda)
     #ilab.crt_add_query_set("#{$query_prefix}_MFLM_u" ,:template=>:hlm ,:smoothing=>$sparam, 
-    #                        :hlm_weight=>([0.1]*($fields.size)))
+    #                        :hlm_weights=>([0.1]*($fields.size)))
   when 'baseline'
     $bm25f_smt = IndriInterface.get_field_bparam($fields , $bfs, $k1)
     $bm25_smt = IndriInterface.get_field_bparam2($fields , $bs, $k1)
     #BASELINE
     ilab.crt_add_query_set("#{$query_prefix}_DQL" ,:smoothing=>$sparam)
     ilab.crt_add_query_set("#{$query_prefix}_MFLM" ,:template=>:hlm, :smoothing=>get_sparam('jm',0.5), 
-                            :hlm_weight=>($hlm_weight || [0.1]*($fields.size)))
+                            :hlm_weights=>($hlm_weight || [0.1]*($fields.size)))
     #ilab.crt_add_query_set("PRM", :template=>:prm, :smoothing=>get_sparam('jm',0.5))
     ilab.crt_add_query_set("#{$query_prefix}_BM25", :template=>:hlm, :smoothing=>$bm25_smt, 
-                            :hlm_weight=>($bm25_weight || [0.1]*($fields.size)), :indri_path=>$indri_path_dih, :param_query=>"-msg_path='#{$bm25f_path}'")
+                            :hlm_weights=>($bm25_weight || [0.1]*($fields.size)), :indri_path=>$indri_path_dih, :param_query=>"-msg_path='#{$bm25f_path}'")
     ilab.crt_add_query_set("#{$query_prefix}_BM25F", :template=>:hlm, :smoothing=>$bm25f_smt, 
-                            :hlm_weight=>($bm25f_weight || [0.1]*($fields.size)), :indri_path=>$indri_path_dih, :param_query=>"-msg_path='#{$bm25f_path}'")
+                            :hlm_weights=>($bm25f_weight || [0.1]*($fields.size)), :indri_path=>$indri_path_dih, :param_query=>"-msg_path='#{$bm25f_path}'")
     ilab.crt_add_query_set("#{$query_prefix}_PRM-S", :template=>:prm, :smoothing=>$sparam)
     #ilab.crt_add_query_set("#{$query_prefix}_PRMf", :template=>:prm, :smoothing=>['method:raw',"node:wsum,method:dirichlet,mu:50"], :indri_path=>$indri_path_dih)
 
@@ -174,24 +183,24 @@ def ILabLoader.build(ilab)
     #ilab.crt_add_query_set("#{$query_prefix}_PRM-B", :template=>:prm, :smoothing=>$bm25f_smt, 
     #                        :indri_path=>$indri_path_dih, :param_query=>"-msg_path='#{$bm25f_path}'")
     #ilab.crt_add_query_set("#{$query_prefix}_MFLMF", :template=>:hlm, :smoothing=>['method:raw','node:wsum,method:dirichlet,mu:50'], :indri_path=>$indri_path_dih, 
-    #                        :hlm_weight=>($mflmf_weight || [0.1]*($fields.size)))
+    #                        :hlm_weights=>($mflmf_weight || [0.1]*($fields.size)))
     ilab.crt_add_query_set("#{$query_prefix}_MFLM2" ,:template=>:hlm, :smoothing=>IndriInterface.get_field_sparam($fields , $mus , $mu), 
-                            :hlm_weight=>($hlm_weight || [0.1]*($fields.size)))
+                            :hlm_weights=>($hlm_weight || [0.1]*($fields.size)))
     ilab.crt_add_query_set("#{$query_prefix}_PRM-D", :template=>:prm_ql ,:smoothing=>$sparam, :lambda=>$prmd_lambda)
     ilab.crt_add_query_set("#{$query_prefix}_PRM-D2", :template=>:prm_ql, :smoothing=>IndriInterface.get_field_sparam($fields , $mus , $mu), :lambda=>$prmd_lambda)
     ilab.crt_add_query_set("#{$query_prefix}_PRM-S2", :template=>:prm, :smoothing=>IndriInterface.get_field_sparam($fields , $mus , $mu))
   when 'document'
     ilab.crt_add_query_set("#{$query_prefix}_BM25F", :template=>:hlm, :smoothing=>$bm25f_smt, 
-                            :hlm_weight=>($bm25f_weight || [0.1]*($fields.size)), :indri_path=>$indri_path_dih, :param_query=>"-msg_path='#{$bm25f_path}'")
+                            :hlm_weights=>($bm25f_weight || [0.1]*($fields.size)), :indri_path=>$indri_path_dih, :param_query=>"-msg_path='#{$bm25f_path}'")
     ilab.crt_add_query_set("#{$query_prefix}_PRM-S", :template=>:prm, :smoothing=>$sparam)
     
     ilab.crt_add_query_set("#{$query_prefix}_PRM-S2", :template=>:prm, :smoothing=>IndriInterface.get_field_sparam($fields , $mus , $mu))
     ilab.crt_add_query_set("#{$query_prefix}_PRM-D2", :template=>:prm_ql, :smoothing=>IndriInterface.get_field_sparam($fields , $mus , $mu), :lambda=>$prmd_lambda)
     ilab.crt_add_query_set("#{$query_prefix}_MFLM2" ,:template=>:hlm, :smoothing=>IndriInterface.get_field_sparam($fields , $mus , $mu), 
-                            :hlm_weight=>($hlm_weight || [0.1]*($fields.size)))
+                            :hlm_weights=>($hlm_weight || [0.1]*($fields.size)))
   when 'length'
     ilab.crt_add_query_set("#{$query_prefix}_BM25F", :template=>:hlm, :smoothing=>$bm25f_smt, 
-                            :hlm_weight=>($bm25f_weight || [0.1]*($fields.size)), :indri_path=>$indri_path_dih, :param_query=>"-msg_path='#{$bm25f_path}'")
+                            :hlm_weights=>($bm25f_weight || [0.1]*($fields.size)), :indri_path=>$indri_path_dih, :param_query=>"-msg_path='#{$bm25f_path}'")
     ilab.crt_add_query_set("#{$query_prefix}_DQL" ,:smoothing=>$sparam)
     ilab.crt_add_query_set("#{$query_prefix}_PRM-S", :template=>:prm, :smoothing=>$sparam)
     ilab.crt_add_query_set("#{$query_prefix}_PRM-D", :template=>:prm_ql ,:smoothing=>$sparam, :lambda=>$prmd_lambda)    
@@ -232,40 +241,40 @@ def ILabLoader.build(ilab)
     end
   when 'smt_test_jm'
     ilab.crt_add_query_set("#{$query_prefix}_DQL"     ,:smoothing=>get_sparam('jm',0.1))
-    ilab.crt_add_query_set("#{$query_prefix}_FLM"     ,:template=>:hlm, :smoothing=>get_sparam('jm',0.1), :hlm_weight=>([0.1]*($fields.size)))
-    ilab.crt_add_query_set("#{$query_prefix}_FLM_2S"  ,:template=>:hlm, :smoothing=>get_sparam2('jm',{:lambda=>0.1,:documentLambda=>0.1}), :hlm_weight=>([0.1]*($fields.size)))
-    ilab.crt_add_query_set("#{$query_prefix}_FLM_FS1" ,:template=>:hlm, :smoothing=>IndriInterface.get_field_sparam($fields,[0.1,0.1,0.1,0.1,0.1] ,0.1,'jm'), :hlm_weight=>([0.1]*($fields.size)))
-    ilab.crt_add_query_set("#{$query_prefix}_FLM_FS2" ,:template=>:hlm, :smoothing=>IndriInterface.get_field_sparam($fields,[0.3,0.1,0.5,0.5,0.5] ,0.1,'jm'), :hlm_weight=>([0.1]*($fields.size)))
+    ilab.crt_add_query_set("#{$query_prefix}_FLM"     ,:template=>:hlm, :smoothing=>get_sparam('jm',0.1), :hlm_weights=>([0.1]*($fields.size)))
+    ilab.crt_add_query_set("#{$query_prefix}_FLM_2S"  ,:template=>:hlm, :smoothing=>get_sparam2('jm',{:lambda=>0.1,:documentLambda=>0.1}), :hlm_weights=>([0.1]*($fields.size)))
+    ilab.crt_add_query_set("#{$query_prefix}_FLM_FS1" ,:template=>:hlm, :smoothing=>IndriInterface.get_field_sparam($fields,[0.1,0.1,0.1,0.1,0.1] ,0.1,'jm'), :hlm_weights=>([0.1]*($fields.size)))
+    ilab.crt_add_query_set("#{$query_prefix}_FLM_FS2" ,:template=>:hlm, :smoothing=>IndriInterface.get_field_sparam($fields,[0.3,0.1,0.5,0.5,0.5] ,0.1,'jm'), :hlm_weights=>([0.1]*($fields.size)))
   when 'smt_test_dir'
     ilab.crt_add_query_set("#{$query_prefix}_DQL"     ,:smoothing=>get_sparam('dir',250))
-    ilab.crt_add_query_set("#{$query_prefix}_FLM"     ,:template=>:hlm, :smoothing=>get_sparam('dir',250), :hlm_weight=>([0.1]*($fields.size)))
-    ilab.crt_add_query_set("#{$query_prefix}_FLM_2S"  ,:template=>:hlm, :smoothing=>get_sparam2('dir',{:lambda=>250,:documentLambda=>100}), :hlm_weight=>([0.1]*($fields.size)))
-    ilab.crt_add_query_set("#{$query_prefix}_FLM_FS1" ,:template=>:hlm, :smoothing=>IndriInterface.get_field_sparam($fields,[100,100,100,100,100] ,250,'dir'), :hlm_weight=>([0.1]*($fields.size)))
-    ilab.crt_add_query_set("#{$query_prefix}_FLM_FS2" ,:template=>:hlm, :smoothing=>IndriInterface.get_field_sparam($fields,[200,50,200,200,200] ,250,'dir'), :hlm_weight=>([0.1]*($fields.size)))
+    ilab.crt_add_query_set("#{$query_prefix}_FLM"     ,:template=>:hlm, :smoothing=>get_sparam('dir',250), :hlm_weights=>([0.1]*($fields.size)))
+    ilab.crt_add_query_set("#{$query_prefix}_FLM_2S"  ,:template=>:hlm, :smoothing=>get_sparam2('dir',{:lambda=>250,:documentLambda=>100}), :hlm_weights=>([0.1]*($fields.size)))
+    ilab.crt_add_query_set("#{$query_prefix}_FLM_FS1" ,:template=>:hlm, :smoothing=>IndriInterface.get_field_sparam($fields,[100,100,100,100,100] ,250,'dir'), :hlm_weights=>([0.1]*($fields.size)))
+    ilab.crt_add_query_set("#{$query_prefix}_FLM_FS2" ,:template=>:hlm, :smoothing=>IndriInterface.get_field_sparam($fields,[200,50,200,200,200] ,250,'dir'), :hlm_weights=>([0.1]*($fields.size)))
   when 'bm25f'
     #['subject','text','to','sent','name','email']
     ilab.crt_add_query_set("#{$query_prefix}_BM25f_f5_st", :template=>:hlm, :smoothing=>["method:bf1,bf:0.5","node:wsum,method:bf2,k1:1.0"], 
-                            :hlm_weight=>[1,1,0,0,0,0], :indri_path=>$indri_path_dih, :param_query=>"-msg_path='#{$bm25f_path}'")    
+                            :hlm_weights=>[1,1,0,0,0,0], :indri_path=>$indri_path_dih, :param_query=>"-msg_path='#{$bm25f_path}'")    
     ilab.crt_add_query_set("#{$query_prefix}_BM25f_f5_st2", :template=>:hlm, :smoothing=>["method:bf1,bf:0.5","node:wsum,method:bf2,k1:1.0"], 
-                            :hlm_weight=>[1,1,0.001,0.001,0.001,0.001], :indri_path=>$indri_path_dih, :param_query=>"-msg_path='#{$bm25f_path}'")    
+                            :hlm_weights=>[1,1,0.001,0.001,0.001,0.001], :indri_path=>$indri_path_dih, :param_query=>"-msg_path='#{$bm25f_path}'")    
     #$fields = ['subject','text','name']
     #ilab.crt_add_query_set("#{$query_prefix}_BM25f_f3", :template=>:hlm, :smoothing=>["method:bf1,bf:0.5","node:wsum,method:bf2,k1:1.0"], 
-    #                        :hlm_weight=>([1.0]*($fields.size)), :indri_path=>$indri_path_dih, :param_query=>"-msg_path='#{$bm25f_path}'")
+    #                        :hlm_weights=>([1.0]*($fields.size)), :indri_path=>$indri_path_dih, :param_query=>"-msg_path='#{$bm25f_path}'")
     $fields = ['subject','text']
     ilab.crt_add_query_set("#{$query_prefix}_BM25f_f2_st", :template=>:hlm, :smoothing=>["method:bf1,bf:0.5","node:wsum,method:bf2,k1:1.0"], 
-                            :hlm_weight=>([1.0]*($fields.size)), :indri_path=>$indri_path_dih, :param_query=>"-msg_path='#{$bm25f_path}'")
+                            :hlm_weights=>([1.0]*($fields.size)), :indri_path=>$indri_path_dih, :param_query=>"-msg_path='#{$bm25f_path}'")
     $fields = ['subject','text']
     ilab.crt_add_query_set("#{$query_prefix}_BM25f_f1_s", :template=>:hlm, :smoothing=>["method:bf1,bf:0.5","node:wsum,method:bf2,k1:1.0"], 
-                            :hlm_weight=>[0.0,1.0], :indri_path=>$indri_path_dih, :param_query=>"-msg_path='#{$bm25f_path}'")
+                            :hlm_weights=>[0.0,1.0], :indri_path=>$indri_path_dih, :param_query=>"-msg_path='#{$bm25f_path}'")
     $fields = ['subject','text','name']
     ilab.crt_add_query_set("#{$query_prefix}_BM25f_f1_s2", :template=>:hlm, :smoothing=>["method:bf1,bf:0.5","node:wsum,method:bf2,k1:1.0"], 
-                            :hlm_weight=>[0.0,1.0,0.0], :indri_path=>$indri_path_dih, :param_query=>"-msg_path='#{$bm25f_path}'")
+                            :hlm_weights=>[0.0,1.0,0.0], :indri_path=>$indri_path_dih, :param_query=>"-msg_path='#{$bm25f_path}'")
     $fields = ['subject','text','name']
     ilab.crt_add_query_set("#{$query_prefix}_BM25f_f1_s3", :template=>:hlm, :smoothing=>["method:bf1,bf:0.5","node:wsum,method:bf2,k1:1.0"], 
-                            :hlm_weight=>[0.0001,1.0,0.0001], :indri_path=>$indri_path_dih, :param_query=>"-msg_path='#{$bm25f_path}'")
+                            :hlm_weights=>[0.0001,1.0,0.0001], :indri_path=>$indri_path_dih, :param_query=>"-msg_path='#{$bm25f_path}'")
     $fields = ['document']
     ilab.crt_add_query_set("#{$query_prefix}_BM25f_doc" , :template=>:hlm, :smoothing=>["method:bf1,bf:0.5","node:wsum,method:bf2,k1:1.0"], 
-                            :hlm_weight=>([0.1]*($fields.size)), :indri_path=>$indri_path_dih, :param_query=>"-msg_path='#{$bm25f_path}'")
+                            :hlm_weights=>([0.1]*($fields.size)), :indri_path=>$indri_path_dih, :param_query=>"-msg_path='#{$bm25f_path}'")
     ilab.crt_add_query_set("#{$query_prefix}_DQL"      ,:smoothing=>get_sparam('jm',0.1))
     #ilab.crt_add_query_set("#{$query_prefix}_BM25f_prm"  , :template=>:prm, :smoothing=>["method:bf1,bf:0.5","node:wsum,method:bf2,k1:1.0"], 
     #                        :indri_path=>$indri_path_dih, :param_query=>"-msg_path='#{$bm25f_path}'")
@@ -274,7 +283,7 @@ def ILabLoader.build(ilab)
     [0.1, 0.3, 0.5, 0.7, 0.9].each_with_index do |bf,i|
       [0.1, 0.3, 0.5, 0.7, 0.9].each_with_index do |k,j|
         ilab.crt_add_query_set("#{$query_prefix}_BM25f_doc_bf#{i}_k#{j}", :template=>:hlm, :smoothing=>["method:bf1,bf:#{bf}","node:wsum,method:bf2,k1:#{k}"], 
-                                :hlm_weight=>([1.0]*($fields.size)), :indri_path=>$indri_path_dih, :param_query=>"-msg_path='#{$bm25f_path}'")
+                                :hlm_weights=>([1.0]*($fields.size)), :indri_path=>$indri_path_dih, :param_query=>"-msg_path='#{$bm25f_path}'")
       end
     end
   when 'prmf_test'
@@ -284,8 +293,8 @@ def ILabLoader.build(ilab)
     ilab.crt_add_query_set("#{$query_prefix}_PRM_nosmt_o", :template=>:prm ,:smoothing=>get_sparam('jm',0))
   when 'hlm_test'
     ilab.crt_add_query_set("#{$query_prefix}_DQL" ,:smoothing=>get_sparam('jm',0.1))
-    ilab.crt_add_query_set("#{$query_prefix}_HLM" ,:template=>:hlm, :smoothing=>get_sparam('jm',0.1), :hlm_weight=>[0,0,1,0,0,0])
-    ilab.crt_add_query_set("#{$query_prefix}_HLM2" ,:template=>:hlm, :smoothing=>get_sparam('jm',0.1), :hlm_weight=>[0.1,0.1,0.5,0.1,0.1,0.1])
+    ilab.crt_add_query_set("#{$query_prefix}_HLM" ,:template=>:hlm, :smoothing=>get_sparam('jm',0.1), :hlm_weights=>[0,0,1,0,0,0])
+    ilab.crt_add_query_set("#{$query_prefix}_HLM2" ,:template=>:hlm, :smoothing=>get_sparam('jm',0.1), :hlm_weights=>[0.1,0.1,0.5,0.1,0.1,0.1])
     ilab.crt_add_query_set("#{$query_prefix}_PRM", :template=>:prm, :smoothing=>get_sparam('jm',0.1))
   # Heuristically manipulate MP -> didn't work
   when 'hprm'
