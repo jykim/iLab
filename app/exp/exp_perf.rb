@@ -26,7 +26,7 @@ if $o[:verbose]
     #len_rel_docs = (q.rl.docs.size>0)? q.rl.docs.map{|e|e.size}.mean : -1.0
     #stdev_len_rel_docs = (q.rl.docs.size>0)? q.rl.docs.map{|e|e.size}.stdev : -1.0
     $tbl_qry << [q.qid, q.text ,$i.qsa.map{|e|e.stat[q.qid.to_s]['map']}, did_rl , 
-      CS_TYPES.map{|e|did_rl.scan(to_ext($top_cols[q.text][e])).size}, CS_TYPES.map{|e|$top_cols[q.text][e]}] #, gen_probs, word_cnt, no_rel_docs, no_res_docs, len_rel_docs.r2, stdev_len_rel_docs.r2,
+      CS_TYPES.map{|e|did_rl.scan(to_ext($top_cols[q.text][e][0])).size}, CS_TYPES.map{|e|$top_cols[q.text][e].join(":")}] #, gen_probs, word_cnt, no_rel_docs, no_res_docs, len_rel_docs.r2, stdev_len_rel_docs.r2,
     $tbl_qry.last << gen_probs if $o[:gen_prob]
   end
   $sig_test, $log_reg = {}, {}

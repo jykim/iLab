@@ -74,7 +74,7 @@ class DocumentSet
       doc_file_name = ["doc" , File.basename(d.did)].join('_') + '.' + 'txt' #( (d.type=~/pdf/i)? 'html' : 'xml' )
       if $exp != 'adhoc'
         doc_color = if d.relevance >  1 : "background:#00cc00" 
-                    elsif d.relevance == 1 : "background:#99FF99" 
+                    elsif d.relevance == 1 : "background:#666666" 
                     elsif d.relevance == 0 : "background:#ffffff"
                     elsif d.relevance == -1 : "background:#cccccc"
                     else "background:#999999"

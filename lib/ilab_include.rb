@@ -15,11 +15,11 @@ load "exlib/globals/global.rb"
 load 'exlib/extensions/extension.rb'
 load 'exlib/extensions/probability.rb'
 load 'exlib/extensions/statistics.rb'
+load 'exlib/extensions/exceptions.rb'
 
 load 'lib/ilab_loader.rb'
 load 'lib/ilab_helper.rb'
 load 'lib/ilab_globals.rb'
-load 'lib/ilab_exceptions.rb'
 
 load 'lib/extensions/ilab_extension.rb'
 load 'lib/extensions/rails_extension.rb'
