@@ -30,7 +30,7 @@ module PRMHelper
     }.to_p.smooth(0.1)
     debug "[scale_map_prob] #{qw} : #{col_scores.r2.sort_val.inspect}"
     #debugger
-    [col_scores, mp_group.map{|col,fields|fields.to_p(col_scores[col]).sort_val}.collapse]
+    [col_scores]#, mp_group.map{|col,fields|fields.to_p(col_scores[col]).sort_val}.collapse]
   end
   
   # Get Mapping Prob. for given query
@@ -57,20 +57,21 @@ module PRMHelper
     $top_cols ||= {} 
     $top_cols[query] ||= {}
     $top_cols[query][o[:cs_type]] = cs_scores_all[0]
-    info "[get_map_prob] #{query} : #{cs_scores_all.inspect}"    
+    info "[get_map_prob] #{query} : #{cs_scores_all.inspect}" if o[:cs_type]
     mps.find_all{|mp|mp[1].size>0}
   end
   
   def get_col_scores(query, cs_type)
+    mps = [] ; col_scores = {}
     query.split(" ").each_with_index do |qw,i|
       #Read Collection Stat.
       qw_s = kstem(qw.downcase)
-      weights = get_col_freq(:prob=>true).map_hash{|k,v|[k,v[qw_s]] if v[qw_s] && fields.include?(k)}
+      weights = get_col_freq(:prob=>true).map_hash{|k,v|[k,v[qw_s]] if v[qw_s]}
       mps[i] = [qw]
       col_scores[qw_s], mps[i][1] = *scale_map_prob(qw_s, weights, cs_type)
       #debugger
     end
-    cs_scores_all =  col_scores.merge_by_product.to_p.r2.sort_val
+    cs_scores_all =  col_scores.merge_by_product.to_p.r3.sort_val
     $top_cols ||= {} 
     $top_cols[query] ||= {}
     $top_cols[query][cs_type] = cs_scores_all[0]
@@ -106,12 +107,14 @@ module PRMHelper
   
   #PRM-S with multiple scollection
   def get_multi_col_query(query, o={})
-    col_scores = get_col_scores(query, cs_type)
+    col_scores = get_col_scores(query, o[:cs_type]).to_h
     result = $fields.group_by{|e|e.split('_')[0]}.map do |col,fields|
       sub_query = case o[:ret_model]
-      else
-        get_prm_query(query, o.merge(:prm_fields=>fields))
-      end
+                  when :dql
+                    query
+                  else
+                    get_prm_query(query, o.merge(:prm_fields=>fields,:cs_type=>nil))
+                  end
       "#{col_scores[col]} #combine(#{sub_query}) "
     end
     return "#wsum(#{result.join("\n")})"

@@ -9,7 +9,7 @@ FIELD_EMAIL = ['subject','content','to','sent','name','email']
 FIELD_ETC = ['title','url','abstract','date','text']
 PIDS = ['c0161','c0002','c0141']
 TOPIC_TYPES = ['F_RN_TIDF','F_RN_TF','F_RN_IDF','F_RN_RN','D_TF','D_TIDF','D_IDF','D_RN']
-CS_TYPES = [:uniform,:mp_max, :mp_mean, :cql]
+CS_TYPES = [:uniform,:cql,:mp_max, :mp_mean]
 #TOPIC_TYPES = ['F_subject_TF','F_text_TF','F_title_TF','F_text_TF']
 
 # Convert a binary document to text
