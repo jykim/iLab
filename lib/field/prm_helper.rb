@@ -9,7 +9,7 @@ module PRMHelper
   # Normalize and weight mapping probability for each collection
   # mp = {f1=>mp1, f2=>mp2, ...}
   # col_scores = {col1=>score1, }
-  def scale_map_prob(qw, mp, cs_type = :uniform)
+  def scale_map_prob(qw, mp, cs_type)
     mp_group = mp.group_by{|k,v|k.split("_")[0]}
     col_scores = COL_TYPES.map_hash { |col|
       #debugger
@@ -61,6 +61,23 @@ module PRMHelper
     mps.find_all{|mp|mp[1].size>0}
   end
   
+  def get_col_scores(query, cs_type)
+    query.split(" ").each_with_index do |qw,i|
+      #Read Collection Stat.
+      qw_s = kstem(qw.downcase)
+      weights = get_col_freq(:prob=>true).map_hash{|k,v|[k,v[qw_s]] if v[qw_s] && fields.include?(k)}
+      mps[i] = [qw]
+      col_scores[qw_s], mps[i][1] = *scale_map_prob(qw_s, weights, cs_type)
+      #debugger
+    end
+    cs_scores_all =  col_scores.merge_by_product.to_p.r2.sort_val
+    $top_cols ||= {} 
+    $top_cols[query] ||= {}
+    $top_cols[query][cs_type] = cs_scores_all[0]
+    info "[get_col_scores] #{query} : #{cs_scores_all.inspect}"
+    cs_scores_all
+  end
+  
   #recover stemmed 'word' from 'source'
   def unstem(word, source)
     source.scan(/\b#{word}/i).each do |w|
@@ -85,6 +102,19 @@ module PRMHelper
     mps = mps.map{|e|[e[0], e[1].to_h.smooth(o[:mp_smooth]).to_a]} if o[:mp_smooth]
     mps.each{|e| info "[get_prm_query] #{e[0]} -> #{e[1].map{|f|[f[0],f[1].r3].join(':')}.join(' ')}"} if o[:verbose]
     return get_tew_query(mps, o)
+  end
+  
+  #PRM-S with multiple scollection
+  def get_multi_col_query(query, o={})
+    col_scores = get_col_scores(query, cs_type)
+    result = $fields.group_by{|e|e.split('_')[0]}.map do |col,fields|
+      sub_query = case o[:ret_model]
+      else
+        get_prm_query(query, o.merge(:prm_fields=>fields))
+      end
+      "#{col_scores[col]} #combine(#{sub_query}) "
+    end
+    return "#wsum(#{result.join("\n")})"
   end
 
   #PRM with DQL

@@ -26,7 +26,7 @@ class IndriInterface
     prior_clause = (o[:prior])? "#prior(#{o[:prior]}) " :""
     smoothing_rule = [o[:smoothing]].flatten || DEF_SMOOTHING
     template = ERB.new(IO.read( to_path("query_#{o[:template].to_s}.rhtml")))
-    $o_tmp = o # For accessibility in template(.rhtml) FIXME - any neater way?
+    #$o_tmp = o # For accessibility in template(.rhtml) FIXME - any neater way?
     fwrite(exp+'.qry' , template.result(binding))
   end
   
