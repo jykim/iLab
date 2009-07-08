@@ -34,35 +34,35 @@ def do_retrieval_at(xvals , yvals , o={})
   case $mode
   when :smoothing
     o.merge!(:smoothing=>IndriInterface.get_field_sparam(xvals , yvals, $mu),
-             :hlm_weight=>([0.1]*$fields.size))
+             :hlm_weights=>([0.1]*$fields.size))
   when :smoothing_jm
     o.merge!(:smoothing=>IndriInterface.get_field_sparam(xvals , yvals, $lambda, 'jm'),
-             :hlm_weight=>([0.1]*$fields.size))
-  when :hlm_weight
+             :hlm_weights=>([0.1]*$fields.size))
+  when :hlm_weights
     $template_query = :hlm
-    o.merge!(:smoothing=>(($mus)? IndriInterface.get_field_sparam(xvals , $mus, $mu) : ['method:jm,lambda:0.1']), :hlm_weight=>yvals)
+    o.merge!(:smoothing=>(($mus)? IndriInterface.get_field_sparam(xvals , $mus, $mu) : ['method:jm,lambda:0.1']), :hlm_weights=>yvals)
   #when :smoothing2   : o.merge!(:smoothing=>IndriInterface.get_field_sparam2(xvals , yvals)) #Train collection mu as well
   when :prmf_weight
     $template_query = :hlm
-    o.merge!(:smoothing=>['method:raw','node:wsum,method:dirichlet,mu:50'], :hlm_weight=>yvals, :indri_path=>$indri_path_dih)
+    o.merge!(:smoothing=>['method:raw','node:wsum,method:dirichlet,mu:50'], :hlm_weights=>yvals, :indri_path=>$indri_path_dih)
   #when :smoothing2   : o.merge!(:smoothing=>IndriInterface.get_field_sparam2(xvals , yvals)) #Train collection mu as well
   when :bm25f_bf
     $template_query = :hlm
     o.merge!(:smoothing=>IndriInterface.get_field_bparam(xvals , yvals, $k1), 
-             :hlm_weight=>([0.1]*$fields.size), :param_query=>"-msg_path='#{$bm25f_path}'", :indri_path=>$indri_path_dih)
+             :hlm_weights=>([0.1]*$fields.size), :param_query=>"-msg_path='#{$bm25f_path}'", :indri_path=>$indri_path_dih)
   when :bm25f_weight
     $template_query = :hlm
     #info "[do_retrieval_at::#{$mode}] Using bfs = #{bfs.inspect}"
     o.merge!(:smoothing=>IndriInterface.get_field_bparam($fields , ($bfs || [0.5] * $fields.size)), 
-             :hlm_weight=>yvals, :param_query=>"-msg_path='#{$bm25f_path}'", :indri_path=>$indri_path_dih)
+             :hlm_weights=>yvals, :param_query=>"-msg_path='#{$bm25f_path}'", :indri_path=>$indri_path_dih)
   when :bm25_bf
     $template_query = :hlm
     o.merge!(:smoothing=>IndriInterface.get_field_bparam2(xvals , yvals, $k1), 
-             :hlm_weight=>([0.1]*$fields.size), :param_query=>"-msg_path='#{$bm25f_path}'", :indri_path=>$indri_path_dih)
+             :hlm_weights=>([0.1]*$fields.size), :param_query=>"-msg_path='#{$bm25f_path}'", :indri_path=>$indri_path_dih)
   when :bm25_weight
     $template_query = :hlm
     o.merge!(:smoothing=>IndriInterface.get_field_bparam2($fields , ($bs || [0.5] * $fields.size)), 
-             :hlm_weight=>yvals, :param_query=>"-msg_path='#{$bm25f_path}'", :indri_path=>$indri_path_dih)
+             :hlm_weights=>yvals, :param_query=>"-msg_path='#{$bm25f_path}'", :indri_path=>$indri_path_dih)
   when :prior
     prior_weight = $fields.map_hash_with_index{|e,i|[e,yvals[i]]}# ; p prior_weight
     o.merge!(:smoothing=>$sparam, :prior_weight=>prior_weight)
@@ -101,7 +101,7 @@ when :smoothing_jm
 when :prmf_weight
   $yvals << [0.5] * $fields.size
   o_opt.merge!(:ymax=>1.0)
-when :hlm_weight
+when :hlm_weights
   $yvals << [0.5] * $fields.size
   o_opt.merge!(:ymax=>1.0)
 end

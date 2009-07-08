@@ -21,7 +21,7 @@ class IndriInterface
     query_offset = o[:offset] || 1
     o[:template] = :ql if !o[:template]
     o[:lambda] = o[:lambda] || 0.5
-    #err("[build_query] HLM weight not specified!") if o[:template] == :hlm && !o[:hlm_weight]
+    #err("[build_query] HLM weight not specified!") if o[:template] == :hlm && !o[:hlm_weights]
     working_set = o[:working_set] || []
     prior_clause = (o[:prior])? "#prior(#{o[:prior]}) " :""
     smoothing_rule = [o[:smoothing]].flatten || DEF_SMOOTHING
