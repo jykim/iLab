@@ -30,6 +30,7 @@ if $o[:verbose]
       CS_TYPES.map{|e|did_rl.scan(to_ext($top_cols[q.text][e][0])).size}, CS_TYPES.map{|e|$top_cols[q.text][e].join(":")}] #, gen_probs, word_cnt, no_rel_docs, no_res_docs, len_rel_docs.r2, stdev_len_rel_docs.r2,
     $tbl_qry.last << gen_probs if $o[:gen_prob]
   end
+  $tbl_qry << [AVG , "PERF" , (2..6).to_a.map{|i|$tbl_qry[1..-1].avg_col(i)} , "COL_SCORE" , (7..10).to_a.map{|i|$tbl_qry[1..-1].avg_col(i)}].flatten
   $sig_test, $log_reg = {}, {}
   if $i.check_R()
     $i.qsa.map{|qs|qs.name}.to_comb.each_with_index do |qs,i|

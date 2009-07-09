@@ -201,6 +201,11 @@ end
 class Array
   include Statistics , Entropy, IRMeasure
   
+  # Get the average of kth column of given table
+  def avg_col(k)
+    map{|e| e[k]}.avg
+  end
+  
   def sort_val
     sort_by{|e|e[1]}.reverse
   end
