@@ -9,7 +9,8 @@ module PRMHelper
   # Normalize and weight mapping probability for each collection
   # mp = {f1=>mp1, f2=>mp2, ...}
   # col_scores = {col1=>score1, }
-  def scale_map_prob(qw, mp, cs_type)
+  def scale_map_prob(qw, mp, cs_type, o)
+    cs_smooth = o[:cs_smooth] || 0.1
     mp_group = mp.group_by{|k,v|k.split("_")[0]}
     col_scores = COL_TYPES.map_hash { |col|
       #debugger
@@ -27,7 +28,7 @@ module PRMHelper
           [col, get_clm_by_col()[col][qw]]
         end
       end
-    }.to_p.smooth(0.1)
+    }.to_p.smooth(cs_smooth)
     debug "[scale_map_prob] #{qw} : #{col_scores.r2.sort_val.inspect}"
     #debugger
     [col_scores]#, mp_group.map{|col,fields|fields.to_p(col_scores[col]).sort_val}.collapse]
@@ -45,12 +46,12 @@ module PRMHelper
       weights = get_col_freq(:prob=>true).map_hash{|k,v|[k,v[qw_s]] if v[qw_s] && fields.include?(k)}
       if o[:cs_type]
         mps[i] = [qw]
-        col_scores[qw_s], mps[i][1] = *scale_map_prob(qw_s, weights, o[:cs_type])
+        col_scores[qw_s], mps[i][1] = *scale_map_prob(qw_s, weights, o[:cs_type], o)
         #debugger
       else
         mp = weights.map_hash{|e|v=e[1]/weights.values.sum ; [e[0],((v >= 0.0001)? v : 0.0)]}
         mp = fields.map_hash{|f|[f, ((mp[f])? mp[f] : 0.0001)]} if o[:mp_all_fields]
-        o[:fix_mp_for].map{|k,v|weights[k] = v} if o[:fix_mp_for]
+        o[:fix_mp_for].map{|k,v|mp[k] = v} if o[:fix_mp_for]
         mps[i] = [qw, mp.find_all{|e|e[1]>0}.sort_val]
       end
     end
@@ -62,14 +63,14 @@ module PRMHelper
     mps.find_all{|mp|mp[1].size>0}
   end
   
-  def get_col_scores(query, cs_type)
+  def get_col_scores(query, cs_type, o)
     mps = [] ; col_scores = {}
     query.split(" ").each_with_index do |qw,i|
       #Read Collection Stat.
       qw_s = kstem(qw.downcase)
       weights = get_col_freq(:prob=>true).map_hash{|k,v|[k,v[qw_s]] if v[qw_s]}
       mps[i] = [qw]
-      col_scores[qw_s], mps[i][1] = *scale_map_prob(qw_s, weights, cs_type)
+      col_scores[qw_s], mps[i][1] = *scale_map_prob(qw_s, weights, cs_type, o)
       #debugger
     end
     cs_scores_all =  col_scores.merge_by_product.to_p.r3.sort_val
@@ -108,7 +109,7 @@ module PRMHelper
   
   #PRM-S with multiple scollection
   def get_multi_col_query(query, o={})
-    col_scores = get_col_scores(query, o[:cs_type]).to_h
+    col_scores = get_col_scores(query, o[:cs_type], o).to_h
     result = $fields.group_by{|e|e.split('_')[0]}.map do |col,fields|
       sub_query = case o[:ret_model]
                   when :dql

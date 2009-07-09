@@ -203,7 +203,7 @@ class Array
   
   # Get the average of kth column of given table
   def avg_col(k)
-    map{|e| e[k]}.avg
+    map{|e|e[k]}.find_all{|e|e}.avg
   end
   
   def sort_val
