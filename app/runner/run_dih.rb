@@ -50,8 +50,12 @@ def ILabLoader.build(ilab)
       :prm_fields=>$fields[2..-1]))
     ilab.crt_add_query_set("#{$query_prefix}_MFLM_tex", $o.merge(:template=>:hlm, :smoothing=>$sparam, 
       :hlm_fields=>$fields[0..1], :hlm_weights=>$hlm_weight[0..1]))
-    ilab.crt_add_query_set("#{$query_prefix}_PRM-H", $o.merge(:template=>:prm_h, :smoothing=>$sparam, 
-      :prm_fields=>$fields[2..-1], :hlm_fields=>$fields[0..1], :hlm_weights=>$hlm_weight[0..1], :lambda=>$prmd_lambda))
+    [0.1,0.3,0.5,0.7,0.9].each do |lambda|
+      ilab.crt_add_query_set("#{$query_prefix}_PRM-H_l#{lambda}", $o.merge(:template=>:prm_h, :smoothing=>$sparam, 
+        :prm_fields=>$fields[2..-1], :hlm_fields=>$fields[0..1], :hlm_weights=>$hlm_weight[0..1], :lambda=>lambda))
+      ilab.crt_add_query_set("#{$query_prefix}_PRM-H2_l#{lambda}", $o.merge(:template=>:prm, :smoothing=>$sparam, 
+        :prm_fields=>$fields[2..-1], :fix_mp_for=>{'title'=>lambda*2, 'content'=>lambda*0.652}))
+    end
     
   #------------------ RANK LIST MERGING ---------------#
   when 'multi_col'

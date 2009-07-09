@@ -50,6 +50,7 @@ module PRMHelper
       else
         mp = weights.map_hash{|e|v=e[1]/weights.values.sum ; [e[0],((v >= 0.0001)? v : 0.0)]}
         mp = fields.map_hash{|f|[f, ((mp[f])? mp[f] : 0.0001)]} if o[:mp_all_fields]
+        o[:fix_mp_for].map{|k,v|weights[k] = v} if o[:fix_mp_for]
         mps[i] = [qw, mp.find_all{|e|e[1]>0}.sort_val]
       end
     end
