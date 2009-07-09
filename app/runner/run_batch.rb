@@ -58,6 +58,15 @@ begin#exception handling
         end
       end
     end
+  when 'multi_col'
+    topic_type = "F_RN_RN"
+    PIDS.each do |pid|
+      ['0708a','0708b','0708c'].each_with_thread do |topic_id,i|
+        $r << run_ilab($root, get_expid_from_env($o.merge(:exp=>$exp,
+          :method=>query_method,:topic_id=>"#{topic_type}_#{topic_id}",:topic_type=>topic_type)), nil, 
+          :remote=>true, :nid=>anodes[i%anodes.size][0])
+      end
+    end
   when 'manual_qrel'
     ['c0161'].each do |pid|
       ['html','lists','pdf','msword','ppt'].each_with_thread do |col_type,i|
