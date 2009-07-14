@@ -55,16 +55,17 @@ module PRMHelper
         mps[i] = [qw, mp.find_all{|e|e[1]>0}.sort_val]
       end
     end
-    cs_scores_all =  col_scores.merge_by_product.to_p.r2.sort_val
-    $top_cols ||= {} 
-    $top_cols[query] ||= {}
-    $top_cols[query][o[:cs_type]] = cs_scores_all[0]
-    info "[get_map_prob] #{query} : #{cs_scores_all.inspect}" if o[:cs_type]
+    #cs_scores =  col_scores.merge_by_product.to_p.r2.sort_val
+    #$top_cols ||= {} 
+    #$top_cols[query] ||= {}
+    #$top_cols[query][o[:cs_type]] = cs_scores[0]
+    #info "[get_map_prob] #{query} : #{cs_scores.inspect}" if o[:cs_type]
     mps.find_all{|mp|mp[1].size>0}
   end
   
   def get_col_scores(query, cs_type, o)
     mps = [] ; col_scores = {}
+    return $cs_scores[query][cs_type] if $cs_scores[query][cs_type]
     query.split(" ").each_with_index do |qw,i|
       #Read Collection Stat.
       qw_s = kstem(qw.downcase)
@@ -73,12 +74,12 @@ module PRMHelper
       col_scores[qw_s], mps[i][1] = *scale_map_prob(qw_s, weights, cs_type, o)
       #debugger
     end
-    cs_scores_all =  col_scores.merge_by_product.to_p.r3.sort_val
-    $top_cols ||= {} 
-    $top_cols[query] ||= {}
-    $top_cols[query][cs_type] = cs_scores_all[0]
-    info "[get_col_scores] #{query} : #{cs_scores_all.inspect}"
-    cs_scores_all
+    cs_scores =  col_scores.merge_by_product.to_p.r3.sort_val
+    $cs_scores ||= {} 
+    $cs_scores[query] ||= {}
+    $cs_scores[query][cs_type] = cs_scores
+    info "[get_col_scores] #{cs_type}|#{query} : #{cs_scores.inspect}"
+    cs_scores
   end
   
   #recover stemmed 'word' from 'source'

@@ -14,14 +14,14 @@ def $i.crt_add_meta_query_set(name, o = {})
   if !fcheck(qs_name+'.qry') || !fcheck(qs_name+'.res')
     $qs = {}
     $qs[$o[:col_type]] = create_query_set(name+"_"+$o[:col_type], o) if $o[:col_type] != 'all'
-    ['lists','pdf','html'].each do |col_type|
+    ['lists','pdf','html','msword','ppt'].each do |col_type|
       next if col_type == $o[:col_type] && $o[:col_type] != 'all'
       set_type_info($o[:pid], col_type)
       if !File.exist?($index_path)
         $engine.build_index("#{$o[:pid]}_#{col_type}" , "#{PD_COL_PATH}/#{$o[:pid]}/#{col_type}_doc" , $index_path , :fields=>$fields, :stopword=>true)
       end
       #info "[crt_add_meta_query_set] index_path = #{$index_path}"
-      $qs[col_type] = create_query_set(name.gsub($o[:col_type],col_type), o)
+      $qs[col_type] = create_query_set(name.gsub($o[:col_type],col_type), o.merge(:col_type=>col_type,:cs_type=>nil))
     end
     ResultDocumentSet.create_by_merge(qs_name, $qs.values, o)
   end

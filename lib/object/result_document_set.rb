@@ -86,17 +86,18 @@ class ResultDocumentSet < DocumentSet
     docs = {}
     limit_docs = o[:limit_docs] || 1000
     col_weight = o[:col_weight] || 1.0
-    
+
+    # Calculate collection scores
+    old_sets[0].qrys.each_with_index do |q,i|
+      col_score[q.qid] = $engine.get_col_scores(q.text, o[:cs_type], o).to_h
+      #col_score[q.qid] = qs.get_col_score(q.text , o)
+      #$i.fwrite("cscore_#{qs.name}_#{o[:cs_type]}.out", "#{qs.name} #{q.qid} #{col_score[q.qid]}", :mode=>((i == 0)? 'w' : 'a'))
+      #info "[create_by_merge] col_score for #{qs.name} #{q.qid} #{col_score[q.qid]}"
+    end
     # Score for each subcollection
     old_sets.each do |qs|
       col_score = {}
-      info "[create_by_merge] query set size = #{qs.qrys.size}"
-      qs.qrys.each_with_index do |q,i|
-        col_score[q.qid] = $engine.get_col_scores(q.text, o[:cs_type], o)
-        #col_score[q.qid] = qs.get_col_score(q.text , o)
-        #$i.fwrite("cscore_#{qs.name}_#{o[:cs_type]}.out", "#{qs.name} #{q.qid} #{col_score[q.qid]}", :mode=>((i == 0)? 'w' : 'a'))
-        #info "[create_by_merge] col_score for #{qs.name} #{q.qid} #{col_score[q.qid]}"
-      end
+      info "[create_by_merge] col_type = #{qs[:col_type]} query set size = #{qs.qrys.size}"
       qs.rs.docs.find_all{|e| (block_given?)? filter.call(e,qs.rs) : true }.each do |d|
         docs[d.qid] = {} if !docs[d.qid]
         docs[d.qid][d.did] = d.dup
@@ -114,7 +115,7 @@ class ResultDocumentSet < DocumentSet
           err "[create_by_merge] invalid qid = #{d.qid}"
           next
         end
-        docs[d.qid][d.did].score = (col_score[d.qid]) * col_weight + score_raw
+        docs[d.qid][d.did].score = (col_score[d.qid][qs[:col_type]]) * col_weight + score_raw
         info "[create_by_merge] #{col_score[d.qid]} | #{score_raw} = #{docs[d.qid][d.did].score} (#{d.did})" if d.qid == 1 && d.rank <= 3
       end#doc
     end#docset
