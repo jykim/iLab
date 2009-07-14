@@ -17,6 +17,9 @@ def $i.crt_add_meta_query_set(name, o = {})
     ['lists','pdf','html'].each do |col_type|
       next if col_type == $o[:col_type] && $o[:col_type] != 'all'
       set_type_info($o[:pid], col_type)
+      if !File.exist?($index_path)
+        $engine.build_index("#{$o[:pid]}_#{col_type}" , "#{PD_COL_PATH}/#{$o[:pid]}/#{col_type}_doc" , $index_path , :fields=>$fields, :stopword=>true)
+      end
       #info "[crt_add_meta_query_set] index_path = #{$index_path}"
       $qs[col_type] = create_query_set(name.gsub($o[:col_type],col_type), o)
     end
@@ -58,34 +61,38 @@ def ILabLoader.build(ilab)
     end
     
   #------------------ RANK LIST MERGING ---------------#
+  #  Single-index Rank-list Merging with Collection Score
   when 'multi_col'
     #Top-score collection for each query
     # Difference for each collection score type
     ilab.crt_add_query_set("#{$query_prefix}_DQL", :smoothing=>$sparam)
     CS_TYPES.each do |cs_type|
-      ilab.crt_add_query_set("#{$query_prefix}_PRM-S_mcs#{cs_type}_#{$o[:cs_smooth]}" , :cs_type=>cs_type, :cs_smooth=>$o[:cs_smooth], :template=>:multi_col, :smoothing=>$sparam)
+      ilab.crt_add_query_set("#{$query_prefix}_PRM-S_mcs#{cs_type}_#{$o[:cs_smooth]}" , 
+        :cs_type=>cs_type, :cs_smooth=>$o[:cs_smooth], :template=>:multi_col, :smoothing=>$sparam)
     end
+  # Single-index Rank-list Merging with Weighted MP
   when 'all_cs_type'
     #Top-score collection for each query
     # Difference for each collection score type
     ilab.crt_add_query_set("#{$query_prefix}_DQL", :smoothing=>$sparam)
     CS_TYPES.each do |cs_type|
       #ilab.crt_add_query_set("#{$query_prefix}_DQL_cs#{cs_type}" , :cs_type=>cs_type, :smoothing=>$sparam)
-      ilab.crt_add_query_set("#{$query_prefix}_PRM-S_cs#{cs_type}" , :cs_type=>cs_type, :template=>:prm, :smoothing=>$sparam)
+      ilab.crt_add_query_set("#{$query_prefix}_PRM-S_cs#{cs_type}" , 
+        :cs_type=>cs_type, :template=>:prm, :smoothing=>$sparam)
     end
-    #ilab.crt_add_query_set("#{$query_prefix}_MFLM" ,:template=>:hlm, :smoothing=>get_sparam('jm',0.5), 
-    #                        :hlm_weights=>($hlm_weight || [0.1]*($fields.size)))
-    #ilab.crt_add_query_set("#{$query_prefix}_PRM-D", :template=>:prm_ql ,:smoothing=>$sparam, :lambda=>$prmd_lambda)
+  # Local retrieval & merge with Collection Score
   when 'meta'
-    # Local retrieval & merge
-    ilab.crt_add_meta_query_set("#{$query_prefix}_DQL"  , $o.merge(:smoothing=>$sparam))
-    ilab.crt_add_meta_query_set("#{$query_prefix}_PRM-S", $o.merge(:template=>:prm, :smoothing=>$sparam))
-    ilab.crt_add_meta_query_set("#{$query_prefix}_PRM-D", $o.merge(:template=>:prm_ql ,:smoothing=>$sparam, :lambda=>$prmd_lambda))
-    analyze_col_score(to_path("qrel_"+$query_prefix), to_path("cscore_#{$query_prefix}_DQL_#{$o[:col_score]}.out"))
+    CS_TYPES.each do |cs_type|
+      ilab.crt_add_meta_query_set("#{$query_prefix}_DQL_lcs#{cs_type}"  , $o.merge(:smoothing=>$sparam) , :cs_type=>cs_type)
+    end
+    #ilab.crt_add_meta_query_set("#{$query_prefix}_PRM-S", $o.merge(:template=>:prm, :smoothing=>$sparam))
+    #ilab.crt_add_meta_query_set("#{$query_prefix}_PRM-D", $o.merge(:template=>:prm_ql ,:smoothing=>$sparam, :lambda=>$prmd_lambda))
+    #analyze_col_score(to_path("qrel_"+$query_prefix), to_path("cscore_#{$query_prefix}_DQL_#{$o[:col_score]}.out"))
+  # Meta-search with different collection weight
   when 'meta_col_weight'
     [0.0,0.2,0.4,0.6,0.8,1.0].each do |col_weight|
       ilab.crt_add_meta_query_set("#{$query_prefix}_DQL"  , $o.merge(:col_weight=>col_weight, :smoothing=>$sparam))
-      ilab.crt_add_meta_query_set("#{$query_prefix}_PRM-S", $o.merge(:col_weight=>col_weight, :template=>:prm, :smoothing=>$sparam))
+      #ilab.crt_add_meta_query_set("#{$query_prefix}_PRM-S", $o.merge(:col_weight=>col_weight, :template=>:prm, :smoothing=>$sparam))
     end
   #------------------ CS691 PROJECT  ------------------#
   when 'cut_words'

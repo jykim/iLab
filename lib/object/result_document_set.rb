@@ -86,12 +86,15 @@ class ResultDocumentSet < DocumentSet
     docs = {}
     limit_docs = o[:limit_docs] || 1000
     col_weight = o[:col_weight] || 1.0
+    
+    # Score for each subcollection
     old_sets.each do |qs|
       col_score = {}
       info "[create_by_merge] query set size = #{qs.qrys.size}"
       qs.qrys.each_with_index do |q,i|
-        col_score[q.qid] = qs.get_col_score(q.text , o)
-        $i.fwrite("cscore_#{qs.name}_#{o[:col_score]}.out", "#{qs.name} #{q.qid} #{col_score[q.qid]}", :mode=>((i == 0)? 'w' : 'a'))
+        col_score[q.qid] = $engine.get_col_scores(q.text, o[:cs_type], o)
+        #col_score[q.qid] = qs.get_col_score(q.text , o)
+        #$i.fwrite("cscore_#{qs.name}_#{o[:cs_type]}.out", "#{qs.name} #{q.qid} #{col_score[q.qid]}", :mode=>((i == 0)? 'w' : 'a'))
         #info "[create_by_merge] col_score for #{qs.name} #{q.qid} #{col_score[q.qid]}"
       end
       qs.rs.docs.find_all{|e| (block_given?)? filter.call(e,qs.rs) : true }.each do |d|

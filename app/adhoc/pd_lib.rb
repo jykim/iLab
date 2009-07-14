@@ -116,7 +116,7 @@ def analyze_col_ratio(topic_id , method, o = {})
   end
 end
 
-# Analyze the collection score and 
+# Analyze the collection score accuracy
 #  analyze_col_score('c0161_all_F_RN_RN_0318d','pd@perf@meta_cql@0402@col_type,all-pid,c0161-topic_id,F_RN_RN_0318d.log)
 def analyze_col_score(qrel_name, file_name)
   col_ptns = ['lists','html','pdf']
