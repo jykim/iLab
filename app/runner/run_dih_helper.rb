@@ -169,7 +169,7 @@ end
 def set_type_info(pid, col_type)
   $index_path = "/work1/jykim/prj/dih/pd/index_#{pid}_#{col_type}"
   $i.config_path( :work_path=>File.join($exp_root,$col) ,:index_path=>$index_path )
-  $fields = if $o[:col_type] == 'all'
+  $fields = if col_type == 'all'
               COL_TYPES.map{|c|add_prefix(get_fields_for(c), c)}.flatten
             else
               add_prefix(get_fields_for(col_type), col_type)
