@@ -43,7 +43,7 @@ class NilClass
   end
   
   def [](data)
-    error "[nil] [] was called for nil"
+    error "[nil] [] was called for nil" # in #{__FILE__}:#{__LINE__}"
     nil
   end
 end

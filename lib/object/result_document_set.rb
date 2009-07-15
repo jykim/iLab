@@ -1,3 +1,4 @@
+
 #Retrieved Document Set
 #
 class ResultDocumentSet < DocumentSet
@@ -86,6 +87,7 @@ class ResultDocumentSet < DocumentSet
     docs = {}
     limit_docs = o[:limit_docs] || 1000
     col_weight = o[:col_weight] || 1.0
+    col_score = {}
 
     # Calculate collection scores
     old_sets[0].qrys.each_with_index do |q,i|
@@ -96,7 +98,6 @@ class ResultDocumentSet < DocumentSet
     end
     # Score for each subcollection
     old_sets.each do |qs|
-      col_score = {}
       info "[create_by_merge] col_type = #{qs[:col_type]} query set size = #{qs.qrys.size}"
       qs.rs.docs.find_all{|e| (block_given?)? filter.call(e,qs.rs) : true }.each do |d|
         docs[d.qid] = {} if !docs[d.qid]
@@ -115,6 +116,7 @@ class ResultDocumentSet < DocumentSet
           err "[create_by_merge] invalid qid = #{d.qid}"
           next
         end
+        #debugger
         docs[d.qid][d.did].score = (col_score[d.qid][qs[:col_type]]) * col_weight + score_raw
         info "[create_by_merge] #{col_score[d.qid]} | #{score_raw} = #{docs[d.qid][d.did].score} (#{d.did})" if d.qid == 1 && d.rank <= 3
       end#doc
