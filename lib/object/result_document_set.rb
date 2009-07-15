@@ -86,7 +86,7 @@ class ResultDocumentSet < DocumentSet
     rs_new = ResultDocumentSet.new(set_name)
     docs = {}
     limit_docs = o[:limit_docs] || 1000
-    col_weight = o[:col_weight] || 1.0
+    col_weight = o[:col_weight] || 0.4
     col_score = {}
 
     # Calculate collection scores
@@ -117,8 +117,9 @@ class ResultDocumentSet < DocumentSet
           next
         end
         #debugger
-        docs[d.qid][d.did].score = (col_score[d.qid][qs[:col_type]]) * col_weight + score_raw
-        info "[create_by_merge] #{col_score[d.qid]} | #{score_raw} = #{docs[d.qid][d.did].score} (#{d.did})" if d.qid == 1 && d.rank <= 3
+        score_col = (col_score[d.qid][qs[:col_type]]) * col_weight
+        docs[d.qid][d.did].score = score_col + Math.exp(score_raw)
+        info "[create_by_merge] #{docs[d.qid][d.did].score} = #{score_col} + #{score_raw} (#{d.did})" if d.qid == 1 && d.rank <= 3
       end#doc
     end#docset
 
