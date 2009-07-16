@@ -84,9 +84,12 @@ def ILabLoader.build(ilab)
     end
   # Local retrieval & merge with Collection Score
   when 'meta'
-    CS_TYPES.each do |cs_type|
-      ilab.crt_add_meta_query_set("#{$query_prefix}_DQL_lcs#{cs_type}"  , $o.merge(:smoothing=>$sparam , :cs_type=>cs_type))
-      ilab.crt_add_meta_query_set("#{$query_prefix}_PRM-S_lcs#{cs_type}", $o.merge(:template=>:prm, :smoothing=>$sparam, :cs_type=>cs_type))
+    [:mp_max].each do |cs_type| #CS_TYPES
+      [0.4].each do |col_weight| #0.0,0.2,0.4,0.6,0.8,1.0
+        #ilab.crt_add_meta_query_set("#{$query_prefix}_DQL_lcs#{cs_type}"  , $o.merge(:smoothing=>$sparam , :cs_type=>cs_type))
+        ilab.crt_add_meta_query_set("#{$query_prefix}_PRM-S_lcs#{cs_type}_cw#{col_weight}", 
+          $o.merge(:template=>:prm, :smoothing=>$sparam, :col_weight=>col_weight, :cs_type=>cs_type))
+      end
     end
 
     #ilab.crt_add_meta_query_set("#{$query_prefix}_PRM-D", $o.merge(:template=>:prm_ql ,:smoothing=>$sparam, :lambda=>$prmd_lambda))
