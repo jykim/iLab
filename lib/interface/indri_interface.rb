@@ -52,7 +52,7 @@ class IndriInterface
       `#{cmd}`
     else
       cmd = fwrite('cmd_run_query.log' , "#{indri_path}/bin/runquery #{o[:param_query]} \
-      #{to_path(query_file)} > #{to_path(exp+'.res')}" , :mode=>'a')
+      #{to_path(query_file)} |grep -e ^[0-9] > #{to_path(exp+'.res')}" , :mode=>'a')
       `#{cmd}` #result = fwrite(exp+'.res'   , `#{cmd}`){|e| e =~ /^[0-9]/}
       filter_result_file(to_path(exp+'.res'))
     end

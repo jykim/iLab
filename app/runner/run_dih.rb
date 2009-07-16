@@ -84,22 +84,20 @@ def ILabLoader.build(ilab)
     end
   # Local retrieval & merge with Collection Score
   when 'meta'
-    $cs_types = [:mp_max]
-    $cs_types.each do |cs_type| #CS_TYPES
-      [0.4].each do |col_weight| #0.0,0.2,0.4,0.6,0.8,1.0
+    col_weight = 0.4
+    CS_TYPES.each do |cs_type| #CS_TYPES
+      NORM_TYPES.each do |norm_type| 
         #ilab.crt_add_meta_query_set("#{$query_prefix}_DQL_lcs#{cs_type}"  , $o.merge(:smoothing=>$sparam , :cs_type=>cs_type))
         ilab.crt_add_meta_query_set("#{$query_prefix}_PRM-S", 
-          $o.merge(:template=>:prm, :smoothing=>$sparam, :col_weight=>col_weight, :cs_type=>cs_type))
+          $o.merge(:template=>:prm, :smoothing=>$sparam, :norm=>norm_type, :col_weight=>col_weight, :cs_type=>cs_type))
       end
     end
 
-    #ilab.crt_add_meta_query_set("#{$query_prefix}_PRM-D", $o.merge(:template=>:prm_ql ,:smoothing=>$sparam, :lambda=>$prmd_lambda))
-    #analyze_col_score(to_path("qrel_"+$query_prefix), to_path("cscore_#{$query_prefix}_DQL_#{$o[:col_score]}.out"))
   # Meta-search with different collection weight
   when 'meta_col_weight'
     [0.0,0.2,0.4,0.6,0.8,1.0].each do |col_weight|
-      ilab.crt_add_meta_query_set("#{$query_prefix}_DQL"  , $o.merge(:col_weight=>col_weight, :smoothing=>$sparam))
-      #ilab.crt_add_meta_query_set("#{$query_prefix}_PRM-S", $o.merge(:col_weight=>col_weight, :template=>:prm, :smoothing=>$sparam))
+      #ilab.crt_add_meta_query_set("#{$query_prefix}_DQL"  , $o.merge(:col_weight=>col_weight, :smoothing=>$sparam))
+      ilab.crt_add_meta_query_set("#{$query_prefix}_PRM-S", $o.merge(:col_weight=>col_weight, :cs_type=>cs_type, :template=>:prm, :smoothing=>$sparam))
     end
   #------------------ CS691 PROJECT  ------------------#
   when 'cut_words'

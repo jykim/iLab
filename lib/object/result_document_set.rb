@@ -120,7 +120,7 @@ class ResultDocumentSet < DocumentSet
         info "[create_by_merge] #{qs.rs.name} max_score: #{qs.rs.max_score(d.qid)} min_score: #{qs.rs.min_score(d.qid)}" if d.qid == 1 && d.rank == 1
         #docs[d.qid][d.did].score = Math.slog(Math.exp(score_raw) + 0.4*Math.exp(col_score[d.qid] + score_raw)/1.4)
         if d.qid.to_i <= 0
-          err "[create_by_merge] invalid qid = #{d.qid}"
+          err "[create_by_merge] invalid qid = #{d.qid} for did = #{d.did}"
           next
         end
         #debugger
