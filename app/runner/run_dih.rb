@@ -86,8 +86,9 @@ def ILabLoader.build(ilab)
   when 'meta'
     CS_TYPES.each do |cs_type|
       ilab.crt_add_meta_query_set("#{$query_prefix}_DQL_lcs#{cs_type}"  , $o.merge(:smoothing=>$sparam , :cs_type=>cs_type))
+      ilab.crt_add_meta_query_set("#{$query_prefix}_PRM-S_lcs#{cs_type}", $o.merge(:template=>:prm, :smoothing=>$sparam, :cs_type=>cs_type))
     end
-    #ilab.crt_add_meta_query_set("#{$query_prefix}_PRM-S", $o.merge(:template=>:prm, :smoothing=>$sparam))
+
     #ilab.crt_add_meta_query_set("#{$query_prefix}_PRM-D", $o.merge(:template=>:prm_ql ,:smoothing=>$sparam, :lambda=>$prmd_lambda))
     #analyze_col_score(to_path("qrel_"+$query_prefix), to_path("cscore_#{$query_prefix}_DQL_#{$o[:col_score]}.out"))
   # Meta-search with different collection weight
