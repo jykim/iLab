@@ -42,13 +42,13 @@ class NilClass
     {}
   end
   
-  #def [](data)
-  #  error "[nil] [] was called for nil" # in #{__FILE__}:#{__LINE__}"
-  #  raise ArgumentException
-  #  nil
-  #end
+  def [](data)
+    error "[nil] [] was called for nil" # in #{__FILE__}:#{__LINE__}"
+    #raise ArgumentException
+    nil
+  end
 end
- 
+
 class String
   def capital?
     !(self == downcase)

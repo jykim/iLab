@@ -7,6 +7,7 @@ class ResultDocumentSet < DocumentSet
   def initialize( name , o = {})
     weight = 1.0
     super(name , o)
+    @min_scores = [] ; @max_scores = []
   end
   
   def clear
@@ -17,12 +18,12 @@ class ResultDocumentSet < DocumentSet
     @avg_precs = {}
   end
   
-  def min_score
-    @min_score ||= @docs.map{|d| d.score}.min
+  def min_score(qid)
+    @min_scores[qid] ||= @dhq[qid].map{|d| d.score}.min
   end
   
-  def max_score
-    @max_score ||= @docs.map{|d| d.score}.max
+  def max_score(qid)
+    @max_scores[qid] ||= @dhq[qid].map{|d| d.score}.max
   end  
   
   def compare_to(rds)
@@ -91,7 +92,12 @@ class ResultDocumentSet < DocumentSet
 
     # Calculate collection scores
     old_sets[0].qrys.each_with_index do |q,i|
-      col_score[q.qid] = $engine.get_col_scores(q.text, o[:cs_type], o).to_h
+      #debugger
+      begin
+        col_score[q.qid] = $engine.get_col_scores(q.text, o[:cs_type], o).to_h
+      rescue StandardError
+        
+      end
       #col_score[q.qid] = qs.get_col_score(q.text , o)
       #$i.fwrite("cscore_#{qs.name}_#{o[:cs_type]}.out", "#{qs.name} #{q.qid} #{col_score[q.qid]}", :mode=>((i == 0)? 'w' : 'a'))
       #info "[create_by_merge] col_score for #{qs.name} #{q.qid} #{col_score[q.qid]}"
@@ -102,15 +108,16 @@ class ResultDocumentSet < DocumentSet
       qs.rs.docs.find_all{|e| (block_given?)? filter.call(e,qs.rs) : true }.each do |d|
         docs[d.qid] = {} if !docs[d.qid]
         docs[d.qid][d.did] = d.dup
-        score_raw = case (o[:norm] || "minmax")
-        when "none"
+        score_raw = case (o[:norm] || :minmax)
+        when :none
           d.score
         when :max
-          d.score_r(qs.rs.max_score)
-        when "minmax"
-          d.score_rn(qs.rs.max_score,qs.rs.min_score)
+          d.score_r(qs.rs.max_score(d.qid))
+        when :minmax
+          d.score_rn(qs.rs.max_score(d.qid),qs.rs.min_score(d.qid))
         end
-        #info "[create_by_merge] #{qs.rs.name} max_score: #{qs.rs.max_score} min_score: #{qs.rs.min_score}"
+        #debugger if qs.rs.max_score > 0
+        info "[create_by_merge] #{qs.rs.name} max_score: #{qs.rs.max_score(d.qid)} min_score: #{qs.rs.min_score(d.qid)}" if d.qid == 1 && d.rank == 1
         #docs[d.qid][d.did].score = Math.slog(Math.exp(score_raw) + 0.4*Math.exp(col_score[d.qid] + score_raw)/1.4)
         if d.qid.to_i <= 0
           err "[create_by_merge] invalid qid = #{d.qid}"
@@ -119,7 +126,7 @@ class ResultDocumentSet < DocumentSet
         #debugger
         score_col = (col_score[d.qid][qs[:col_type]]) * col_weight
         docs[d.qid][d.did].score = score_col + Math.exp(score_raw)
-        info "[create_by_merge] #{docs[d.qid][d.did].score} = #{score_col} + #{score_raw} (#{d.did})" if d.qid == 1 && d.rank <= 3
+        info "[create_by_merge] #{docs[d.qid][d.did].score} = #{score_col} + #{score_raw.r3} (#{d.score.r3}) (#{d.did})" if d.qid == 1 && d.rank <= 3
       end#doc
     end#docset
 

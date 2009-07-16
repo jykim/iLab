@@ -10,7 +10,7 @@ def $i.run_query( name, query, template, idx, sparam )
 end
 
 def $i.crt_add_meta_query_set(name, o = {})
-  qs_name = name+"_cw#{o[:col_weight]}_#{o[:norm]}_#{o[:col_score]}"
+  qs_name = name+"_cw#{o[:col_weight]}_#{o[:norm]}_#{o[:cs_type]}"
   if !fcheck(qs_name+'.qry') || !fcheck(qs_name+'.res')
     $qs = {}
     $qs[$o[:col_type]] = create_query_set(name+"_"+$o[:col_type], o) if $o[:col_type] != 'all'
@@ -84,10 +84,11 @@ def ILabLoader.build(ilab)
     end
   # Local retrieval & merge with Collection Score
   when 'meta'
-    [:mp_max].each do |cs_type| #CS_TYPES
+    $cs_types = [:mp_max]
+    $cs_types.each do |cs_type| #CS_TYPES
       [0.4].each do |col_weight| #0.0,0.2,0.4,0.6,0.8,1.0
         #ilab.crt_add_meta_query_set("#{$query_prefix}_DQL_lcs#{cs_type}"  , $o.merge(:smoothing=>$sparam , :cs_type=>cs_type))
-        ilab.crt_add_meta_query_set("#{$query_prefix}_PRM-S_lcs#{cs_type}_cw#{col_weight}", 
+        ilab.crt_add_meta_query_set("#{$query_prefix}_PRM-S", 
           $o.merge(:template=>:prm, :smoothing=>$sparam, :col_weight=>col_weight, :cs_type=>cs_type))
       end
     end
