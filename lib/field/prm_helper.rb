@@ -10,7 +10,7 @@ module PRMHelper
   # mp = {f1=>mp1, f2=>mp2, ...}
   # col_scores = {col1=>score1, }
   def scale_map_prob(qw, mp, cs_type, o)
-    cs_smooth = o[:cs_smooth] || 0.01
+    cs_smooth = o[:cs_smooth] || 0.1
     mp_group = mp.group_by{|k,v|k.split("_")[0]}
     col_scores = COL_TYPES.map_hash { |col|
       #debugger

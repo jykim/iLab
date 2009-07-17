@@ -102,7 +102,7 @@ end
 def analyze_col_ratio(topic_id , method, o = {})
   topk = o[:topk] || 50
   begin
-    col_ptns = ['lists','html','pdf']
+    col_ptns = ['lists','html','pdf','msword','ppt']
     #{qid=>{type1=>[[qid1,type1],[qid2,type2]], type2=>}}
     res = IO.read("query/#{topic_id}_#{method}.res").split("\n").map{|e|a = e.split(" ") ; [a[0], col_ptns.pfind(a[2])]}.
         group_by{|e|e[0]}.map_hash{|k,v|[k,v[0..topk].group_by{|e|e[1]}]}

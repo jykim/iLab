@@ -11,7 +11,7 @@ end
 
 def $i.crt_add_meta_query_set(name, o = {})
   qs_name = name+"_cw#{o[:col_weight]}_#{o[:norm]}_#{o[:cs_type]}"
-  if !fcheck(qs_name+'.qry') || !fcheck(qs_name+'.res')
+  if !fcheck(qs_name+'.qry') || !fcheck(qs_name+'.res') 
     $qs = {}
     $qs[$o[:col_type]] = create_query_set(name+"_"+$o[:col_type], o) if $o[:col_type] != 'all'
     ['lists','pdf','html','msword','ppt'].each do |col_type|
