@@ -171,6 +171,10 @@ class Hash
   def to_arr(labels)
     labels.map{|e|self[e]}
   end
+  
+  def normalize
+    map_hash{|k,v|[k , (v.to_f - values.min)/(values.max - values.min)]}
+  end
 end
 
 
@@ -210,7 +214,7 @@ class Array
   def sort_val
     sort_by{|e|e[1]}.reverse
   end
-  
+    
   #Generate Array of Cartesian Product
   def cproduct(arr)
     self << nil if size == 0

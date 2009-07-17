@@ -10,7 +10,7 @@ module PRMHelper
   # mp = {f1=>mp1, f2=>mp2, ...}
   # col_scores = {col1=>score1, }
   def scale_map_prob(qw, mp, cs_type, o)
-    cs_smooth = o[:cs_smooth] || 0.1
+    cs_smooth = o[:cs_smooth] || 0.01
     mp_group = mp.group_by{|k,v|k.split("_")[0]}
     col_scores = COL_TYPES.map_hash { |col|
       #debugger
@@ -74,7 +74,7 @@ module PRMHelper
       col_scores[qw_s], mps[i][1] = *scale_map_prob(qw_s, weights, cs_type, o)
       #debugger
     end
-    cs_scores =  col_scores.merge_by_product.to_p.r3.sort_val
+    cs_scores =  col_scores.merge_by_product.normalize.r3.sort_val
     $cs_scores ||= {} 
     $cs_scores[query] ||= {}
     $cs_scores[query][cs_type] = cs_scores

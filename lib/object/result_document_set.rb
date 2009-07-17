@@ -124,9 +124,10 @@ class ResultDocumentSet < DocumentSet
           next
         end
         #debugger
-        score_col = (col_score[d.qid][qs[:col_type]]) * col_weight
-        docs[d.qid][d.did].score = score_col + Math.exp(score_raw)
-        info "[create_by_merge] #{docs[d.qid][d.did].score.r3} = #{score_col} + #{Math.exp(score_raw).r3} (#{d.did})" if d.qid == 1 && d.rank <= 3
+        score_doc = Math.exp(score_raw)
+        score_col = score_doc * (col_score[d.qid][qs[:col_type]]) * col_weight
+        docs[d.qid][d.did].score = (score_col + score_doc) / (1 + col_weight)
+        info "[create_by_merge] #{docs[d.qid][d.did].score.r3} = #{score_col} + #{score_doc.r3} (#{d.did})" if d.qid == 1 && d.rank <= 3
       end#doc
     end#docset
 
