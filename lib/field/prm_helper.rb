@@ -31,7 +31,7 @@ module PRMHelper
     }.to_p.smooth(cs_smooth)
     debug "[scale_map_prob] #{qw} : #{col_scores.r2.sort_val.inspect}"
     #debugger
-    [col_scores]#, mp_group.map{|col,fields|fields.to_p(col_scores[col]).sort_val}.collapse]
+    [col_scores, mp_group.map{|col,fields|fields.to_p(col_scores[col]).sort_val}.collapse]
   end
   
   # Get Mapping Prob. for given query
@@ -108,16 +108,11 @@ module PRMHelper
     return get_tew_query(mps, o)
   end
   
-  #PRM-S with multiple scollection
+  #PRM-S with multiple sub-collections
   def get_multi_col_query(query, o={})
     col_scores = get_col_scores(query, o[:cs_type], o).to_h
     result = $fields.group_by{|e|e.split('_')[0]}.map do |col,fields|
-      sub_query = case o[:ret_model]
-                  when :dql
-                    query
-                  else
-                    get_prm_query(query, o.merge(:prm_fields=>fields,:cs_type=>nil))
-                  end
+      sub_query = get_prm_query(query, o.merge(:prm_fields=>fields,:cs_type=>nil))
       "#{col_scores[col]} #combine(#{sub_query}) "
     end
     return "#wsum(#{result.join("\n")})"

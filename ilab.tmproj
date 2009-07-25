@@ -3,7 +3,7 @@
 <plist version="1.0">
 <dict>
 	<key>currentDocument</key>
-	<string>lib/object/result_document_set.rb</string>
+	<string>lib/object/document_set.rb</string>
 	<key>documents</key>
 	<array>
 		<dict>
@@ -21,6 +21,20 @@
 	<integer>272</integer>
 	<key>metaData</key>
 	<dict>
+		<key>app/adhoc/pd_analysis.rb</key>
+		<dict>
+			<key>caret</key>
+			<dict>
+				<key>column</key>
+				<integer>0</integer>
+				<key>line</key>
+				<integer>44</integer>
+			</dict>
+			<key>firstVisibleColumn</key>
+			<integer>0</integer>
+			<key>firstVisibleLine</key>
+			<integer>4</integer>
+		</dict>
 		<key>app/adhoc/pd_build.rb</key>
 		<dict>
 			<key>caret</key>
@@ -54,14 +68,14 @@
 			<key>caret</key>
 			<dict>
 				<key>column</key>
-				<integer>0</integer>
+				<integer>23</integer>
 				<key>line</key>
-				<integer>0</integer>
+				<integer>114</integer>
 			</dict>
 			<key>firstVisibleColumn</key>
 			<integer>0</integer>
 			<key>firstVisibleLine</key>
-			<integer>0</integer>
+			<integer>89</integer>
 		</dict>
 		<key>app/exp/exp_document.rb</key>
 		<dict>
@@ -96,14 +110,14 @@
 			<key>caret</key>
 			<dict>
 				<key>column</key>
-				<integer>0</integer>
+				<integer>5</integer>
 				<key>line</key>
-				<integer>32</integer>
+				<integer>31</integer>
 			</dict>
 			<key>firstVisibleColumn</key>
 			<integer>0</integer>
 			<key>firstVisibleLine</key>
-			<integer>4</integer>
+			<integer>0</integer>
 		</dict>
 		<key>app/exp/exp_perf.rhtml</key>
 		<dict>
@@ -124,14 +138,30 @@
 			<key>caret</key>
 			<dict>
 				<key>column</key>
-				<integer>0</integer>
+				<integer>34</integer>
 				<key>line</key>
-				<integer>5</integer>
+				<integer>137</integer>
 			</dict>
+			<key>columnSelection</key>
+			<false/>
 			<key>firstVisibleColumn</key>
 			<integer>0</integer>
 			<key>firstVisibleLine</key>
-			<integer>0</integer>
+			<integer>58</integer>
+			<key>selectFrom</key>
+			<dict>
+				<key>column</key>
+				<integer>24</integer>
+				<key>line</key>
+				<integer>137</integer>
+			</dict>
+			<key>selectTo</key>
+			<dict>
+				<key>column</key>
+				<integer>41</integer>
+				<key>line</key>
+				<integer>137</integer>
+			</dict>
 		</dict>
 		<key>app/runner/run_batch.rb</key>
 		<dict>
@@ -166,35 +196,35 @@
 			<key>caret</key>
 			<dict>
 				<key>column</key>
-				<integer>4</integer>
+				<integer>59</integer>
 				<key>line</key>
-				<integer>77</integer>
+				<integer>42</integer>
 			</dict>
 			<key>firstVisibleColumn</key>
 			<integer>0</integer>
 			<key>firstVisibleLine</key>
-			<integer>0</integer>
+			<integer>15</integer>
 		</dict>
 		<key>app/runner/run_dih_helper.rb</key>
 		<dict>
 			<key>caret</key>
 			<dict>
 				<key>column</key>
-				<integer>22</integer>
+				<integer>0</integer>
 				<key>line</key>
-				<integer>185</integer>
+				<integer>168</integer>
 			</dict>
 			<key>firstVisibleColumn</key>
 			<integer>0</integer>
 			<key>firstVisibleLine</key>
-			<integer>170</integer>
+			<integer>148</integer>
 		</dict>
 		<key>exlib/extensions/ddl_extension.rb</key>
 		<dict>
 			<key>caret</key>
 			<dict>
 				<key>column</key>
-				<integer>9</integer>
+				<integer>3</integer>
 				<key>line</key>
 				<integer>58</integer>
 			</dict>
@@ -278,29 +308,29 @@
 			<key>caret</key>
 			<dict>
 				<key>column</key>
-				<integer>12</integer>
+				<integer>11</integer>
 				<key>line</key>
-				<integer>254</integer>
+				<integer>244</integer>
 			</dict>
 			<key>columnSelection</key>
 			<false/>
 			<key>firstVisibleColumn</key>
 			<integer>0</integer>
 			<key>firstVisibleLine</key>
-			<integer>126</integer>
+			<integer>196</integer>
 			<key>selectFrom</key>
 			<dict>
 				<key>column</key>
 				<integer>6</integer>
 				<key>line</key>
-				<integer>254</integer>
+				<integer>244</integer>
 			</dict>
 			<key>selectTo</key>
 			<dict>
 				<key>column</key>
-				<integer>12</integer>
+				<integer>11</integer>
 				<key>line</key>
-				<integer>254</integer>
+				<integer>244</integer>
 			</dict>
 		</dict>
 		<key>lib/field/field_helper.rb</key>
@@ -336,14 +366,14 @@
 			<key>caret</key>
 			<dict>
 				<key>column</key>
-				<integer>47</integer>
+				<integer>54</integer>
 				<key>line</key>
-				<integer>52</integer>
+				<integer>76</integer>
 			</dict>
 			<key>firstVisibleColumn</key>
 			<integer>0</integer>
 			<key>firstVisibleLine</key>
-			<integer>32</integer>
+			<integer>56</integer>
 		</dict>
 		<key>lib/ilab_globals.rb</key>
 		<dict>
@@ -371,7 +401,7 @@
 			<key>firstVisibleColumn</key>
 			<integer>0</integer>
 			<key>firstVisibleLine</key>
-			<integer>0</integer>
+			<integer>10</integer>
 		</dict>
 		<key>lib/ilab_include.rb</key>
 		<dict>
@@ -420,14 +450,14 @@
 			<key>caret</key>
 			<dict>
 				<key>column</key>
-				<integer>5</integer>
+				<integer>45</integer>
 				<key>line</key>
-				<integer>28</integer>
+				<integer>54</integer>
 			</dict>
 			<key>firstVisibleColumn</key>
 			<integer>0</integer>
 			<key>firstVisibleLine</key>
-			<integer>0</integer>
+			<integer>170</integer>
 		</dict>
 		<key>lib/interface/yahoo_interface.rb</key>
 		<dict>
@@ -443,14 +473,28 @@
 			<key>firstVisibleLine</key>
 			<integer>0</integer>
 		</dict>
-		<key>lib/object/document_set.rb</key>
+		<key>lib/object/document.rb</key>
 		<dict>
 			<key>caret</key>
 			<dict>
 				<key>column</key>
 				<integer>0</integer>
 				<key>line</key>
-				<integer>77</integer>
+				<integer>58</integer>
+			</dict>
+			<key>firstVisibleColumn</key>
+			<integer>0</integer>
+			<key>firstVisibleLine</key>
+			<integer>29</integer>
+		</dict>
+		<key>lib/object/document_set.rb</key>
+		<dict>
+			<key>caret</key>
+			<dict>
+				<key>column</key>
+				<integer>22</integer>
+				<key>line</key>
+				<integer>46</integer>
 			</dict>
 			<key>firstVisibleColumn</key>
 			<integer>0</integer>
@@ -469,21 +513,7 @@
 			<key>firstVisibleColumn</key>
 			<integer>0</integer>
 			<key>firstVisibleLine</key>
-			<integer>22</integer>
-		</dict>
-		<key>lib/object/result_document_set.rb</key>
-		<dict>
-			<key>caret</key>
-			<dict>
-				<key>column</key>
-				<integer>56</integer>
-				<key>line</key>
-				<integer>110</integer>
-			</dict>
-			<key>firstVisibleColumn</key>
-			<integer>0</integer>
-			<key>firstVisibleLine</key>
-			<integer>92</integer>
+			<integer>31</integer>
 		</dict>
 		<key>lib/template/doc_pd.xml.erb</key>
 		<dict>
@@ -706,7 +736,7 @@
 		<string>lib/etc/markup_handler.rb</string>
 		<string>lib/etc/file_handler.rb</string>
 		<string>lib/object/document_set.rb</string>
-		<string>lib/object/result_document_set.rb</string>
+		<string>lib/object/document.rb</string>
 		<string>lib/object/query_set.rb</string>
 		<string>lib/ilab_include.rb</string>
 		<string>lib/field/prm_helper.rb</string>
@@ -729,6 +759,7 @@
 		<string>app/adhoc/pd_build.rb</string>
 		<string>app/adhoc/pd_conv.rb</string>
 		<string>app/adhoc/pd_lib.rb</string>
+		<string>app/adhoc/pd_analysis.rb</string>
 		<string>app/exp/exp_perf.rhtml</string>
 		<string>exlib/extensions/extension.rb</string>
 		<string>exlib/extensions/probability.rb</string>
@@ -737,6 +768,6 @@
 	<key>showFileHierarchyDrawer</key>
 	<true/>
 	<key>windowFrame</key>
-	<string>{{28, 0}, {789, 778}}</string>
+	<string>{{25, 0}, {775, 778}}</string>
 </dict>
 </plist>
