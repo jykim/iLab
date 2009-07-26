@@ -42,11 +42,11 @@ class NilClass
     {}
   end
   
-  def [](data)
-    error "[nil] [] was called for nil" # in #{__FILE__}:#{__LINE__}"
+  #def [](data)
+  #  error "[nil] [] was called for nil" # in #{__FILE__}:#{__LINE__}"
     #raise ArgumentException
-    nil
-  end
+  #  nil
+  #end
 end
 
 class String

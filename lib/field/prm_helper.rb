@@ -46,8 +46,8 @@ module PRMHelper
       weights = get_col_freq(:prob=>true).map_hash{|k,v|[k,v[qw_s]] if v[qw_s] && fields.include?(k)}
       if o[:cs_type]
         mps[i] = [qw]
-        col_scores[qw_s], mps[i][1] = *scale_map_prob(qw_s, weights, o[:cs_type], o)
         #debugger
+        col_scores[qw_s], mps[i][1] = *scale_map_prob(qw_s, weights, o[:cs_type], o)
       else
         mp = weights.map_hash{|e|v=e[1]/weights.values.sum ; [e[0],((v >= 0.0001)? v : 0.0)]}
         mp = fields.map_hash{|f|[f, ((mp[f])? mp[f] : 0.0001)]} if o[:mp_all_fields]
@@ -65,14 +65,14 @@ module PRMHelper
   
   def get_col_scores(query, cs_type, o)
     mps = [] ; col_scores = {}
-    return $cs_scores[query][cs_type] if $cs_scores[query][cs_type]
+    return $cs_scores[query][cs_type] if $cs_scores && $cs_scores[query] && $cs_scores[query][cs_type]
     query.split(" ").each_with_index do |qw,i|
       #Read Collection Stat.
       qw_s = kstem(qw.downcase)
-      weights = get_col_freq(:prob=>true).map_hash{|k,v|[k,v[qw_s]] if v[qw_s]}
+      weights = get_col_freq(:prob=>true).map_hash{|k,v|[k,v[qw_s]] if v[qw_s] && $fields.include?(k)} 
       mps[i] = [qw]
-      col_scores[qw_s], mps[i][1] = *scale_map_prob(qw_s, weights, cs_type, o)
       #debugger
+      col_scores[qw_s], mps[i][1] = *scale_map_prob(qw_s, weights, cs_type, o)
     end
     cs_scores =  col_scores.merge_by_product.normalize.r3.sort_val
     $cs_scores ||= {} 

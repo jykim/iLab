@@ -93,11 +93,11 @@ class ResultDocumentSet < DocumentSet
     # Calculate collection scores
     old_sets[0].qrys.each_with_index do |q,i|
       #debugger
-      begin
-        col_score[q.qid] = $engine.get_col_scores(q.text, o[:cs_type], o).to_h
-      rescue StandardError
+      #begin
+      col_score[q.qid] = $engine.get_col_scores(q.text, o[:cs_type], o).to_h
+      #rescue StandardError
         
-      end
+      #`end
       #col_score[q.qid] = qs.get_col_score(q.text , o)
       #$i.fwrite("cscore_#{qs.name}_#{o[:cs_type]}.out", "#{qs.name} #{q.qid} #{col_score[q.qid]}", :mode=>((i == 0)? 'w' : 'a'))
       #info "[create_by_merge] col_score for #{qs.name} #{q.qid} #{col_score[q.qid]}"
@@ -135,6 +135,8 @@ class ResultDocumentSet < DocumentSet
           score_col = score_doc * (col_score[d.qid][qs[:col_type]]) 
           docs[d.qid][d.did].score = (score_col * score_doc)
           info "[create_by_merge] #{docs[d.qid][d.did].score.r3} = #{score_col.r3} * #{score_doc.r3} (#{d.did})" if d.qid == 1 && d.rank <= 3
+        else
+          err "[create_by_merge] invalid merge type"
         end
       end#doc
     end#docset
