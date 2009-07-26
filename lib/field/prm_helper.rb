@@ -71,12 +71,16 @@ module PRMHelper
       qw_s = kstem(qw.downcase)
       weights = get_col_freq(:prob=>true).map_hash{|k,v|[k,v[qw_s]] if v[qw_s]}
       mps[i] = [qw]
-      col_scores[qw_s], mps[i][1] = *scale_map_prob(qw_s, weights, cs_type, o)
+        col_scores[qw_s], mps[i][1] = *scale_map_prob(qw_s, weights, cs_type, o)
       #debugger
     end
-    cs_scores =  col_scores.merge_by_product.normalize.r3.sort_val
+    if cs_type == :uniform
+      cs_scores = COL_TYPE.map{|e|[e,1.0]}.to_p
+    else
+      cs_scores = col_scores.merge_by_product.normalize.r3.sort_val
+    end
     $cs_scores ||= {} 
-    $cs_scores[query] ||= {}
+    $cs_scores[query] ||= {}  
     $cs_scores[query][cs_type] = cs_scores
     info "[get_col_scores] #{cs_type}|#{query} : #{cs_scores.inspect}"
     cs_scores
