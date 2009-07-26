@@ -71,10 +71,6 @@ module PRMHelper
       qw_s = kstem(qw.downcase)
       weights = get_col_freq(:prob=>true).map_hash{|k,v|[k,v[qw_s]] if v[qw_s] && $fields.include?(k)} 
       mps[i] = [qw]
-<<<<<<< HEAD:lib/field/prm_helper.rb
-        col_scores[qw_s], mps[i][1] = *scale_map_prob(qw_s, weights, cs_type, o)
-=======
->>>>>>> 109f112e744160861a19b12abad220c62f237d01:lib/field/prm_helper.rb
       #debugger
       col_scores[qw_s], mps[i][1] = *scale_map_prob(qw_s, weights, cs_type, o)
     end
