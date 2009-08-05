@@ -20,18 +20,18 @@ module PRMHelper
         case cs_type
         when :uniform
           [col, 1.0]
-        when :mp_max
+        when :mpmax
           [col, mp_group[col].max{|a,b|a[1]<=>b[1]}[1]]
-        when :mp_mean
+        when :mpmean
           [col, mp_group[col].map{|e|e[1]}.mean]
         when :cql
           [col, get_clm_by_col()[col][qw]]
         end
       end
     }.to_p.smooth(cs_smooth)
-    debug "[scale_map_prob] #{qw} : #{col_scores.r2.sort_val.inspect}"
+    debug "[scale_map_prob] #{qw} : #{col_scores.r2.to_a.sort_val.inspect}"
     #debugger
-    [col_scores, mp_group.map{|col,fields|fields.to_p(col_scores[col]).sort_val}.collapse]
+    [col_scores, mp_group.map{|col,fields|fields.to_p(col_scores[col]).to_a.sort_val}.collapse]
   end
   
   # Get Mapping Prob. for given query
@@ -52,7 +52,7 @@ module PRMHelper
         mp = weights.map_hash{|e|v=e[1]/weights.values.sum ; [e[0],((v >= 0.0001)? v : 0.0)]}
         mp = fields.map_hash{|f|[f, ((mp[f])? mp[f] : 0.0001)]} if o[:mp_all_fields]
         o[:fix_mp_for].map{|k,v|mp[k] = v} if o[:fix_mp_for]
-        mps[i] = [qw, mp.find_all{|e|e[1]>0}.sort_val]
+        mps[i] = [qw, mp.find_all{|e|e[1]>0}.to_a.sort_val]
       end
     end
     #cs_scores =  col_scores.merge_by_product.to_p.r2.sort_val
@@ -77,7 +77,7 @@ module PRMHelper
     if cs_type == :uniform
       cs_scores = COL_TYPE.map{|e|[e,1.0]}.to_p
     else
-      cs_scores = col_scores.merge_by_product.normalize.r3.sort_val
+      cs_scores = col_scores.merge_by_product.normalize.r3.to_a.sort_val
     end
     $cs_scores ||= {} 
     $cs_scores[query] ||= {}  
