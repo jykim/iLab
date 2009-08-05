@@ -90,15 +90,18 @@ def ILabLoader.build(ilab)
     col_weight = $o[:col_weight] || 0.4
     CS_TYPES.each do |cs_type| #CS_TYPES
       NORM_TYPES.each do |norm_type| 
-        #ilab.crt_add_meta_query_set("#{$query_prefix}_DQL_lcs#{cs_type}"  , $o.merge(:smoothing=>$sparam , :cs_type=>cs_type))
-        ilab.crt_add_meta_query_set("#{$query_prefix}_PRM-S", 
-          $o.merge(:template=>:prm, :smoothing=>$sparam, :norm=>norm_type, :col_weight=>col_weight, :cs_type=>cs_type))
+        MERGE_TYPES.each do |merge_type| 
+          ilab.crt_add_meta_query_set("#{$query_prefix}_DQL"  , 
+            $o.merge(:smoothing=>$sparam, :norm=>norm_type, :col_weight=>col_weight, :cs_type=>cs_type, :merge_type=>merge_type))
+          ilab.crt_add_meta_query_set("#{$query_prefix}_PRM-S", 
+            $o.merge(:template=>:prm, :smoothing=>$sparam, :norm=>norm_type, :col_weight=>col_weight, :cs_type=>cs_type, :merge_type=>merge_type))
+        end
       end
     end
 
   # Meta-search with different collection weight
   when 'meta_col_weight'
-    norm_type, cs_type = :none, :mp_max
+    norm_type, cs_type = :none, :mpmax
     [0.0,0.2,0.4,0.6,0.8,1.0].each do |col_weight|
       ilab.crt_add_meta_query_set("#{$query_prefix}_PRM-S", $o.merge(:col_weight=>col_weight, :cs_type=>cs_type, :norm=>norm_type, :template=>:prm, :smoothing=>$sparam))
     end
