@@ -11,11 +11,12 @@ end
 
 def $i.crt_add_meta_query_set(name, o = {})
   qs_name = name+"_cw#{o[:col_weight]}_#{o[:norm]}_#{o[:cs_type]}_#{o[:merge_type]}"
-  if !fcheck(qs_name+'.qry') || !fcheck(qs_name+'.res')
+  if !fcheck(qs_name+'.qry') || !fcheck(qs_name+'.res') || $o[:redo]
     $qs = {}
-    $qs[$o[:col_type]] = create_query_set(name+"_"+$o[:col_type], o) if $o[:col_type] != 'all'
+    # $qs[$o[:col_type]] = create_query_set(name+"_"+$o[:col_type], o) if $o[:col_type] != 'all'
     ['lists','pdf','html','msword','ppt'].each do |col_type|
       next if col_type == $o[:col_type] && $o[:col_type] != 'all'
+      #debugger
       info "Process #{col_type}:"
       set_type_info($o[:pid], col_type)
       if !File.exist?($index_path)
@@ -32,6 +33,7 @@ end
 
 #Choose Retrieval Method
 def ILabLoader.build(ilab)
+  puts "METHOD : #$method"
   #['length','length2','length3','pagerank'].each{|e| $engine.run_make_prior(e) }
   case $col
   when 'pd'
@@ -84,6 +86,7 @@ def ILabLoader.build(ilab)
     end
   # Local retrieval & merge with Collection Score
   when 'meta'
+    #debugger
     col_weight = $o[:col_weight] || 0.4
     CS_TYPES.each do |cs_type| #CS_TYPES
       NORM_TYPES.each do |norm_type| 

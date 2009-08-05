@@ -75,7 +75,7 @@ module PRMHelper
       col_scores[qw_s], mps[i][1] = *scale_map_prob(qw_s, weights, cs_type, o)
     end
     if cs_type == :uniform
-      cs_scores = COL_TYPE.map{|e|[e,1.0]}.to_p
+      cs_scores = COL_TYPES.map{|e|[e,1.0]}.to_p
     else
       cs_scores = col_scores.merge_by_product.normalize.r3.sort_val
     end
@@ -115,6 +115,7 @@ module PRMHelper
   #PRM-S with multiple sub-collections
   def get_multi_col_query(query, o={})
     col_scores = get_col_scores(query, o[:cs_type], o).to_h
+    info "[get_multi_col_query] col_scores = #{col_scores.inspect}"
     result = $fields.group_by{|e|e.split('_')[0]}.map do |col,fields|
       sub_query = get_prm_query(query, o.merge(:prm_fields=>fields,:cs_type=>nil))
       "#{col_scores[col]} #combine(#{sub_query}) "

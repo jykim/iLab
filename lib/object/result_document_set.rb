@@ -132,7 +132,7 @@ class ResultDocumentSet < DocumentSet
           info "[create_by_merge] #{docs[d.qid][d.did].score.r3} = #{score_col.r3} * #{col_weight} + #{score_doc.r3} (#{d.did})" if d.qid == 1 && d.rank <= 3
         when :multiply
           score_doc = Math.exp(score_raw)
-          score_col = score_doc * (col_score[d.qid][qs[:col_type]]) 
+          score_col = (col_score[d.qid][qs[:col_type]]) 
           docs[d.qid][d.did].score = (score_col * score_doc)
           info "[create_by_merge] #{docs[d.qid][d.did].score.r3} = #{score_col.r3} * #{score_doc.r3} (#{d.did})" if d.qid == 1 && d.rank <= 3
         else
