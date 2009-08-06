@@ -3,7 +3,7 @@
 module PRMHelper
 
   def get_clm_by_col()
-    @clm ||= get_col_freq().group_by{|k,v|k.split("_")[0]}.map_hash{|k,v|[k, v.to_h.merge_elements.to_p]}
+    @clm ||= get_col_freq().group_by{|k,v|k.split("_")[0]}.map_hash{|k,v|[k, v.to_h.values.merge_elements.to_p]}
   end
   
   # Normalize and weight mapping probability for each collection
@@ -77,7 +77,7 @@ module PRMHelper
     if cs_type == :uniform
       cs_scores = COL_TYPES.map{|e|[e,1.0]}.to_p
     else
-      cs_scores = col_scores.merge_by_product.normalize.r3.to_a.sort_val
+      cs_scores = col_scores.values.merge_by_product.normalize.r3.to_a.sort_val
     end
     $cs_scores ||= {} 
     $cs_scores[query] ||= {}  

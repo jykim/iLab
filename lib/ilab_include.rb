@@ -12,7 +12,7 @@ require "logger"
 include Test::Unit::Assertions
 
 load "exlib/globals/global.rb"
-load 'exlib/extensions/extension.rb'
+load 'exlib/extensions/extensions.rb'
 load 'exlib/extensions/probability.rb'
 load 'exlib/extensions/statistics.rb'
 load 'exlib/extensions/exceptions.rb'

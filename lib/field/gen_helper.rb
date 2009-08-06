@@ -78,7 +78,7 @@ module GenHelper
                when /_IDF$/  : dflm.map_hash{|k,v|[k,v.map_hash{|k2,v2|[k2, Math.log(o[:doc_no]/dfh[k2])]}.to_p]}
                when /_TIDF$/ : dflm.map_hash{|k,v|[k,v.map_hash{|k2,v2|[k2, v2*Math.log(o[:doc_no]/dfh[k2])]}.to_p]}
       end
-      return dflm_s.merge_elements if len < 0
+      return dflm_s.values.merge_elements if len < 0
       1.upto(len) do |j|
         field = case topic_type
                 when /^F_FF/ : o[:fields][j]

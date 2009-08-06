@@ -5,21 +5,6 @@ class File
   end
 end
 
-module Math
-  def log2(numeric)
-    log(numeric) / log(2)
-  end
-
-  def log10(numeric)
-    log(numeric) / log(10)
-  end
-  
-  #Safe log
-  def slog(numeric)
-    (numeric > 0)? log(numeric) : MIN_NUM
-  end
-end
-
 class Fixnum
   def to_log( deno = 10)
     (self>0)? Math.log(self) / Math.log(deno) : 0
@@ -174,32 +159,6 @@ class Hash
   
   def normalize
     map_hash{|k,v|[k , (v.to_f - values.min)/(values.max - values.min)]}
-  end
-end
-
-
-#Information-theoretic Operations
-# - Instance is assumed to be a random variable (sum of element = 1)
-module Entropy
-  include Math
-  def h
-    -inject(0){|sum,e| sum + e * log2(e) }
-  end
-  
-  #Cross Entropy
-  def ch(a)
-    sum = 0 ; each_both(a){|p , q| sum += p * log2(q) } ; -sum
-  end
-  
-  def kld(a)
-    ch(a) - h()
-  end
-  
-  # Apply smoothing with given bgmodel
-  def to_smt(o = {})
-    lambda = o[:lambda] || 0.1
-    bgmodel = o[:bgmodel] || [1.0 / size] * size
-    map_with_index{|e,i| (1-lambda) * e + lambda * bgmodel[i]}
   end
 end
 

@@ -189,12 +189,12 @@ class IndriInterface
     #return nil if fields.values.size !=  fields.values.uniq.size
     dv[2].split("\n").map{|l|l.split(" ")}.
       group_by{|e|f = fields.find{|k,v|k === e[0].to_i} ; (f)? f[1] : nil }. #FIXME Support overlapping elements
-      map_hash{|k,v|[k,v.find_all{|e|e[2]!="[OOV]"}.map{|e|e[2]}.to_dist.to_p]}    
+      map_hash{|k,v|[k,v.find_all{|e|e[2]!="[OOV]"}.map{|e|e[2]}.to_pdist]}    
   end
   
   def get_doc_lm(dno)
     dv = get_index_info("dv", dno).split(/--- .*? ---\n/)
-    dv[2].split("\n").map{|l|l.split(" ")}.find_all{|e|e[2]!="[OOV]"}.map{|e|e[2]}.to_dist.to_p
+    dv[2].split("\n").map{|l|l.split(" ")}.find_all{|e|e[2]!="[OOV]"}.map{|e|e[2]}.to_pdist
   end
 end
 
