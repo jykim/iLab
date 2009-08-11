@@ -71,18 +71,6 @@ class String
       i = -1 ; words.delete_if{|e|i += 1 ; ints[i]}
     end
   end
-  
-  def find_tag(tag_name)
-    r = scan(/\<#{tag_name}\>(.*?)\<\/#{tag_name}\>/im)
-    r.map{|e|e.first}
-  end
-
-  #  Replace the name of given tag into another
-  # "<a>sdssd</a>".replace_tag('a','b')
-  # => <b>sdssd</b>
-  def replace_tag(tag_name, tag_name_after)
-    gsub(/\<#{tag_name}\>(.*?)\<\/#{tag_name}\>/im, "<#{tag_name_after}>\\1</#{tag_name_after}>")
-  end
 
   def to_a
     if self =~ /^\|.*\|$/
