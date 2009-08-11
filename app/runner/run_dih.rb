@@ -50,6 +50,7 @@ def ILabLoader.build(ilab)
   set_collection_param($col_id)
   $col_id = col_type_old if $o[:param]
   case $method
+  # Fix weights for some of fields
   when 'hybrid'
     ilab.crt_add_query_set("#{$query_prefix}_DQL"  , $o.merge(:smoothing=>$sparam))
     ilab.crt_add_query_set("#{$query_prefix}_PRM-S", $o.merge(:template=>:prm, :smoothing=>$sparam))
@@ -65,7 +66,27 @@ def ILabLoader.build(ilab)
     end
     
   #------------------ RANK LIST MERGING ---------------#
-  #  Single-index Rank-list Merging with Collection Score
+  # Local retrieval & merge with Collection Score
+  when 'meta'
+    #debugger
+    col_weight = $o[:col_weight] || 0.4
+    CS_TYPES.each do |cs_type| #CS_TYPES
+      NORM_TYPES.each do |norm_type| 
+        MERGE_TYPES.each do |merge_type| 
+          ilab.crt_add_meta_query_set("#{$query_prefix}_DQL"  , 
+            $o.merge(:smoothing=>$sparam, :norm=>norm_type, :col_weight=>col_weight, :cs_type=>cs_type, :merge_type=>merge_type))
+          ilab.crt_add_meta_query_set("#{$query_prefix}_PRM-S", 
+            $o.merge(:template=>:prm, :smoothing=>$sparam, :norm=>norm_type, :col_weight=>col_weight, :cs_type=>cs_type, :merge_type=>merge_type))
+        end
+      end
+    end
+  # Meta-search with different collection weight
+  when 'meta_col_weight'
+    norm_type, cs_type, merge_type = :minmax, :mpmax, :cori
+    [0.0,0.2,0.4,0.6,0.8,1.0].each do |col_weight|
+      ilab.crt_add_meta_query_set("#{$query_prefix}_PRM-S", $o.merge(:col_weight=>col_weight, :cs_type=>cs_type, :norm=>norm_type, :merge_type=>merge_type, :template=>:prm, :smoothing=>$sparam))
+    end
+  # Single-index Rank-list Merging with Collection Score
   when 'multi_col'
     #Top-score collection for each query
     # Difference for each collection score type
@@ -83,27 +104,6 @@ def ILabLoader.build(ilab)
       #ilab.crt_add_query_set("#{$query_prefix}_DQL_cs#{cs_type}" , :cs_type=>cs_type, :smoothing=>$sparam)
       ilab.crt_add_query_set("#{$query_prefix}_PRM-S_cs#{cs_type}" , 
         :cs_type=>cs_type, :template=>:prm, :smoothing=>$sparam)
-    end
-  # Local retrieval & merge with Collection Score
-  when 'meta'
-    #debugger
-    col_weight = $o[:col_weight] || 0.4
-    CS_TYPES.each do |cs_type| #CS_TYPES
-      NORM_TYPES.each do |norm_type| 
-        MERGE_TYPES.each do |merge_type| 
-          ilab.crt_add_meta_query_set("#{$query_prefix}_DQL"  , 
-            $o.merge(:smoothing=>$sparam, :norm=>norm_type, :col_weight=>col_weight, :cs_type=>cs_type, :merge_type=>merge_type))
-          ilab.crt_add_meta_query_set("#{$query_prefix}_PRM-S", 
-            $o.merge(:template=>:prm, :smoothing=>$sparam, :norm=>norm_type, :col_weight=>col_weight, :cs_type=>cs_type, :merge_type=>merge_type))
-        end
-      end
-    end
-
-  # Meta-search with different collection weight
-  when 'meta_col_weight'
-    norm_type, cs_type, merge_type = :minmax, :mpmax, :cori
-    [0.0,0.2,0.4,0.6,0.8,1.0].each do |col_weight|
-      ilab.crt_add_meta_query_set("#{$query_prefix}_PRM-S", $o.merge(:col_weight=>col_weight, :cs_type=>cs_type, :norm=>norm_type, :merge_type=>merge_type, :template=>:prm, :smoothing=>$sparam))
     end
   #------------------ CS691 PROJECT  ------------------#
   when 'cut_words'
