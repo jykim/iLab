@@ -25,7 +25,7 @@ module PRMHelper
         when :mpmean
           [col, mp_group[col].map{|e|e[1]}.mean]
         when :cql
-          [col, get_clm_by_col()[col][qw]]
+          [col, (get_clm_by_col()[col][qw]||0.0)]
         end
       end
     }.to_p.smooth(cs_smooth)
