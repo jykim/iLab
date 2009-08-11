@@ -1,0 +1,5 @@
+<DOC> 
+<DOCNO> <%= @did %> </DOCNO>
+<% @flm.each do |k,v|%>
+<%= "<#{k}> #{v.text} </#{k}>" %><% end %>
+</DOC>
