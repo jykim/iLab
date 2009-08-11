@@ -32,7 +32,7 @@ module GenHelper
                   fields = $field_set[rand($field_set.size)]
                   get_knownitem_topic(dno, o[:topic_type], fields.size, o.merge(:doc_no=>doc_no,:fields=>fields))
                 else
-                  topic_len = o[:query_len] || 2#(o[:query_len])? o[:query_len] : $query_lens[rand($query_lens.size)]
+                  topic_len = o[:query_len] || 3#(o[:query_len])? o[:query_len] : $query_lens[rand($query_lens.size)]
                   get_knownitem_topic(dno, o[:topic_type], topic_len, o.merge(:doc_no=>doc_no))
                 end
       rescue => err
@@ -50,7 +50,7 @@ module GenHelper
   def get_knownitem_topic(dno, topic_type, len = -1, o={})
     dfh = get_df()
     topic = []
-    info "[get_knownitem_topic] #{dno} #{topic_type} (replace=#{o[:replace]})"
+    info "[get_knownitem_topic] #{dno} #{topic_type}"
     case topic_type
     when /^D_/
       clm = get_col_freq(:whole_doc=>true)
@@ -89,7 +89,7 @@ module GenHelper
         #puts "[get_knownitem_topic] field = #{field} (#{dflm_s.keys})"
         #p "dflm = #{dflm_s.map{|k,v|v.sort_by{|k,v|v}.reverse}.inspect}"
         #xp "field = #{field}"
-        topic << dflm_s[field].dice(o[:replace]) if dflm_s[field]
+        topic << dflm_s[field].dice() if dflm_s[field]
       end
     when /^EN_/
       dlm = get_doc_lm(dno)
@@ -102,9 +102,9 @@ module GenHelper
       1.upto(len) do |j|
         topic << case topic_type
         when /L$/ #Low entropy -> skewed MP distribution
-          ent_list.to_h.inverse.dice(o[:replace])
+          ent_list.to_h.inverse.dice()
         when /H$/
-          ent_list.dice(o[:replace])
+          ent_list.dice()
         end
       end
       #info "[get_knownitem_topic] ent_list: #{ent_list.inspect}"

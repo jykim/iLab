@@ -124,17 +124,19 @@ class ResultDocumentSet < DocumentSet
           next
         end
         #debugger
+        #err "[create_by_merge] col_score[#{d.qid}][#{qs[:col_type]}] = nil" if !col_score[d.qid][qs[:col_type]]
         case (o[:merge_type] || :cori)
         when :cori
           score_doc = Math.exp(score_raw)
-          score_col = score_doc * (col_score[d.qid][qs[:col_type]]) 
+          score_col = score_doc * col_score[d.qid][qs[:col_type]]
           docs[d.qid][d.did].score = (score_col * col_weight + score_doc) / (1 + col_weight)
           info "[create_by_merge] #{docs[d.qid][d.did].score.r3} = #{score_col.r3} * #{col_weight} + #{score_doc.r3} (#{d.did})" if d.qid == 1 && d.rank <= 3
         when :multiply
           score_doc = Math.exp(score_raw)
-          score_col = (col_score[d.qid][qs[:col_type]]) 
+          score_col = col_score[d.qid][qs[:col_type]]
           docs[d.qid][d.did].score = (score_col * score_doc)
           info "[create_by_merge] #{docs[d.qid][d.did].score.r3} = #{score_col.r3} * #{score_doc.r3} (#{d.did})" if d.qid == 1 && d.rank <= 3
+          #debugger
         else
           err "[create_by_merge] invalid merge type"
         end

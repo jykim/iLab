@@ -101,9 +101,9 @@ def ILabLoader.build(ilab)
 
   # Meta-search with different collection weight
   when 'meta_col_weight'
-    norm_type, cs_type = :none, :mpmax
+    norm_type, cs_type, merge_type = :minmax, :mpmax, :cori
     [0.0,0.2,0.4,0.6,0.8,1.0].each do |col_weight|
-      ilab.crt_add_meta_query_set("#{$query_prefix}_PRM-S", $o.merge(:col_weight=>col_weight, :cs_type=>cs_type, :norm=>norm_type, :template=>:prm, :smoothing=>$sparam))
+      ilab.crt_add_meta_query_set("#{$query_prefix}_PRM-S", $o.merge(:col_weight=>col_weight, :cs_type=>cs_type, :norm=>norm_type, :merge_type=>merge_type, :template=>:prm, :smoothing=>$sparam))
     end
   #------------------ CS691 PROJECT  ------------------#
   when 'cut_words'

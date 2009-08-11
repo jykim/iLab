@@ -148,7 +148,7 @@ class Matrix
 end
 
 class Hash
-  include ProbabilityDistribution
+  #include ProbabilityDistribution
   def max_pair
     max{|e1,e2|e1[1]<=>e2[1]}
   end
@@ -163,7 +163,7 @@ class Hash
 end
 
 class Array
-  include Statistics , Entropy, IRMeasure
+  include IRMeasure
   
   # Get the average of kth column of given table
   def avg_col(k)
