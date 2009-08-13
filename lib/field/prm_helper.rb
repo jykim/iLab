@@ -66,18 +66,22 @@ module PRMHelper
   def get_col_scores(query, cs_type, o)
     mps = [] ; col_scores = {}
     return $cs_scores[query][cs_type] if $cs_scores && $cs_scores[query] && $cs_scores[query][cs_type]
-    query.split(" ").each_with_index do |qw,i|
-      #Read Collection Stat.
-      qw_s = kstem(qw.downcase)
-      weights = get_col_freq(:prob=>true).map_hash{|k,v|[k,v[qw_s]] if v[qw_s] && $fields.include?(k)} 
-      mps[i] = [qw]
-      #debugger
-      col_scores[qw_s], mps[i][1] = *scale_map_prob(qw_s, weights, cs_type, o)
-    end
-    if cs_type == :uniform
-      cs_scores = COL_TYPES.map{|e|[e,1.0]}.to_p
-    else
-      cs_scores = col_scores.values.merge_by_product.normalize.r3.to_a.sort_val
+    begin
+      query.split(" ").each_with_index do |qw,i|
+        #Read Collection Stat.
+        qw_s = kstem(qw.downcase)
+        weights = get_col_freq(:prob=>true).map_hash{|k,v|[k,v[qw_s]] if v[qw_s] && $fields.include?(k)} 
+        mps[i] = [qw]
+        #debugger
+        col_scores[qw_s], mps[i][1] = *scale_map_prob(qw_s, weights, cs_type, o)
+      end
+      if cs_type == :uniform
+        cs_scores = COL_TYPES.map{|e|[e,1.0]}.to_p
+      else
+        cs_scores = col_scores.values.merge_by_product.normalize.r3.to_a.sort_val
+      end
+    rescue Exception => e
+      puts "[get_col_scores] #{col_scores.inspect}"
     end
     $cs_scores ||= {} 
     $cs_scores[query] ||= {}  

@@ -60,13 +60,6 @@ module ReportHelper
 end
 
 module FileHelper
-  def fdump( dump_name , var )
-    File.open( to_path(dump_name) , 'w') {|f| Marshal.dump(var , f) } ; var
-  end
-  
-  def fload( dump_name )
-    File.open( to_path(dump_name) , 'r') {|f| return Marshal.load(f) }
-  end
 
   #check existence & size of file
   def fcheck(file_name , o = {})
