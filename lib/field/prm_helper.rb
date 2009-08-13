@@ -31,7 +31,7 @@ module PRMHelper
     }.to_p.smooth(cs_smooth)
     debug "[scale_map_prob] #{qw} : #{col_scores.to_a.sort_val.inspect}"
     #debugger
-    [col_scores, mp_group.map{|col,fields|fields.to_p(col_scores[col]).to_a.sort_val}.collapse]
+    col_scores
   end
   
   # Get Mapping Prob. for given query
@@ -44,16 +44,10 @@ module PRMHelper
       #Read Collection Stat.
       qw_s = kstem(qw.downcase)
       weights = get_col_freq(:prob=>true).map_hash{|k,v|[k,v[qw_s]] if v[qw_s] && fields.include?(k)}
-      if o[:cs_type]
-        mps[i] = [qw]
-        #debugger
-        col_scores[qw_s], mps[i][1] = *scale_map_prob(qw_s, weights, o[:cs_type], o)
-      else
-        mp = weights.map_hash{|e|v=e[1]/weights.values.sum ; [e[0],((v >= 0.0001)? v : 0.0)]}
-        mp = fields.map_hash{|f|[f, ((mp[f])? mp[f] : 0.0001)]} if o[:mp_all_fields]
-        o[:fix_mp_for].map{|k,v|mp[k] = v} if o[:fix_mp_for]
-        mps[i] = [qw, mp.find_all{|e|e[1]>0}.to_a.sort_val]
-      end
+      mp = weights.map_hash{|e|v=e[1]/weights.values.sum ; [e[0],((v >= 0.0001)? v : 0.0)]}
+      mp = fields.map_hash{|f|[f, ((mp[f])? mp[f] : 0.0001)]} if o[:mp_all_fields]
+      o[:fix_mp_for].map{|k,v|mp[k] = v} if o[:fix_mp_for]
+      mps[i] = [qw, mp.find_all{|e|e[1]>0}.to_a.sort_val]
     end
     #cs_scores =  col_scores.merge_by_product.to_p.r2.sort_val
     #$top_cols ||= {} 
@@ -63,31 +57,43 @@ module PRMHelper
     mps.find_all{|mp|mp[1].size>0}
   end
   
-  def get_col_scores(query, cs_type, o)
-    mps = [] ; col_scores = {}
+  def get_cs_score(query, cs_type, o)
+    mps = [] ; col_scores = {} ; col_score_def = 0.0001
     return $cs_scores[query][cs_type] if $cs_scores && $cs_scores[query] && $cs_scores[query][cs_type]
+    return COL_TYPES.map{|e|[e,1.0]}.to_p if cs_type == :uniform
     begin
-      query.split(" ").each_with_index do |qw,i|
-        #Read Collection Stat.
-        qw_s = kstem(qw.downcase)
-        weights = get_col_freq(:prob=>true).map_hash{|k,v|[k,v[qw_s]] if v[qw_s] && $fields.include?(k)} 
-        mps[i] = [qw]
-        #debugger
-        col_scores[qw_s], mps[i][1] = *scale_map_prob(qw_s, weights, cs_type, o)
+      mps = get_map_prob(query)
+      col_scores = mps.map do |mp|
+        mp_group = mp.group_by{|k,v|k.split("_")[0]}
+        col_scores_qw = COL_TYPES.map_hash { |col|
+          #debugger
+          unless mp_group[col]
+            [col,col_score_def]
+          else
+            case cs_type
+            when :uniform
+              [col, 1.0]
+            when :mpmax
+              [col, mp_group[col].max{|a,b|a[1]<=>b[1]}[1]]
+            when :mpmean
+              [col, mp_group[col].map{|e|e[1]}.mean]
+            when :cql
+              [col, (get_clm_by_col()[col][qw] || col_score_def)]
+            end
+          end
+        }.to_p
+        debug "[get_cs_score] #{qw} : #{col_scores_qw.to_a.sort_val.inspect}"
+        [qw,col_scores_qw]
       end
-      if cs_type == :uniform
-        cs_scores = COL_TYPES.map{|e|[e,1.0]}.to_p
-      else
-        cs_scores = col_scores.values.merge_by_product.normalize.r3.to_a.sort_val
-      end
+      cs_score = col_scores.values.merge_by_product.normalize
     rescue Exception => e
-      puts "[get_col_scores] Exception caused by col_scores = #{col_scores.inspect}"
+      puts "[get_cs_score] Exception caused by col_scores = #{col_scores.inspect}"
     end
     $cs_scores ||= {} 
     $cs_scores[query] ||= {}  
-    $cs_scores[query][cs_type] = cs_scores
-    info "[get_col_scores] #{cs_type}|#{query} : #{cs_scores.inspect}"
-    cs_scores
+    $cs_scores[query][cs_type] = cs_score
+    info "[get_cs_score] #{cs_type} | #{query} : #{cs_score.r3.to_a.sort_val}"
+    cs_score
   end
   
   #recover stemmed 'word' from 'source'
@@ -118,7 +124,7 @@ module PRMHelper
   
   #PRM-S with multiple sub-collections
   def get_multi_col_query(query, o={})
-    col_scores = get_col_scores(query, o[:cs_type], o).to_h
+    col_scores = get_cs_score(query, o[:cs_type], o)
     info "[get_multi_col_query] col_scores = #{col_scores.inspect}"
     result = $fields.group_by{|e|e.split('_')[0]}.map do |col,fields|
       sub_query = get_prm_query(query, o.merge(:prm_fields=>fields,:cs_type=>nil))
