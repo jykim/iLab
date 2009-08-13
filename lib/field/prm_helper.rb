@@ -25,7 +25,7 @@ module PRMHelper
         when :mpmean
           [col, mp_group[col].map{|e|e[1]}.mean]
         when :cql
-          [col, (get_clm_by_col()[col][qw]||0.0)]
+          [col, (get_clm_by_col()[col][qw]||0.0001)]
         end
       end
     }.to_p.smooth(cs_smooth)
@@ -81,7 +81,7 @@ module PRMHelper
         cs_scores = col_scores.values.merge_by_product.normalize.r3.to_a.sort_val
       end
     rescue Exception => e
-      puts "[get_col_scores] #{col_scores.inspect}"
+      puts "[get_col_scores] Exception caused by col_scores = #{col_scores.inspect}"
     end
     $cs_scores ||= {} 
     $cs_scores[query] ||= {}  
