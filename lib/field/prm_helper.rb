@@ -25,11 +25,11 @@ module PRMHelper
         when :mpmean
           [col, mp_group[col].map{|e|e[1]}.mean]
         when :cql
-          [col, (get_clm_by_col()[col][qw]||0.0001)]
+          [col, (get_clm_by_col()[col][qw] || 0.0001)]
         end
       end
     }.to_p.smooth(cs_smooth)
-    debug "[scale_map_prob] #{qw} : #{col_scores.r2.to_a.sort_val.inspect}"
+    debug "[scale_map_prob] #{qw} : #{col_scores.to_a.sort_val.inspect}"
     #debugger
     [col_scores, mp_group.map{|col,fields|fields.to_p(col_scores[col]).to_a.sort_val}.collapse]
   end
@@ -105,7 +105,7 @@ module PRMHelper
   #    "#wsum(#{1-lambdas[i]} #{get_tew_query([mp], o)} #{lambdas[i]} #{mp[0]})"
   #  end
   #end
-      
+  
   #Get query for field-level weighting
   def get_prm_query(query, o={})
     mps = get_map_prob(query, o)
@@ -160,9 +160,9 @@ module PRMHelper
 
   def get_phrase_field_weight(query, phrase_flag = 0)
     index_path = case $col
-      when 'imdb' : '/work1/xuexb/DBProject/index_plot'
-      when 'monster' : '/work1/xuexb/DBProject/index_monster'
-      end
+                 when 'imdb' : '/work1/xuexb/DBProject/index_plot'
+                 when 'monster' : '/work1/xuexb/DBProject/index_monster'
+                 end
     out_filepath = to_path("phrase_#{phrase_flag}_p#{File.basename(index_path)}_#{query.gsub(/ /,"-")}.tmp")
     if !fcheck(out_filepath) || $o[:redo]
       cmd = fwrite('cmd_get_phrase_field_weight.log' , " /work1/xuexb/DBProject/app/PhraseMappingProb #{index_path} #{out_filepath} #{phrase_flag} 10 #{query}" , :mode=>'a') ; `#{cmd}`
