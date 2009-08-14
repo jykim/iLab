@@ -49,22 +49,18 @@ module PRMHelper
       o[:fix_mp_for].map{|k,v|mp[k] = v} if o[:fix_mp_for]
       mps[i] = [qw, mp.find_all{|e|e[1]>0}.to_a.sort_val]
     end
-    #cs_scores =  col_scores.merge_by_product.to_p.r2.sort_val
-    #$top_cols ||= {} 
-    #$top_cols[query] ||= {}
-    #$top_cols[query][o[:cs_type]] = cs_scores[0]
-    #info "[get_map_prob] #{query} : #{cs_scores.inspect}" if o[:cs_type]
     mps.find_all{|mp|mp[1].size>0}
   end
   
-  def get_cs_score(query, cs_type, o)
-    mps = [] ; col_scores = {} ; col_score_def = 0.0001
+  def get_cs_score(query, cs_type, o={})
+    col_score_def = 0.0001
     return $cs_scores[query][cs_type] if $cs_scores && $cs_scores[query] && $cs_scores[query][cs_type]
     return COL_TYPES.map{|e|[e,1.0]}.to_p if cs_type == :uniform
-    begin
+    #begin
       mps = get_map_prob(query)
-      col_scores = mps.map do |mp|
-        mp_group = mp.group_by{|k,v|k.split("_")[0]}
+      col_scores = mps.map_hash do |mp|
+        qw = mp[0]
+        mp_group = mp[1].group_by{|e|e[0].split("_")[0]}
         col_scores_qw = COL_TYPES.map_hash { |col|
           #debugger
           unless mp_group[col]
@@ -80,19 +76,19 @@ module PRMHelper
             when :cql
               [col, (get_clm_by_col()[col][qw] || col_score_def)]
             end
-          end
+          end#col_scores_qw
         }.to_p
         debug "[get_cs_score] #{qw} : #{col_scores_qw.to_a.sort_val.inspect}"
         [qw,col_scores_qw]
-      end
-      cs_score = col_scores.values.merge_by_product.normalize
-    rescue Exception => e
-      puts "[get_cs_score] Exception caused by col_scores = #{col_scores.inspect}"
-    end
+      end#col_scores
+      cs_score = col_scores.values.merge_by_product.to_p
+    #rescue Exception => e
+    #  puts "[get_cs_score] Exception caused by col_scores = #{col_scores.inspect} \n" + $!
+    #end
     $cs_scores ||= {} 
     $cs_scores[query] ||= {}  
     $cs_scores[query][cs_type] = cs_score
-    info "[get_cs_score] #{cs_type} | #{query} : #{cs_score.r3.to_a.sort_val}"
+    info "[get_cs_score] #{cs_type} | #{query} : #{cs_score.r3.to_a.sort_val.inspect}"
     cs_score
   end
   
