@@ -17,7 +17,7 @@ if $o[:verbose]
   $i.qsa[0].qrys.each do |q|
     next if $i.qsa[0].stat[q.qid.to_s] == nil
     did_rl = q.rl.docs[0].did
-    col_rl = COL_TYPES.find_all{|col|did_rl.scan(/#{to_ext(col)}/).size>0}
+    col_rl = COL_TYPES.find_all{|col|did_rl.scan(/#{to_ext(col)}/).size>0}[0]
     #dno_rl = $engine.to_dno(q.rl.docs[0].did) if $o[:gen_prob]
     #gen_probs = topic_types.map{|topic_type| $engine.get_gen_prob(q.text, dno_rl , topic_type, :doc_no=>doc_no) }
 

@@ -63,7 +63,8 @@ class QuerySet
   def calc_stat(file_qrel, o={})
     run_trec_eval(file_qrel , @name+'.res') if !fcheck(@name+'.eval') || $o[:redo] || o[:redo]
     a = dsvread(@name+'.eval')
-    @stat = {} ; a.each{|l| @stat[l[1]] = {} if !@stat[l[1]] ; @stat[l[1]][l[0]] = l[2].to_f.r3}
+    @stat = @qh.map_hash{|k,v|[k.to_s,nil]}
+    a.each{|l| @stat[l[1]] = {} if !@stat[l[1]] ; @stat[l[1]][l[0]] = l[2].to_f.r3}
     # @stat2 = {} ; a.each{|l| @stat2[l[0]] = {} if !@stat2[l[0]] ; @stat2[l[0]][l[1]] = l[2].to_f}
     @stat
   end
