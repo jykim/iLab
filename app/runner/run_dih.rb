@@ -75,8 +75,8 @@ def ILabLoader.build(ilab)
         MERGE_TYPES.each do |merge_type| 
           ilab.crt_add_meta_query_set("#{$query_prefix}_DQL"  , 
             $o.merge(:smoothing=>$sparam, :norm=>norm_type, :col_weight=>col_weight, :cs_type=>cs_type, :merge_type=>merge_type))
-          ilab.crt_add_meta_query_set("#{$query_prefix}_PRM-S", 
-            $o.merge(:template=>:prm, :smoothing=>$sparam, :norm=>norm_type, :col_weight=>col_weight, :cs_type=>cs_type, :merge_type=>merge_type))
+          #ilab.crt_add_meta_query_set("#{$query_prefix}_PRM-S", 
+          #  $o.merge(:template=>:prm, :smoothing=>$sparam, :norm=>norm_type, :col_weight=>col_weight, :cs_type=>cs_type, :merge_type=>merge_type))
         end
       end
     end
@@ -363,6 +363,12 @@ rescue DataError
   exit
 end
 
+def send_report
+  $i.create_report_index
+  info("Sending report to belmont...")
+  `ssh jykim@belmont 'source ~/.bash_profile;/usr/dan/users4/jykim/dev/rails/lifidea/script/sync_rpt.rb dih #{$col}'`
+end
+
 #Run Experiment & Generate Report
 info("Experiment '#{$exp}' started..")
 if $o[:env]
@@ -370,9 +376,8 @@ if $o[:env]
   $r[:expid] = get_expid_from_env()
   info("RETURN<#{$r.inspect}>RETURN")
 else
-  eval IO.read(to_path('exp_'+$exp+'.rb'))
-  $i.create_report_index
+  load to_path('exp_'+$exp+'.rb')
+  send_report()
+  #eval IO.read(to_path('exp_'+$exp+'.rb'))
 end
-info("Sending report to belmont...")
-`ssh jykim@belmont 'source ~/.bash_profile;/usr/dan/users4/jykim/dev/rails/lifidea/script/sync_rpt.rb dih #{$col}'`
 info("For #{get_expid_from_env()} experiment, #{Time.now - $t_start} second elapsed...")

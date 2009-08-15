@@ -26,8 +26,13 @@ if $o[:verbose]
     #no_rel_docs, no_res_docs= q.rl.docs.size , q.rs.docs.size
     #len_rel_docs = (q.rl.docs.size>0)? q.rl.docs.map{|e|e.size}.mean : -1.0
     #stdev_len_rel_docs = (q.rl.docs.size>0)? q.rl.docs.map{|e|e.size}.stdev : -1.0
+    if $cs_scores[q.text]
+      #debug "#{q.text} / #{did_rl}"
+      cols_cs = CS_TYPES.map{|e|did_rl.scan(to_ext($cs_scores[q.text][e].r3.to_a.sort_val[0][0])).size}
+      scores_cs = CS_TYPES.map{|e|$cs_scores[q.text][e][col_rl].r3}
+    end
     $tbl_qry << [q.qid, q.text ,$i.qsa.map{|e|e.stat[q.qid.to_s]['map']}, col_rl , 
-      CS_TYPES.map{|e|did_rl.scan(to_ext($cs_scores[q.text][e][0][0])).size}, CS_TYPES.map{|e|$cs_scores[q.text][e][0].join(":")}].flatten #, gen_probs, word_cnt, no_rel_docs, no_res_docs, len_rel_docs.r2, stdev_len_rel_docs.r2,
+      cols_cs, scores_cs].flatten #, gen_probs, word_cnt, no_rel_docs, no_res_docs, len_rel_docs.r2, stdev_len_rel_docs.r2,
     $tbl_qry.last << gen_probs if $o[:gen_prob]
   end
   #$tbl_qry << ["AVG" , "PERF" , (2..9).to_a.map{|i|$tbl_qry[1..-1].avg_col(i).r3} , "COL_SCORE" , (11..14).to_a.map{|i|$tbl_qry[1..-1].avg_col(i).r3}].flatten
