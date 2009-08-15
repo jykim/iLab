@@ -1,8 +1,10 @@
 #topic_types = ['D_RN','D_TF','D_IDF','D_TIDF','F_RN_RN','F_RN_TF','F_RN_IDF','F_RN_TIDF']
 $i.qsa.map{|e| `cp #{to_path(e.name+'.qry')} #{to_path('qry_'+e.name+'.txt')}`}
 $tbl_qry = []
-$tbl_qry << ['qid', 'text' , $i.qsa.map{|e|e.short_name = e.name.gsub($query_prefix+'_',"")}, 'rdoc', CS_TYPES, CS_TYPES].flatten #', topic_types, word_cnt', 'no_rel', 'no_res', 'len_rel', 'stdev_len_rel',
+$tbl_qry << ['qid', 'text' , $i.qsa.map{|e|e.short_name = e.name.gsub($query_prefix+'_',"")}, 'rdoc', CS_TYPES, CS_TYPES, $ret_models].flatten #', topic_types, word_cnt', 'no_rel', 'no_res', 'len_rel', 'stdev_len_rel',
+$ret_models = $i.qsa.map{|qs|qs[:template]}.unique
 $tbl_qry[0] << topic_types if $o[:gen_prob]
+
 if $o[:verbose]
   #Length Stat
   #$i.calc_length_stat
@@ -31,8 +33,10 @@ if $o[:verbose]
       cols_cs = CS_TYPES.map{|e|did_rl.scan(to_ext($cs_scores[q.text][e].r3.to_a.sort_val[0][0])).size}
       scores_cs = CS_TYPES.map{|e|$cs_scores[q.text][e][col_rl].r3}
     end
-    $tbl_qry << [q.qid, q.text ,$i.qsa.map{|e|e.stat[q.qid.to_s]['map']}, col_rl , 
-      cols_cs, scores_cs].flatten #, gen_probs, word_cnt, no_rel_docs, no_res_docs, len_rel_docs.r2, stdev_len_rel_docs.r2,
+    if $avg_doc_scores[q.qid]
+      avg_doc_scores = $ret_models.map{|e|$avg_doc_scores[q.qid][e][col_rl].r3}
+    end
+    $tbl_qry << [q.qid, q.text ,$i.qsa.map{|e|e.stat[q.qid.to_s]['map']}, col_rl, cols_cs, scores_cs, avg_doc_scores].flatten #, gen_probs, word_cnt, no_rel_docs, no_res_docs, len_rel_docs.r2, stdev_len_rel_docs.r2,
     $tbl_qry.last << gen_probs if $o[:gen_prob]
   end
   #$tbl_qry << ["AVG" , "PERF" , (2..9).to_a.map{|i|$tbl_qry[1..-1].avg_col(i).r3} , "COL_SCORE" , (11..14).to_a.map{|i|$tbl_qry[1..-1].avg_col(i).r3}].flatten
