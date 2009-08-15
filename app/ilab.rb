@@ -14,6 +14,7 @@ class ILab
   
   def initialize(exp_name = 'test', o = {})
     @name = exp_name
+    @data_fetched = false
     @o = o
     $engine = case (o[:engine_type] || DEFAULT_ENGINE_TYPE)
               when :indri
@@ -158,6 +159,8 @@ class ILab
   def fetch_data
     # Relevance
     #@rl.calc_count_rel
+    return if @data_fetched && !$o[:redo]
+    @data_fetched = true
     h_rl = @rl.docs.map_hash{|d| [[d.did,d.qid].join , d.relevance]}
     @rs.each{|k,v| v.docs.each{ |d| d.fetch_relevance(h_rl) }}
     info "relevance fetched..."
