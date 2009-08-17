@@ -55,8 +55,9 @@ module PRMHelper
   def get_cs_score(query, cs_type, o={})
     col_score_def = 0.0001
     return $cs_scores[query][cs_type] if $cs_scores && $cs_scores[query] && $cs_scores[query][cs_type]
-    return COL_TYPES.map{|e|[e,1.0]}.to_p if cs_type == :uniform
-    #begin
+    cs_score = if cs_type == :uniform
+      COL_TYPES.map{|e|[e,1.0]}.to_p
+    else
       mps = get_map_prob(query)
       col_scores = mps.map_hash do |mp|
         qw = mp[0]
@@ -81,13 +82,17 @@ module PRMHelper
         debug "[get_cs_score] #{qw} : #{col_scores_qw.to_a.sort_val.inspect}"
         [qw,col_scores_qw]
       end#col_scores
-      cs_score = col_scores.values.merge_by_product.to_p
-    #rescue Exception => e
-    #  puts "[get_cs_score] Exception caused by col_scores = #{col_scores.inspect} \n" + $!
-    #end
-    $cs_scores ||= {} 
-    $cs_scores[query] ||= {}  
+      col_scores.values.merge_by_product.to_p
+    end
+    $cs_scores ||= {}
+    $cs_scores[query] ||= {}
     $cs_scores[query][cs_type] = cs_score
+    if $cs_scores[query][:mpmean] && $cs_scores[query][:cql]
+      [0.3,0.6,0.9].map do |n|
+        $cs_types << (cs_name = "mpmean_cql#{n*10*to_i}".to_sym)
+        $cs_scores[query][cs_name] = $cs_scores[query][:mpmean].smooth(n, $cs_scores[query][:cql])
+      end
+    end
     info "[get_cs_score] #{cs_type} | #{query} : #{cs_score.r3.to_a.sort_val.inspect}"
     cs_score
   end

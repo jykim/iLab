@@ -1,9 +1,11 @@
 #topic_types = ['D_RN','D_TF','D_IDF','D_TIDF','F_RN_RN','F_RN_TF','F_RN_IDF','F_RN_TIDF']
 $i.qsa.map{|e| `cp #{to_path(e.name+'.qry')} #{to_path('qry_'+e.name+'.txt')}`}
-$tbl_qry = []
-$tbl_qry << ['qid', 'text' , $i.qsa.map{|e|e.short_name = e.name.gsub($query_prefix+'_',"")}, 'rdoc', CS_TYPES, CS_TYPES, $ret_models].flatten #', topic_types, word_cnt', 'no_rel', 'no_res', 'len_rel', 'stdev_len_rel',
+$qrys = $i.qsa[0].qrys
+$tbl_qry = [['qid', 'text']].concat($qrys.map{|q|[q.did,q.text]}).concat(["%","%"])
 $ret_models = $i.qsa.map{|qs|qs[:template]}.unique
-$tbl_qry[0] << topic_types if $o[:gen_prob]
+
+$tbl_all = [['Measure','MAP','P5','P10','P20']]
+$tbl_all.concat $i.qsa.map{|qs|["\"#{qs.short_name}\":#{'qry_'+qs.name+'.txt'}"].concat($tbl_all[0][1..-1].map{|e|qs.stat['all'][e]})}
 
 if $o[:verbose]
   #Length Stat
@@ -15,30 +17,25 @@ if $o[:verbose]
   #Stat (e.g. MAP)
   #$i.calc_stat
 
-  doc_no = $engine.get_col_stat()[:doc_no] if $o[:gen_prob]
-  $i.qsa[0].qrys.each do |q|
-    next if $i.qsa[0].stat[q.qid.to_s] == nil
-    did_rl = q.rl.docs[0].did
-    col_rl = COL_TYPES.find_all{|col|did_rl.scan(/#{to_ext(col)}/).size>0}[0]
-    #dno_rl = $engine.to_dno(q.rl.docs[0].did) if $o[:gen_prob]
-    #gen_probs = topic_types.map{|topic_type| $engine.get_gen_prob(q.text, dno_rl , topic_type, :doc_no=>doc_no) }
+  #$tbl_qry[0] << topic_types if $o[:gen_prob]
+  #doc_no = $engine.get_col_stat()[:doc_no] if $o[:gen_prob]
+  #gen_probs = topic_types.map{|topic_type| $engine.get_gen_prob(q.text, dno_rl , topic_type, :doc_no=>doc_no) }
+  
+  $did_rl = $qrys.map_hash{|q|[q.qid, q.rl.docs[0].did]}
+  $col_rl = $qrys.map_hash{|q|[q.qid, COL_TYPES.find_all{|col|$did_rl[q.qid].scan(/#{to_ext(col)}/).size>0}[0]]}
+  
+  $tbl_qry.add_cols $cs_types.map{|e|"r#{e}"}, 
+    $qrys.map{|q|$cs_types.map{|e|$did_rl[q.qid].scan(to_ext($cs_scores[q.text][e].r3.to_a.sort_val[0][0])).size}}
 
-    #word_cnt = q.text.split(' ').size
-    #\len_res_docs = q.rs.docs.map{|e|e.size}.mean
-    #no_rel_docs, no_res_docs= q.rl.docs.size , q.rs.docs.size
-    #len_rel_docs = (q.rl.docs.size>0)? q.rl.docs.map{|e|e.size}.mean : -1.0
-    #stdev_len_rel_docs = (q.rl.docs.size>0)? q.rl.docs.map{|e|e.size}.stdev : -1.0
-    if $cs_scores[q.text]
-      #debug "#{q.text} / #{did_rl}"
-      cols_cs = CS_TYPES.map{|e|did_rl.scan(to_ext($cs_scores[q.text][e].r3.to_a.sort_val[0][0])).size}
-      scores_cs = CS_TYPES.map{|e|$cs_scores[q.text][e][col_rl].r3}
-    end
-    if $avg_doc_scores[q.qid]
-      avg_doc_scores = $ret_models.map{|e|$avg_doc_scores[q.qid][e][col_rl].r3}
-    end
-    $tbl_qry << [q.qid, q.text ,$i.qsa.map{|e|e.stat[q.qid.to_s]['map']}, col_rl, cols_cs, scores_cs, avg_doc_scores].flatten #, gen_probs, word_cnt, no_rel_docs, no_res_docs, len_rel_docs.r2, stdev_len_rel_docs.r2,
-    $tbl_qry.last << gen_probs if $o[:gen_prob]
-  end
+  $tbl_qry.add_cols $cs_types.map{|e|"s#{e}"}, 
+    $qrys.map{|q|$cs_types.map{|e|$cs_scores[q.text][e][col_rl].r3}}
+    
+  $tbl.add_cols $i.qsa.map{|e|e.short_name = e.name.gsub($query_prefix+'_',"")}, 
+    $qrys.map{|q|$i.qsa.map{|e|e.stat[q.qid.to_s]['map']}}
+
+  #$tbl_qry.add_cols $ret_models, 
+  #  $ret_models.map{|e|$avg_doc_scores[q.qid][e][$col_rl[q.qid]].r3}
+  
   #$tbl_qry << ["AVG" , "PERF" , (2..9).to_a.map{|i|$tbl_qry[1..-1].avg_col(i).r3} , "COL_SCORE" , (11..14).to_a.map{|i|$tbl_qry[1..-1].avg_col(i).r3}].flatten
   $sig_test, $log_reg = {}, {}
   if $i.check_R()

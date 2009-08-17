@@ -70,11 +70,11 @@ def ILabLoader.build(ilab)
   when 'meta'
     #debugger
     col_weight = $o[:col_weight] || 0.4
-    CS_TYPES.each do |cs_type| #CS_TYPES
+    $cs_types.each do |cs_type| #$cs_types
       NORM_TYPES.each do |norm_type| 
         MERGE_TYPES.each do |merge_type| 
           ilab.crt_add_meta_query_set("#{$query_prefix}_DQL"  , 
-            $o.merge(:smoothing=>$sparam, :norm=>norm_type, :col_weight=>col_weight, :cs_type=>cs_type, :merge_type=>merge_type))
+            $o.merge(:template=>:ql, :smoothing=>$sparam, :norm=>norm_type, :col_weight=>col_weight, :cs_type=>cs_type, :merge_type=>merge_type))
           ilab.crt_add_meta_query_set("#{$query_prefix}_PRM-S", 
             $o.merge(:template=>:prm, :smoothing=>$sparam, :norm=>norm_type, :col_weight=>col_weight, :cs_type=>cs_type, :merge_type=>merge_type))
         end
@@ -91,7 +91,7 @@ def ILabLoader.build(ilab)
     #Top-score collection for each query
     # Difference for each collection score type
     ilab.crt_add_query_set("#{$query_prefix}_DQL", :smoothing=>$sparam)
-    CS_TYPES.each do |cs_type|
+    $cs_types.each do |cs_type|
       ilab.crt_add_query_set("#{$query_prefix}_PRM-S_mcs#{cs_type}_#{$o[:cs_smooth]}" , 
         :cs_type=>cs_type, :cs_smooth=>$o[:cs_smooth], :template=>:multi_col, :smoothing=>$sparam)
     end
@@ -100,7 +100,7 @@ def ILabLoader.build(ilab)
     #Top-score collection for each query
     # Difference for each collection score type
     ilab.crt_add_query_set("#{$query_prefix}_DQL", :smoothing=>$sparam)
-    CS_TYPES.each do |cs_type|
+    $cs_types.each do |cs_type|
       #ilab.crt_add_query_set("#{$query_prefix}_DQL_cs#{cs_type}" , :cs_type=>cs_type, :smoothing=>$sparam)
       ilab.crt_add_query_set("#{$query_prefix}_PRM-S_cs#{cs_type}" , 
         :cs_type=>cs_type, :template=>:prm, :smoothing=>$sparam)

@@ -117,10 +117,10 @@ class ResultDocumentSet < DocumentSet
           d.score_rn(qs.rs.max_score(d.qid),qs.rs.min_score(d.qid))
         end
         #debugger if qs.rs.max_score > 0
-        $avg_doc_score = {} if !$avg_doc_score
-        $avg_doc_score[d.qid] = {} if !$avg_doc_score[d.qid]
-        $avg_doc_score[d.qid][qs[:template]] = {} if !$avg_doc_score[d.qid][qs[:template]]
-        $avg_doc_score[d.qid][qs[:template]][qs[:col_type]] = (Math.exp(qs.rs.max_score(d.qid)) + Math.exp(qs.rs.min_score(d.qid)))/2
+        #$avg_doc_score = {} if !$avg_doc_score
+        #$avg_doc_score[d.qid] = {} if !$avg_doc_score[d.qid]
+        #$avg_doc_score[d.qid][qs[:template]] = {} if !$avg_doc_score[d.qid][qs[:template]]
+        #$avg_doc_score[d.qid][qs[:template]][qs[:col_type]] = (Math.exp(qs.rs.max_score(d.qid)) + Math.exp(qs.rs.min_score(d.qid)))/2
         info "[create_by_merge] #{qs.rs.name} max_score: #{qs.rs.max_score(d.qid)} min_score: #{qs.rs.min_score(d.qid)}" if d.qid == 1 && d.rank == 1
         if d.qid.to_i <= 0
           err "[create_by_merge] invalid qid = #{d.qid} for did = #{d.did}"

@@ -1,16 +1,7 @@
 = Experiment
 == Overall Performance
-|Measure<%= $i.qsa.map{|e|"\"#{e.short_name}\":#{'qry_'+e.name+'.txt'}"}.to_tbl %>
-|MAP<%= map = $i.qsa.map{|e|e.stat['all']['map']}.to_tbl(:mode=>:min) %>
-|Bpref<%= bpref = $i.qsa.map{|e|e.stat['all']['bpref']}.to_tbl(:mode=>:min) %>
-|RecipRank<%= map = $i.qsa.map{|e|e.stat['all']['recip_rank']}.to_tbl(:mode=>:min) %>
 
-|Measure<%= $i.qsa.map{|e|e.short_name}.to_tbl %>
-|Prec@5<%= $i.qsa.map{|e|e.stat['all']['P5']}.to_tbl(:mode=>:min) %>
-|Prec@10<%= $i.qsa.map{|e|e.stat['all']['P10']}.to_tbl(:mode=>:min) %>
-|Prec@20<%= $i.qsa.map{|e|e.stat['all']['P20']}.to_tbl(:mode=>:min) %>
-|Prec@100<%= $i.qsa.map{|e|e.stat['all']['P100']}.to_tbl(:mode=>:min) %>
-|Prec@1000<%= $i.qsa.map{|e|e.stat['all']['P1000']}.to_tbl(:mode=>:min) %>
+<%= $tbl_all.map{|e|e.to_tbl}.join("\n") %>
 
 <% if $o[:verbose] %>
 

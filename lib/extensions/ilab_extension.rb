@@ -192,6 +192,23 @@ class Array
     sum = map{|e|e[1]}.sum.to_f
     map{|e| [e[0] , e[1] / sum * factor]}
   end
+  
+  # Format each row as table with min/max highlight
+  # self : [e1-1, e1-2, ...]
+  def to_tbl(o={})
+    style = (o[:style])? "{#{o[:style]}}. " : ""
+    a = case o[:mode]
+        when :max
+          max_e = max.to_f
+          map{|e|(e==max_e)? "*#{e.to_s}*" : "#{e}(#{((e-max_e)/max_e*100).round_at(1)}%)"}
+        when :min
+          min_e = min.to_f
+          map{|e|(e==min_e)? "#{e.to_s}" : "#{e}(#{((e-min_e)/min_e*100).round_at(1)}%)"}
+        else
+          self
+        end
+    "|"+style+a.join('|')+"|"
+  end
 
   #  combination of members
   # [a,b,c] => [[a,b],[a,c],[b,c]]

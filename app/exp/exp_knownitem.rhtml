@@ -2,7 +2,7 @@
 = Accuracy of M.P. Estimation
 |QID|Query|<%=$i.qsa.map{|e|e.short_name = e.name.gsub($query_prefix+'_',"")}.join("|")%>|Optimal|MappingProb.|FieldRatio|FieldMapping|
 <%= $result.map{|e|e.to_tbl}.join("\n") %>
-|-|Avg_Perf|<%=$i.qsa.map{|e|e.stat["all"]["map"]}.join("|")%>|<%= $opt_perf.mean%>|<%= $mp_scores.mean %>|<%= $fm_ratios.merge_elements.sort_by{|e|e[1]}.reverse.to_p[0].join(":")%>|
+|-|Avg_Perf|<%=$i.qsa.map{|e|e.stat["all"]["map"]}.join("|")%>|<%= $opt_perf.mean%>|<%= $mp_scores.mean %>|<%= $fm_ratios.values.merge_elements.sort_by{|e|e[1]}.reverse.to_p[0].join(":")%>|
 
 <% if $train_mode %>
 = CRF Training Result
