@@ -1,8 +1,10 @@
 #topic_types = ['D_RN','D_TF','D_IDF','D_TIDF','F_RN_RN','F_RN_TF','F_RN_IDF','F_RN_TIDF']
+$ret_models = $i.qsa.map{|qs|qs[:template]}.uniq
+$cs_types = CS_TYPES - [:uniform]
 $i.qsa.map{|e| `cp #{to_path(e.name+'.qry')} #{to_path('qry_'+e.name+'.txt')}`}
 $tbl_qry = []
-$tbl_qry << ['qid', 'text' , $i.qsa.map{|e|e.short_name = e.name.gsub($query_prefix+'_',"")}, 'rdoc', CS_TYPES, CS_TYPES, $ret_models].flatten #', topic_types, word_cnt', 'no_rel', 'no_res', 'len_rel', 'stdev_len_rel',
-$ret_models = $i.qsa.map{|qs|qs[:template]}.unique
+$tbl_qry << ['qid', 'text' , $i.qsa.map{|e|e.short_name = e.name.gsub($query_prefix+'_',"")}, 'rdoc', $cs_types, $cs_types, $ret_models].flatten #', topic_types, word_cnt', 'no_rel', 'no_res', 'len_rel', 'stdev_len_rel',
+
 $tbl_qry[0] << topic_types if $o[:gen_prob]
 
 if $o[:verbose]
@@ -30,11 +32,11 @@ if $o[:verbose]
     #stdev_len_rel_docs = (q.rl.docs.size>0)? q.rl.docs.map{|e|e.size}.stdev : -1.0
     if $cs_scores[q.text]
       #debug "#{q.text} / #{did_rl}"
-      cols_cs = CS_TYPES.map{|e|did_rl.scan(to_ext($cs_scores[q.text][e].r3.to_a.sort_val[0][0])).size}
-      scores_cs = CS_TYPES.map{|e|$cs_scores[q.text][e][col_rl].r3}
+      cols_cs = $cs_types.map{|e|did_rl.scan(to_ext($cs_scores[q.text][e].r3.to_a.sort_val[0][0])).size}
+      scores_cs = $cs_types.map{|e|$cs_scores[q.text][e][col_rl].r3}
     end
-    if $avg_doc_scores[q.qid]
-      avg_doc_scores = $ret_models.map{|e|$avg_doc_scores[q.qid][e][col_rl].r3}
+    if $avg_doc_score[q.qid]
+      avg_doc_scores = $ret_models.map{|e|$avg_doc_score[q.qid][e].to_p[col_rl].r3}
     end
     $tbl_qry << [q.qid, q.text ,$i.qsa.map{|e|e.stat[q.qid.to_s]['map']}, col_rl, cols_cs, scores_cs, avg_doc_scores].flatten #, gen_probs, word_cnt, no_rel_docs, no_res_docs, len_rel_docs.r2, stdev_len_rel_docs.r2,
     $tbl_qry.last << gen_probs if $o[:gen_prob]

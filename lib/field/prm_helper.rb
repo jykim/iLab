@@ -55,7 +55,7 @@ module PRMHelper
   def get_cs_score(query, cs_type, o={})
     col_score_def = 0.0001
     return $cs_scores[query][cs_type] if $cs_scores && $cs_scores[query] && $cs_scores[query][cs_type]
-    return COL_TYPES.map{|e|[e,1.0]}.to_p if cs_type == :uniform
+    return COL_TYPES.map_hash{|e|[e,1.0]}.to_p if cs_type == :uniform
     #begin
       mps = get_map_prob(query)
       col_scores = mps.map_hash do |mp|
