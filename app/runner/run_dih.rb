@@ -363,7 +363,8 @@ rescue DataError
   exit
 end
 
-def send_report
+def process_report
+  load to_path('exp_'+$exp+'.rb')
   $i.create_report_index
   info("Sending report to belmont...")
   `ssh jykim@belmont 'source ~/.bash_profile;/usr/dan/users4/jykim/dev/rails/lifidea/script/sync_rpt.rb dih #{$col}'`
@@ -376,8 +377,7 @@ if $o[:env]
   $r[:expid] = get_expid_from_env()
   info("RETURN<#{$r.inspect}>RETURN")
 else
-  load to_path('exp_'+$exp+'.rb')
-  send_report()
+  process_report()
   #eval IO.read(to_path('exp_'+$exp+'.rb'))
 end
 info("For #{get_expid_from_env()} experiment, #{Time.now - $t_start} second elapsed...")

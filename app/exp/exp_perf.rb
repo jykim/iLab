@@ -1,8 +1,8 @@
 #topic_types = ['D_RN','D_TF','D_IDF','D_TIDF','F_RN_RN','F_RN_TF','F_RN_IDF','F_RN_TIDF']
+$ret_models = $i.qsa.map{|qs|qs[:template]}.uniq
 $i.qsa.map{|e| `cp #{to_path(e.name+'.qry')} #{to_path('qry_'+e.name+'.txt')}`}
 $qrys = $i.qsa[0].qrys
 $tbl_qry = [['qid', 'text']].concat($qrys.map{|q|[q.did,q.text]}).concat(["%","%"])
-$ret_models = $i.qsa.map{|qs|qs[:template]}.unique
 
 $tbl_all = [['Measure','MAP','P5','P10','P20']]
 $tbl_all.concat $i.qsa.map{|qs|["\"#{qs.short_name}\":#{'qry_'+qs.name+'.txt'}"].concat($tbl_all[0][1..-1].map{|e|qs.stat['all'][e]})}
@@ -34,7 +34,7 @@ if $o[:verbose]
     $qrys.map{|q|$i.qsa.map{|e|e.stat[q.qid.to_s]['map']}}
 
   #$tbl_qry.add_cols $ret_models, 
-  #  $ret_models.map{|e|$avg_doc_scores[q.qid][e][$col_rl[q.qid]].r3}
+  #  $ret_models.map{|e|$avg_doc_scores[q.qid][e].to_p[$col_rl[q.qid]].r3}
   
   #$tbl_qry << ["AVG" , "PERF" , (2..9).to_a.map{|i|$tbl_qry[1..-1].avg_col(i).r3} , "COL_SCORE" , (11..14).to_a.map{|i|$tbl_qry[1..-1].avg_col(i).r3}].flatten
   $sig_test, $log_reg = {}, {}
