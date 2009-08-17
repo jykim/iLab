@@ -70,7 +70,7 @@ def ILabLoader.build(ilab)
   when 'meta'
     #debugger
     col_weight = $o[:col_weight] || 0.4
-    $cs_types.each do |cs_type| #$cs_types
+    [:uniform,:cql,:mpmax,:mpmean].each do |cs_type|
       NORM_TYPES.each do |norm_type| 
         MERGE_TYPES.each do |merge_type| 
           ilab.crt_add_meta_query_set("#{$query_prefix}_DQL"  , 

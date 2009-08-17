@@ -56,7 +56,7 @@ module PRMHelper
     col_score_def = 0.0001
     return $cs_scores[query][cs_type] if $cs_scores && $cs_scores[query] && $cs_scores[query][cs_type]
     cs_score = if cs_type == :uniform
-      COL_TYPES.map{|e|[e,1.0]}.to_p
+      COL_TYPES.map_hash{|e|[e,1.0]}.to_p
     else
       mps = get_map_prob(query)
       col_scores = mps.map_hash do |mp|
@@ -83,13 +83,13 @@ module PRMHelper
         [qw,col_scores_qw]
       end#col_scores
       col_scores.values.merge_by_product.to_p
-    end
+    end#cs_score
     $cs_scores ||= {}
     $cs_scores[query] ||= {}
     $cs_scores[query][cs_type] = cs_score
     if $cs_scores[query][:mpmean] && $cs_scores[query][:cql]
       [0.3,0.6,0.9].map do |n|
-        $cs_types << (cs_name = "mpmean_cql#{n*10*to_i}".to_sym)
+        $cs_types << (cs_name = "mpmean_cql#{(n*10).to_i}".to_sym)
         $cs_scores[query][cs_name] = $cs_scores[query][:mpmean].smooth(n, $cs_scores[query][:cql])
       end
     end

@@ -1,3 +1,4 @@
+load "rubylib/rubylib_include.rb"
 require 'erb'
 require 'enumerator'
 #if ENV['HOSTNAME'] =~ /^compute/
@@ -7,8 +8,6 @@ require 'enumerator'
 #end
 require "logger"
 include Test::Unit::Assertions
-
-load "rubylib/rubylib_include.rb"
 
 load 'lib/ilab_loader.rb'
 load 'lib/ilab_helper.rb'

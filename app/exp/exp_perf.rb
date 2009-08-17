@@ -2,9 +2,9 @@
 $ret_models = $i.qsa.map{|qs|qs[:template]}.uniq
 $i.qsa.map{|e| `cp #{to_path(e.name+'.qry')} #{to_path('qry_'+e.name+'.txt')}`}
 $qrys = $i.qsa[0].qrys
-$tbl_qry = [['qid', 'text']].concat($qrys.map{|q|[q.did,q.text]}).concat(["%","%"])
+$tbl_qry = [['qid', 'text']].concat($qrys.map{|q|[q.qid,q.text]}).concat([["%","%"]])
 
-$tbl_all = [['Measure','MAP','P5','P10','P20']]
+$tbl_all = [['Measure','map','P5','P10','P20']]
 $tbl_all.concat $i.qsa.map{|qs|["\"#{qs.short_name}\":#{'qry_'+qs.name+'.txt'}"].concat($tbl_all[0][1..-1].map{|e|qs.stat['all'][e]})}
 
 if $o[:verbose]
@@ -28,9 +28,9 @@ if $o[:verbose]
     $qrys.map{|q|$cs_types.map{|e|$did_rl[q.qid].scan(to_ext($cs_scores[q.text][e].r3.to_a.sort_val[0][0])).size}}
 
   $tbl_qry.add_cols $cs_types.map{|e|"s#{e}"}, 
-    $qrys.map{|q|$cs_types.map{|e|$cs_scores[q.text][e][col_rl].r3}}
+  $qrys.map{|q|$cs_types.map{|e|$cs_scores[q.text][e][$col_rl[q.qid]].r3}}
     
-  $tbl.add_cols $i.qsa.map{|e|e.short_name = e.name.gsub($query_prefix+'_',"")}, 
+  $tbl_qry.add_cols $i.qsa.map{|e|e.short_name = e.name.gsub($query_prefix+'_',"")}, 
     $qrys.map{|q|$i.qsa.map{|e|e.stat[q.qid.to_s]['map']}}
 
   #$tbl_qry.add_cols $ret_models, 
