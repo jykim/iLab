@@ -54,6 +54,7 @@ module PRMHelper
   
   def get_cs_score(query, cs_type, o={})
     col_score_def = 0.0001
+    mpmax_smooth = o[:mpmax_smooth] || 0.3
     return $cs_scores[query][cs_type] if $cs_scores && $cs_scores[query] && $cs_scores[query][cs_type]
     cs_score = if cs_type == :uniform
       COL_TYPES.map_hash{|e|[e,1.0]}.to_p
@@ -87,12 +88,8 @@ module PRMHelper
     $cs_scores ||= {}
     $cs_scores[query] ||= {}
     $cs_scores[query][cs_type] = cs_score
-    if $cs_scores[query][:mpmean] && $cs_scores[query][:cql]
-      [0.3,0.6,0.9].map do |n|
-        $cs_types << (cs_name = "mpmean_cql#{(n*10).to_i}".to_sym)
-        $cs_scores[query][cs_name] = $cs_scores[query][:mpmean].smooth(n, $cs_scores[query][:cql])
-      end
-    end
+    $cs_scores[query][:mpmeancql] = $cs_scores[query][:mpmean].smooth(mpmax_smooth, $cs_scores[query][:cql]) if $cs_scores[query][:mpmean] 
+    $cs_scores[query][:mpmaxcql] = $cs_scores[query][:mpmax].smooth(mpmax_smooth, $cs_scores[query][:cql]) if $cs_scores[query][:mpmax] 
     info "[get_cs_score] #{cs_type} | #{query} : #{cs_score.r3.to_a.sort_val.inspect}"
     cs_score
   end

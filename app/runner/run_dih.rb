@@ -82,9 +82,11 @@ def ILabLoader.build(ilab)
     end
   # Meta-search with different collection weight
   when 'meta_col_weight'
-    norm_type, cs_type, merge_type = :minmax, :mpmax, :cori
-    [0.0,0.2,0.4,0.6,0.8,1.0].each do |col_weight|
-      ilab.crt_add_meta_query_set("#{$query_prefix}_PRM-S", $o.merge(:col_weight=>col_weight, :cs_type=>cs_type, :norm=>norm_type, :merge_type=>merge_type, :template=>:prm, :smoothing=>$sparam))
+    cs_type, merge_type = :mpmax, :cori
+    [0.0,0.2,0.4,0.6,0.8].each do |col_weight|
+      NORM_TYPES.each do |norm_type| 
+        ilab.crt_add_meta_query_set("#{$query_prefix}_DQL", $o.merge(:col_weight=>col_weight, :cs_type=>cs_type, :norm=>norm_type, :merge_type=>merge_type, :smoothing=>$sparam))
+      end
     end
   # Single-index Rank-list Merging with Collection Score
   when 'multi_col'
