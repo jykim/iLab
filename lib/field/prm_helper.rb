@@ -80,16 +80,17 @@ module PRMHelper
             end
           end#col_scores_qw
         }.to_p
-        debug "[get_cs_score] #{qw} : #{col_scores_qw.to_a.sort_val.inspect}"
+        #debug "[get_cs_score] #{qw} : #{col_scores_qw.to_a.sort_val.inspect}"
         [qw,col_scores_qw]
       end#col_scores
       col_scores.values.merge_by_product.to_p
     end#cs_score
+    #debugger
     $cs_scores ||= {}
     $cs_scores[q.qid] ||= {}
     $cs_scores[q.qid][cs_type] = cs_score
-    $cs_scores[q.qid][:mpmeancql] = $cs_scores[q.qid][:mpmean].smooth(mpmax_smooth, $cs_scores[q.qid][:cql]) if $cs_scores[q.qid][:mpmean] 
-    $cs_scores[q.qid][:mpmaxcql] = get_cs_score(q.qid,:mpmax).smooth(mpmax_smooth, get_cs_score(q.qid, :cql)) if $cs_scores[q.qid][:mpmax] 
+    #$cs_scores[q.qid][:mpmeancql] = $cs_scores[q.qid][:mpmean].smooth(mpmax_smooth, $cs_scores[q.qid][:cql]) if $cs_scores[q.qid][:mpmean] 
+    #$cs_scores[q.qid][:mpmaxcql] = get_cs_score(q.qid,:mpmax).smooth(mpmax_smooth, get_cs_score(q.qid, :cql)) if $cs_scores[q.qid][:mpmax] 
     info "[get_cs_score] #{cs_type} | #{q.qid} : #{cs_score.r3.to_a.sort_val.inspect}"
     cs_score
   end

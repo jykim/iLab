@@ -24,7 +24,7 @@ def $i.crt_add_meta_query_set(name, o = {})
       end
       template = case o[:template]
       when :best
-        (col_type == 'email')? :prm : :dql
+        (col_type == 'lists')? :prm : :ql
       else
         o[:template]
       end
@@ -73,9 +73,9 @@ def ILabLoader.build(ilab)
   #------------------ RANK LIST MERGING ---------------#
   # Local retrieval & merge with Collection Score
   when 'meta_with_best'
-    col_weight, cs_type, merge_type = 0.4, :mpmax, :cori
-    [:uniform,:cql,:mpmax].each do |cs_type|
-      [:dql, :prm, :best].each do |ret_model|
+    col_weight, norm_type, merge_type = 0.4, :minmax, :cori
+    [:uniform,:cql,:mpmean].each do |cs_type|
+      [:ql, :prm, :best].each do |ret_model|
         ilab.crt_add_meta_query_set("#{$query_prefix}_#{ret_model}", 
           $o.merge(:template=>ret_model, :smoothing=>$sparam, :norm=>norm_type, :col_weight=>col_weight, :cs_type=>cs_type, :merge_type=>merge_type))
       end
