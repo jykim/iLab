@@ -22,8 +22,13 @@ def $i.crt_add_meta_query_set(name, o = {})
       if !File.exist?($index_path)
         $engine.build_index("#{$o[:pid]}_#{col_type}" , "#{PD_COL_PATH}/#{$o[:pid]}/#{col_type}_doc" , $index_path , :fields=>$fields, :stopword=>true)
       end
-      #info "[crt_add_meta_query_set] index_path = #{$index_path}"
-      $qs[col_type] = create_query_set(name.gsub($o[:col_type],col_type), o.merge(:col_type=>col_type,:cs_type=>nil))
+      template = case o[:template]
+      when :best
+        (col_type == 'email')? :prm : :dql
+      else
+        o[:template]
+      end
+      $qs[col_type] = create_query_set(name.gsub($o[:col_type],col_type), o.merge(:template=>template, :col_type=>col_type,:cs_type=>nil))
     end
     set_type_info($o[:pid], 'all')
     ResultDocumentSet.create_by_merge(qs_name, $qs.values, o)
@@ -63,6 +68,17 @@ def ILabLoader.build(ilab)
         :prm_fields=>$fields[2..-1], :hlm_fields=>$fields[0..1], :hlm_weights=>$hlm_weight[0..1], :lambda=>lambda))
       ilab.crt_add_query_set("#{$query_prefix}_PRM-H2_l#{lambda}", $o.merge(:template=>:prm, :smoothing=>$sparam, 
         :prm_fields=>$fields[2..-1], :fix_mp_for=>{'title'=>lambda*2, 'content'=>lambda*0.652}))
+    end
+    
+  #------------------ RANK LIST MERGING ---------------#
+  # Local retrieval & merge with Collection Score
+  when 'meta_with_best'
+    col_weight, cs_type, merge_type = 0.4, :mpmax, :cori
+    [:uniform,:cql,:mpmax].each do |cs_type|
+      [:dql, :prm, :best].each do |ret_model|
+        ilab.crt_add_meta_query_set("#{$query_prefix}_#{ret_model}", 
+          $o.merge(:template=>ret_model, :smoothing=>$sparam, :norm=>norm_type, :col_weight=>col_weight, :cs_type=>cs_type, :merge_type=>merge_type))
+      end
     end
     
   #------------------ RANK LIST MERGING ---------------#
