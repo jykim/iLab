@@ -117,7 +117,7 @@ def ILabLoader.build(ilab)
     #Top-score collection for each query
     # Difference for each collection score type
     ilab.crt_add_query_set("#{$query_prefix}_DQL", :smoothing=>$sparam)
-    $cs_types.each do |cs_type|
+    CS_TYPES.each do |cs_type|
       ilab.crt_add_query_set("#{$query_prefix}_PRM-S_mcs#{cs_type}_#{$o[:cs_smooth]}" , 
         :cs_type=>cs_type, :cs_smooth=>$o[:cs_smooth], :template=>:multi_col, :smoothing=>$sparam)
     end
@@ -126,7 +126,7 @@ def ILabLoader.build(ilab)
     #Top-score collection for each query
     # Difference for each collection score type
     ilab.crt_add_query_set("#{$query_prefix}_DQL", :smoothing=>$sparam)
-    $cs_types.each do |cs_type|
+    CS_TYPES.each do |cs_type|
       #ilab.crt_add_query_set("#{$query_prefix}_DQL_cs#{cs_type}" , :cs_type=>cs_type, :smoothing=>$sparam)
       ilab.crt_add_query_set("#{$query_prefix}_PRM-S_cs#{cs_type}" , 
         :cs_type=>cs_type, :template=>:prm, :smoothing=>$sparam)

@@ -24,11 +24,11 @@ if $o[:verbose]
   $did_rl = $qrys.map_hash{|q|[q.qid, q.rl.docs[0].did]}
   $col_rl = $qrys.map_hash{|q|[q.qid, COL_TYPES.find_all{|col|$did_rl[q.qid].scan(/#{to_ext(col)}/).size>0}[0]]}
   
-  $tbl_qry.add_cols $cs_types.map{|e|"r#{e}"}, 
-    $qrys.map{|q|$cs_types.map{|e|$did_rl[q.qid].scan(to_ext($cs_scores[q.qid][e].r3.to_a.sort_val[0][0])).size}}
+  $tbl_qry.add_cols CS_TYPES.map{|e|"r#{e}"}, 
+    $qrys.map{|q|CS_TYPES.map{|e|$did_rl[q.qid].scan(to_ext($cs_scores[q.qid][e].r3.to_a.sort_val[0][0])).size}}
 
-  $tbl_qry.add_cols $cs_types.map{|e|"s#{e}"}, 
-  $qrys.map{|q|$cs_types.map{|e|$cs_scores[q.qid][e][$col_rl[q.qid]].r3}}
+  $tbl_qry.add_cols CS_TYPES.map{|e|"s#{e}"}, 
+  $qrys.map{|q|CS_TYPES.map{|e|$cs_scores[q.qid][e][$col_rl[q.qid]].r3}}
     
   $tbl_qry.add_cols $i.qsa.map{|e|e.short_name = e.name.gsub($query_prefix+'_',"")}, 
     $qrys.map{|q|$i.qsa.map{|e|e.stat[q.qid.to_s]['map']}}

@@ -135,7 +135,7 @@ def init_collection(col)
     $file_qrel =  "qrel/" + ["qrel" , $col_id, $o[:topic_id]].join("_")
     dids = ($o[:pair])? read_qrel($manual_qrel).map_hash{|k,v|[k.to_i,v.keys.first]} : nil
     $engine.build_knownitem_topics($file_topic, $file_qrel, $o.dup.merge(:dids=>dids)) if !File.exist?(to_path($file_topic))
-    $offset = 1 ; $count = $o[:topic_no] || 50
+    $offset = 1 ; $count = $o[:topic_no] || 100
     $sparam = get_sparam('jm',0.1)
   #when 'pdm'
   #  #set_type_info($o[:col_type])
