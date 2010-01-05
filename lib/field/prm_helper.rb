@@ -52,14 +52,14 @@ module PRMHelper
     mps.find_all{|mp|mp[1].size>0}
   end
   
-  def get_cs_score(query, cs_type, o={})
+  def get_cs_score(q, cs_type, o={})
     col_score_def = 0.0001
     mpmax_smooth = o[:mpmax_smooth] || 0.3
-    return $cs_scores[query][cs_type] if $cs_scores && $cs_scores[query] && $cs_scores[query][cs_type]
+    return $cs_scores[q.qid][cs_type] if $cs_scores && $cs_scores[q.qid] && $cs_scores[q.qid][cs_type]
     cs_score = if cs_type == :uniform
       COL_TYPES.map_hash{|e|[e,1.0]}.to_p
     else
-      mps = get_map_prob(query)
+      mps = get_map_prob(q.text)
       col_scores = mps.map_hash do |mp|
         qw = mp[0]
         mp_group = mp[1].group_by{|e|e[0].split("_")[0]}
@@ -86,11 +86,11 @@ module PRMHelper
       col_scores.values.merge_by_product.to_p
     end#cs_score
     $cs_scores ||= {}
-    $cs_scores[query] ||= {}
-    $cs_scores[query][cs_type] = cs_score
-    $cs_scores[query][:mpmeancql] = $cs_scores[query][:mpmean].smooth(mpmax_smooth, $cs_scores[query][:cql]) if $cs_scores[query][:mpmean] 
-    $cs_scores[query][:mpmaxcql] = $cs_scores[query][:mpmax].smooth(mpmax_smooth, $cs_scores[query][:cql]) if $cs_scores[query][:mpmax] 
-    info "[get_cs_score] #{cs_type} | #{query} : #{cs_score.r3.to_a.sort_val.inspect}"
+    $cs_scores[q.qid] ||= {}
+    $cs_scores[q.qid][cs_type] = cs_score
+    $cs_scores[q.qid][:mpmeancql] = $cs_scores[q.qid][:mpmean].smooth(mpmax_smooth, $cs_scores[q.qid][:cql]) if $cs_scores[q.qid][:mpmean] 
+    $cs_scores[q.qid][:mpmaxcql] = get_cs_score(q.qid,:mpmax).smooth(mpmax_smooth, get_cs_score(q.qid, :cql)) if $cs_scores[q.qid][:mpmax] 
+    info "[get_cs_score] #{cs_type} | #{q.qid} : #{cs_score.r3.to_a.sort_val.inspect}"
     cs_score
   end
   

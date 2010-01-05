@@ -94,7 +94,7 @@ class ResultDocumentSet < DocumentSet
     old_sets[0].qrys.each_with_index do |q,i|
       #debugger
       #begin
-      col_score[q.qid] = $engine.get_cs_score(q.text, o[:cs_type], o)
+      col_score[q.qid] = $engine.get_cs_score(q, o[:cs_type], o)
       #rescue StandardError
         
       #`end

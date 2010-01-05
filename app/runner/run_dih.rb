@@ -70,11 +70,11 @@ def ILabLoader.build(ilab)
   when 'meta'
     #debugger
     col_weight = $o[:col_weight] || 0.4
-    [:uniform,:cql,:mpmax,:mpmean].each do |cs_type|
+    [:uniform,:cql,:mpmax].each do |cs_type|
       NORM_TYPES.each do |norm_type| 
         MERGE_TYPES.each do |merge_type| 
-          ilab.crt_add_meta_query_set("#{$query_prefix}_DQL"  , 
-            $o.merge(:template=>:ql, :smoothing=>$sparam, :norm=>norm_type, :col_weight=>col_weight, :cs_type=>cs_type, :merge_type=>merge_type))
+          #ilab.crt_add_meta_query_set("#{$query_prefix}_DQL"  , 
+          #  $o.merge(:template=>:ql, :smoothing=>$sparam, :norm=>norm_type, :col_weight=>col_weight, :cs_type=>cs_type, :merge_type=>merge_type))
           ilab.crt_add_meta_query_set("#{$query_prefix}_PRM-S", 
             $o.merge(:template=>:prm, :smoothing=>$sparam, :norm=>norm_type, :col_weight=>col_weight, :cs_type=>cs_type, :merge_type=>merge_type))
         end
@@ -86,6 +86,14 @@ def ILabLoader.build(ilab)
     [0.0,0.2,0.4,0.6,0.8].each do |col_weight|
       NORM_TYPES.each do |norm_type| 
         ilab.crt_add_meta_query_set("#{$query_prefix}_DQL", $o.merge(:col_weight=>col_weight, :cs_type=>cs_type, :norm=>norm_type, :merge_type=>merge_type, :smoothing=>$sparam))
+      end
+    end
+  # Meta-search with different collection weight
+  when 'meta_mpmax_smooth'
+    cs_type, merge_type = :mpmaxcql, :cori
+    [0.0,0.2,0.4,0.6,0.8].each do |mpmax_smooth|
+      NORM_TYPES.each do |norm_type|
+        ilab.crt_add_meta_query_set("#{$query_prefix}_DQL_#{mpmax_smooth}", $o.merge(:col_weight=>col_weight, :mpmax_smooth=>mpmax_smooth, :cs_type=>cs_type, :norm=>norm_type, :merge_type=>merge_type, :smoothing=>$sparam))
       end
     end
   # Single-index Rank-list Merging with Collection Score
