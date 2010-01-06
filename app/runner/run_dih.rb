@@ -9,10 +9,10 @@ def $i.run_query( name, query, template, idx, sparam )
   crt_add_query_set(name, :adhoc_topic=>$o[:query], :index_path=>idx, :template=>template, :smoothing=>sparam, :field_doc=>[$field_doc])
 end
 
+$qs = {}
 def $i.crt_add_meta_query_set(name, o = {})
   qs_name = name+"_cw#{o[:col_weight]}_#{o[:norm]}_#{o[:cs_type]}_#{o[:merge_type]}"
   if !fcheck(qs_name+'.qry') || !fcheck(qs_name+'.res') || $o[:redo]
-    $qs = {}
     # $qs[$o[:col_type]] = create_query_set(name+"_"+$o[:col_type], o) if $o[:col_type] != 'all'
     ['lists','pdf','html','msword','ppt'].each do |col_type|
       next if col_type == $o[:col_type] && $o[:col_type] != 'all'
@@ -22,16 +22,15 @@ def $i.crt_add_meta_query_set(name, o = {})
       if !File.exist?($index_path)
         $engine.build_index("#{$o[:pid]}_#{col_type}" , "#{PD_COL_PATH}/#{$o[:pid]}/#{col_type}_doc" , $index_path , :fields=>$fields, :stopword=>true)
       end
-      template = case o[:template]
-      when :best
-        (col_type == 'lists')? :prm : :ql
-      else
-        o[:template]
-      end
-      $qs[col_type] = create_query_set(name.gsub($o[:col_type],col_type), o.merge(:template=>template, :col_type=>col_type,:cs_type=>nil))
+      $qs[col_type] = {} if !$qs[col_type]
+      $qs[col_type][o[:template]] = if o[:template] == :best
+                                      $qs[col_type].max{|e1,e2|e1[1].stat['all']['map']<=>e2[1].stat['all']['map']}[1]
+                                    else
+                                      create_query_set(name.gsub($o[:col_type],col_type), o.merge(:template=>o[:template], :col_type=>col_type,:cs_type=>nil))
+                                    end
     end
     set_type_info($o[:pid], 'all')
-    ResultDocumentSet.create_by_merge(qs_name, $qs.values, o)
+    ResultDocumentSet.create_by_merge(qs_name, $qs.map{|k,v|v[o[:template]]}, o)
   end
   crt_add_query_set(qs_name , o)
 end
@@ -392,8 +391,8 @@ end
 def process_report
   load to_path('exp_'+$exp+'.rb')
   $i.create_report_index
-  info("Sending report to belmont...")
-  `ssh jykim@belmont 'source ~/.bash_profile;/usr/dan/users4/jykim/dev/rails/lifidea/script/sync_rpt.rb dih #{$col}'`
+  #info("Sending report to belmont...")
+  #`ssh jykim@belmont 'source ~/.bash_profile;/usr/dan/users4/jykim/dev/rails/lifidea/script/sync_rpt.rb dih #{$col}'`
 end
 
 #Run Experiment & Generate Report

@@ -16,6 +16,14 @@ class QuerySet
       end
     @o = o
   end
+
+  def short_name
+    if $query_prefix
+      @name.gsub($query_prefix+'_',"")
+    else
+      @name
+    end
+  end
   
   def add_query( query )
     @qrys << query

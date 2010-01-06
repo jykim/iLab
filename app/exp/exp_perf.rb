@@ -31,7 +31,7 @@ if $o[:verbose]
   $qrys.map{|q|CS_TYPES.map{|e|$cs_scores[q.qid][e][$col_rl[q.qid]].r3}}
     
   $tbl_qry.add_cols $i.qsa.map{|e|e.short_name = e.name.gsub($query_prefix+'_',"")}, 
-    $qrys.map{|q|$i.qsa.map{|e|e.stat[q.qid.to_s]['map']}}
+    $qrys.map{|q|$i.qsa.map{|e|(e.stat[q.qid.to_s])? e.stat[q.qid.to_s]['map'] : 0.0}}
 
   #$tbl_qry.add_cols $ret_models, 
   #  $ret_models.map{|e|$avg_doc_scores[q.qid][e].to_p[$col_rl[q.qid]].r3}

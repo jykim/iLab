@@ -103,7 +103,7 @@ def to_path(file_name , arg_path = nil)
            when /\.(rhtml|rxml|template)/
              File.join( $ilab_root , "lib/template/#{file_name}")
            when /\.R/
-             File.join( $ilab_root , "app/interface/#{file_name}")
+             File.join( $ilab_root , "lib/interface/#{file_name}")
            when /\.(css|js)/
              File.join( $ilab_root , "lib/template/#{file_name}")
            when /^qrel_.*/
