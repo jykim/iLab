@@ -10,7 +10,7 @@ module GenHelper
   # o[:queries] : [[dno1, query1], [dno2, query2], ...]
   def build_knownitem_topics(file_topic, file_qrel, o={})
     queries = [] #o[:queries] 
-    o[:topic_no] ||= 50
+    o[:topic_no] ||= 100
     doc_no = get_col_stat()[:doc_no]
     if o[:topic_prior]
       filepath_prior = "#{$col}_#{o[:topic_prior]}.prior"
