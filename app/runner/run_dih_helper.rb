@@ -26,6 +26,9 @@ def init_env()
   $file_topic = ["topic", $o[:topic_id]].join("_")
   $file_qrel =  ["qrel" , $o[:topic_id]].join("_")
 
+  $qs = {} # performance of query-sets
+  $cs_scores = {}
+
   #Default Retrieval Parameter
   $mu = $o[:mu] || 100
   $lambda = $o[:lambda] || 0.1

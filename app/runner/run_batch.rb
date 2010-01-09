@@ -45,6 +45,15 @@ begin#exception handling
           :remote=>true, :nid=>anodes[i%anodes.size][0])
       end
     end
+  when 'meta_with_best'
+    ['0105b','0105c'].each do |topic_id|
+      ['F_RN_RN'].each_with_thread do |topic_type, i|
+        $r << run_ilab($root, get_expid_from_env($o.merge(:exp=>$exp,
+        :method=>query_method,:topic_id=>"#{topic_type}_#{topic_id}",
+        :col_score=>col_score,:norm=>norm)), nil, 
+          :remote=>true, :nid=>anodes[i%anodes.size][0])
+      end
+    end
   when 'meta'
     ['0318d'].each do |topic_id|
       ["cql","nmp"].each do |col_score|

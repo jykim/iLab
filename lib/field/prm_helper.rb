@@ -86,7 +86,6 @@ module PRMHelper
       col_scores.values.merge_by_product.to_p
     end#cs_score
     #debugger
-    $cs_scores ||= {}
     $cs_scores[q.qid] ||= {}
     $cs_scores[q.qid][cs_type] = cs_score
     #$cs_scores[q.qid][:mpmeancql] = $cs_scores[q.qid][:mpmean].smooth(mpmax_smooth, $cs_scores[q.qid][:cql]) if $cs_scores[q.qid][:mpmean] 

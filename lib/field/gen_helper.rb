@@ -35,8 +35,9 @@ module GenHelper
                   topic_len = o[:query_len] || 3#(o[:query_len])? o[:query_len] : $query_lens[rand($query_lens.size)]
                   get_knownitem_topic(dno, o[:topic_type], topic_len, o.merge(:doc_no=>doc_no))
                 end
+        raise DataError, "No content in query!" if query.blank?
       rescue => err
-        info "[build_knownitem_topics] Unable to process doc ##{dno} (#{err})"
+        warn "[build_knownitem_topics] Unable to process doc ##{dno} (#{err})"
         next
       end
       queries << [to_did(dno).strip, query.join(" ")]

@@ -9,7 +9,6 @@ def $i.run_query( name, query, template, idx, sparam )
   crt_add_query_set(name, :adhoc_topic=>$o[:query], :index_path=>idx, :template=>template, :smoothing=>sparam, :field_doc=>[$field_doc])
 end
 
-$qs = {}
 def $i.crt_add_meta_query_set(name, o = {})
   qs_name = name+"_cw#{o[:col_weight]}_#{o[:norm]}_#{o[:cs_type]}_#{o[:merge_type]}"
   if !fcheck(qs_name+'.qry') || !fcheck(qs_name+'.res') || $o[:redo]
