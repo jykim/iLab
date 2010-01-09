@@ -15,6 +15,7 @@ load 'lib/ilab_globals.rb'
 
 load 'lib/extensions/ilab_extension.rb'
 load 'lib/extensions/rails_extension.rb'
+load 'lib/extensions/blank.rb'
 load 'lib/etc/option_handler.rb'
 load 'lib/etc/markup_handler.rb'
 load 'lib/etc/file_handler.rb'
