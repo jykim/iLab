@@ -24,7 +24,7 @@ def $i.crt_add_meta_query_set(name, o = {})
       $qs[col_type] = {} if !$qs[col_type]
       $qs[col_type][o[:template]] = if o[:template] == :best
                                       $qs[col_type].max{|e1,e2|e1[1].stat['all']['map']<=>e2[1].stat['all']['map']}[1]
-                                    else
+                                    elsif !$qs[col_type][o[:template]]
                                       create_query_set(name.gsub($o[:col_type],col_type), o.merge(:template=>o[:template], :col_type=>col_type,:cs_type=>nil))
                                     end
     end
@@ -72,9 +72,9 @@ def ILabLoader.build(ilab)
   # Local retrieval & merge with Collection Score
   when 'meta_with_best'
     ilab.add_relevant_set($file_qrel)
-    $qid_type = @rl.docs.map_hash{|d|[d.qid, did_to_col_type(d.did)]}
+    $qid_type = $i.rl.docs.map_hash{|d|[d.qid, did_to_col_type(d.did)]}
     col_weight, norm_type, merge_type = 0.4, :minmax, :cori
-    [:uniform,:cql,:mpmean,:best].each do |cs_type|
+    [:best,:uniform,:cql,:mpmean].each do |cs_type|
       [:ql, :prm, :prm_ql, :best].each do |ret_model|
         ilab.crt_add_meta_query_set("#{$query_prefix}_#{ret_model}", 
           $o.merge(:template=>ret_model, :smoothing=>$sparam, :norm=>norm_type, :col_weight=>col_weight, :cs_type=>cs_type, :merge_type=>merge_type))
