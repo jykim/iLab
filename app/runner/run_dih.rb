@@ -71,9 +71,11 @@ def ILabLoader.build(ilab)
   #------------------ RANK LIST MERGING ---------------#
   # Local retrieval & merge with Collection Score
   when 'meta_with_best'
+    ilab.add_relevant_set($file_qrel)
+    $qid_type = @rl.docs.map_hash{|d|[d.qid, did_to_col_type(d.did)]}
     col_weight, norm_type, merge_type = 0.4, :minmax, :cori
-    [:uniform,:cql,:mpmean].each do |cs_type|
-      [:ql, :prm, :best].each do |ret_model|
+    [:uniform,:cql,:mpmean,:best].each do |cs_type|
+      [:ql, :prm, :prm_ql, :best].each do |ret_model|
         ilab.crt_add_meta_query_set("#{$query_prefix}_#{ret_model}", 
           $o.merge(:template=>ret_model, :smoothing=>$sparam, :norm=>norm_type, :col_weight=>col_weight, :cs_type=>cs_type, :merge_type=>merge_type))
       end
@@ -375,7 +377,7 @@ def ILabLoader.build(ilab)
     $exp = 'qrel'
     return
   end
-  ilab.add_relevant_set($file_qrel)      
+  ilab.add_relevant_set($file_qrel)
   ilab.fetch_data
   
 end

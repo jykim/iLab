@@ -38,6 +38,10 @@ def to_ext(col_type)
   end
 end
 
+def did_to_col_type(did)
+  COL_TYPES.find_all{|col|did.scan(/#{to_ext(col)}/).size>0}[0]
+end
+
 # Generate document with metadata from the collection
 def create_doc(path , doc_id , o = {})
   `mkdir -p #{path}` if !File.exist?(path)

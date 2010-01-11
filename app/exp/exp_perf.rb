@@ -22,7 +22,7 @@ if $o[:verbose]
   #gen_probs = topic_types.map{|topic_type| $engine.get_gen_prob(q.text, dno_rl , topic_type, :doc_no=>doc_no) }
   
   $did_rl = $qrys.map_hash{|q|[q.qid, q.rl.docs[0].did]}
-  $col_rl = $qrys.map_hash{|q|[q.qid, COL_TYPES.find_all{|col|$did_rl[q.qid].scan(/#{to_ext(col)}/).size>0}[0]]}
+  $col_rl = $qrys.map_hash{|q|[q.qid, did_to_col_type($did_rl[q.qid])]}
   
   $tbl_qry.add_cols CS_TYPES.map{|e|"r#{e}"}, 
     $qrys.map{|q|CS_TYPES.map{|e|$did_rl[q.qid].scan(to_ext($cs_scores[q.qid][e].r3.to_a.sort_val[0][0])).size}}

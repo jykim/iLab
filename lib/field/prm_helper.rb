@@ -71,6 +71,8 @@ module PRMHelper
             case cs_type
             when :uniform
               [col, 1.0]
+            when :best
+              [col, (($qid_type[q.qid]==col)? 1.0 : 0.0)]
             when :mpmax
               [col, mp_group[col].max{|a,b|a[1]<=>b[1]}[1]]
             when :mpmean
