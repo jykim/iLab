@@ -133,7 +133,7 @@ class ResultDocumentSet < DocumentSet
         when :cori
           score_doc = Math.exp(score_raw)
           #debugger
-          score_col = score_doc * col_score[d.qid][qs[:col_type]]
+          score_col = score_doc * (col_score[d.qid][qs[:col_type]] || 0)
           docs[d.qid][d.did].score = (score_col * col_weight + score_doc) / (1 + col_weight)
           info "[create_by_merge] #{docs[d.qid][d.did].score.r3} = #{score_col.r3} * #{col_weight} + #{score_doc.r3} (#{d.did})" if d.qid == 1 && d.rank <= 3
         when :multiply
