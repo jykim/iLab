@@ -24,7 +24,7 @@ def $i.crt_add_meta_query_set(name, o = {})
       $qs[col_type] = {} if !$qs[col_type]
       $qs[col_type][o[:template]] = if o[:template] == :best
                                       $qs[col_type].max{|e1,e2|e1[1].stat['all']['map']<=>e2[1].stat['all']['map']}[1]
-                                    elsif !$qs[col_type][o[:template]]
+                                    else#if !$qs[col_type][o[:template]]
                                       create_query_set(name.gsub($o[:col_type],col_type), o.merge(:template=>o[:template], :col_type=>col_type,:cs_type=>nil))
                                     end
     end
