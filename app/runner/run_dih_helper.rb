@@ -20,7 +20,7 @@ def init_env()
 
   #Set Global Vars
   $t_start = Time.now
-  $col_id = ($col == 'pd')? "#{$o[:pid]}_#{$o[:col_type]}" : $col
+  $col_id = "#{$col}_#{$o[:pid]}_#{$o[:col_type]}"
   $o[:topic_id] = $o[:topic_type] if !$o[:topic_id] && $o[:topic_type]
   $query_prefix = "#{$col_id}_#{$o[:topic_id]}"
   $file_topic = ["topic", $o[:topic_id]].join("_")
@@ -110,7 +110,7 @@ def init_collection(col)
   when 'cs'
     $col_types = ['calendar','webpage','news','file','email'] 
     set_type_info(nil, $o[:col_type])
-    $ptn_qry_title = /\<title\> (.*) \<\/title\>/
+    $ptn_qry_title = /\<title\>(.*)\<\/title\>/
 
     #Index Build
     if !File.exist?($index_path)
@@ -118,11 +118,11 @@ def init_collection(col)
     end
 
     #Topic/Qrel Building
-    $file_topic = "topic/" + ["topic", $o[:topic_id]].join("_")
-    $file_qrel =  "qrel/" + ["qrel" , $o[:topic_id]].join("_")
+    $file_topic = ["topic", $o[:topic_id]].join("_")
+    $file_qrel =  ["qrel" , $o[:topic_id]].join("_")
     $engine.build_knownitem_topics($file_topic, $file_qrel) if !File.exist?(to_path($file_topic))
     $offset = 1 ; $count = $o[:topic_no] || 100
-    $sparam = get_sparam('jm',0.1)aram = get_sparam('jm',0.1)
+    $sparam = get_sparam('jm',0.1)
   when 'pd'
     $col_types = ['msword','ppt','pdf','lists','html']
     set_type_info($o[:pid], $o[:col_type])
