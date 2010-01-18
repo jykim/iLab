@@ -4,6 +4,7 @@ load 'app/runner/run_dih_helper.rb'
 
 init_env()
 init_collection($col)
+load_csel_scores("cs/csel_scores.txt")
 
 def $i.run_query( name, query, template, idx, sparam )
   crt_add_query_set(name, :adhoc_topic=>$o[:query], :index_path=>idx, :template=>template, :smoothing=>sparam, :field_doc=>[$field_doc])
@@ -74,7 +75,7 @@ def ILabLoader.build(ilab)
     ilab.add_relevant_set($file_qrel)
     $qid_type = $i.rl.docs.map_hash{|d|[d.qid, did_to_col_type(d.did)]}
     col_weight, norm_type, merge_type = 0.4, :minmax, :cori
-    [:best,:uniform,:cql,:mpmean].each do |cs_type|
+    [:grid, :ranksvm, :multisvm, :best,:uniform,:cql,:mpmean].each do |cs_type|
       [:ql, :prm, :prm_ql, :best].each do |ret_model|
         ilab.crt_add_meta_query_set("#{$query_prefix}_#{ret_model}", 
           $o.merge(:template=>ret_model, :smoothing=>$sparam, :norm=>norm_type, :col_weight=>col_weight, :cs_type=>cs_type, :merge_type=>merge_type))

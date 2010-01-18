@@ -55,7 +55,10 @@ module PRMHelper
   def get_cs_score(q, cs_type, o={})
     col_score_def = 0.0001
     mpmax_smooth = o[:mpmax_smooth] || 0.3
-    return $csel_scores[q.qid][cs_type] if $csel_scores && $csel_scores[q.qid] && $csel_scores[q.qid][cs_type]
+    if $csel_scores && $csel_scores[q.qid] && $csel_scores[q.qid][cs_type]
+      puts "[csel_scores] #{q.qid} / #{cs_type} used"
+      return $csel_scores[q.qid][cs_type] 
+    end
     cs_score = if cs_type == :uniform
       $col_types.map_hash{|e|[e,1.0]}.to_p
     else

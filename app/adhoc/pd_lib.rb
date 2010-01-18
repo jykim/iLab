@@ -48,6 +48,25 @@ def did_to_col_type(did)
   $col_types.find_all{|col|did.scan(/#{to_ext(col)}/).size>0}[0]
 end
 
+def read_csv(filename, o = {})
+  #header = o[:header] || true
+  content = dsvread(filename, :sep_col=>"\t")
+  if o[:output] == :array
+    content[1..-1]
+  else
+    content[1..-1].map{|c|content[0].map_hash_with_index{|h,i|[h.downcase.to_sym, c[i]]}}
+  end
+end
+
+def load_csel_scores(filename)
+  content = read_csv(filename)
+  $csel_scores = content.map_hash{|l|
+    values_cs_type = l.find_all{|k,v|k.to_s=~/_/}.group_by{|e|e[0].to_s.split("_")[0]}.
+      map_hash{|k,v|[k.to_sym, v.map_hash{|e|[e[0].to_s.split("_")[1], e[1].to_f]}]}
+    [l[:qid], values_cs_type]
+    }
+end
+
 # Generate document with metadata from the collection
 def create_doc(path , doc_id , o = {})
   `mkdir -p #{path}` if !File.exist?(path)
