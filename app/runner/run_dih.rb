@@ -13,14 +13,14 @@ def $i.crt_add_meta_query_set(name, o = {})
   qs_name = name+"_cw#{o[:col_weight]}_#{o[:norm]}_#{o[:cs_type]}_#{o[:merge_type]}"
   if !fcheck(qs_name+'.qry') || !fcheck(qs_name+'.res') || $o[:redo]
     # $qs[$o[:col_type]] = create_query_set(name+"_"+$o[:col_type], o) if $o[:col_type] != 'all'
-    ['lists','pdf','html','msword','ppt'].each do |col_type|
+    $col_types.each do |col_type|
       next if col_type == $o[:col_type] && $o[:col_type] != 'all'
       #debugger
       info "Process #{col_type}:"
       set_type_info($o[:pid], col_type)
-      if !File.exist?($index_path)
-        $engine.build_index("#{$o[:pid]}_#{col_type}" , "#{PD_COL_PATH}/#{$o[:pid]}/#{col_type}_doc" , $index_path , :fields=>$fields, :stopword=>true)
-      end
+      #if !File.exist?($index_path)
+      #  $engine.build_index("#{$o[:pid]}_#{col_type}" , "#{PD_COL_PATH}/#{$o[:pid]}/#{col_type}_doc" , $index_path , :fields=>$fields, :stopword=>true)
+      #end
       $qs[col_type] = {} if !$qs[col_type]
       $qs[col_type][o[:template]] = if o[:template] == :best
                                       $qs[col_type].max{|e1,e2|e1[1].stat['all']['map']<=>e2[1].stat['all']['map']}[1]
@@ -117,7 +117,7 @@ def ILabLoader.build(ilab)
     #Top-score collection for each query
     # Difference for each collection score type
     ilab.crt_add_query_set("#{$query_prefix}_DQL", :smoothing=>$sparam)
-    CS_TYPES.each do |cs_type|
+    CSEL_TYPES.each do |cs_type|
       ilab.crt_add_query_set("#{$query_prefix}_PRM-S_mcs#{cs_type}_#{$o[:cs_smooth]}" , 
         :cs_type=>cs_type, :cs_smooth=>$o[:cs_smooth], :template=>:multi_col, :smoothing=>$sparam)
     end
@@ -126,7 +126,7 @@ def ILabLoader.build(ilab)
     #Top-score collection for each query
     # Difference for each collection score type
     ilab.crt_add_query_set("#{$query_prefix}_DQL", :smoothing=>$sparam)
-    CS_TYPES.each do |cs_type|
+    CSEL_TYPES.each do |cs_type|
       #ilab.crt_add_query_set("#{$query_prefix}_DQL_cs#{cs_type}" , :cs_type=>cs_type, :smoothing=>$sparam)
       ilab.crt_add_query_set("#{$query_prefix}_PRM-S_cs#{cs_type}" , 
         :cs_type=>cs_type, :template=>:prm, :smoothing=>$sparam)

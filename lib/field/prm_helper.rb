@@ -12,7 +12,7 @@ module PRMHelper
   def scale_map_prob(qw, mp, cs_type, o)
     cs_smooth = o[:cs_smooth] || 0.1
     mp_group = mp.group_by{|k,v|k.split("_")[0]}
-    col_scores = COL_TYPES.map_hash { |col|
+    col_scores = $col_types.map_hash { |col|
       #debugger
       unless mp_group[col]
         [col,0.0]
@@ -55,15 +55,15 @@ module PRMHelper
   def get_cs_score(q, cs_type, o={})
     col_score_def = 0.0001
     mpmax_smooth = o[:mpmax_smooth] || 0.3
-    return $cs_scores[q.qid][cs_type] if $cs_scores && $cs_scores[q.qid] && $cs_scores[q.qid][cs_type]
+    return $csel_scores[q.qid][cs_type] if $csel_scores && $csel_scores[q.qid] && $csel_scores[q.qid][cs_type]
     cs_score = if cs_type == :uniform
-      COL_TYPES.map_hash{|e|[e,1.0]}.to_p
+      $col_types.map_hash{|e|[e,1.0]}.to_p
     else
       mps = get_map_prob(q.text)
       col_scores = mps.map_hash do |mp|
         qw = mp[0]
         mp_group = mp[1].group_by{|e|e[0].split("_")[0]}
-        col_scores_qw = COL_TYPES.map_hash { |col|
+        col_scores_qw = $col_types.map_hash { |col|
           #debugger
           unless mp_group[col]
             [col,col_score_def]
@@ -88,10 +88,10 @@ module PRMHelper
       col_scores.values.merge_by_product.to_p
     end#cs_score
     #debugger
-    $cs_scores[q.qid] ||= {}
-    $cs_scores[q.qid][cs_type] = cs_score
-    #$cs_scores[q.qid][:mpmeancql] = $cs_scores[q.qid][:mpmean].smooth(mpmax_smooth, $cs_scores[q.qid][:cql]) if $cs_scores[q.qid][:mpmean] 
-    #$cs_scores[q.qid][:mpmaxcql] = get_cs_score(q.qid,:mpmax).smooth(mpmax_smooth, get_cs_score(q.qid, :cql)) if $cs_scores[q.qid][:mpmax] 
+    $csel_scores[q.qid] ||= {}
+    $csel_scores[q.qid][cs_type] = cs_score
+    #$csel_scores[q.qid][:mpmeancql] = $csel_scores[q.qid][:mpmean].smooth(mpmax_smooth, $csel_scores[q.qid][:cql]) if $csel_scores[q.qid][:mpmean] 
+    #$csel_scores[q.qid][:mpmaxcql] = get_cs_score(q.qid,:mpmax).smooth(mpmax_smooth, get_cs_score(q.qid, :cql)) if $csel_scores[q.qid][:mpmax] 
     info "[get_cs_score] #{cs_type} | #{q.qid} : #{cs_score.r3.to_a.sort_val.inspect}"
     cs_score
   end

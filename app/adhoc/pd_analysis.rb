@@ -36,7 +36,7 @@ build_knownitem_topic("topic_c0161_lists_manual", "qrel_c0161_lists_manual", :qu
 end
 
 ['c0002','c0141','c0161'].each do |pid|
-  CS_TYPES.each do |cs_type| #CS_TYPES
+  CSEL_TYPES.each do |cs_type| #CSEL_TYPES
     NORM_TYPES.each do |norm_type|
       analyze_col_ratio("#{pid}_all_F_RN_RN_0708b", "PRM-S_cw0.4_#{norm_type}_#{cs_type}")
     end

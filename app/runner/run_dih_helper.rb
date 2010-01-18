@@ -27,7 +27,7 @@ def init_env()
   $file_qrel =  ["qrel" , $o[:topic_id]].join("_")
 
   $qs = {} # performance of query-sets
-  $cs_scores = {}
+  $csel_scores = {}
 
   #Default Retrieval Parameter
   $mu = $o[:mu] || 100
@@ -107,26 +107,26 @@ def init_collection(col)
         $file_topic ,$file_qrel = 'ent05.known-item-topics', 'ent05.known-item-qrels'
       end
     end
+  when 'cs'
+    $col_types = ['calendar','webpage','news','file','email'] 
+    set_type_info(nil, $o[:col_type])
+    $ptn_qry_title = /\<title\> (.*) \<\/title\>/
+
+    #Index Build
+    if !File.exist?($index_path)
+      $engine.build_index($col_id , "#{CS_COL_PATH}/#{$o[:col_type]}_doc" , $index_path , :fields=>$fields, :stopword=>true)
+    end
+
+    #Topic/Qrel Building
+    $file_topic = "topic/" + ["topic", $o[:topic_id]].join("_")
+    $file_qrel =  "qrel/" + ["qrel" , $o[:topic_id]].join("_")
+    $engine.build_knownitem_topics($file_topic, $file_qrel) if !File.exist?(to_path($file_topic))
+    $offset = 1 ; $count = $o[:topic_no] || 100
+    $sparam = get_sparam('jm',0.1)aram = get_sparam('jm',0.1)
   when 'pd'
+    $col_types = ['msword','ppt','pdf','lists','html']
     set_type_info($o[:pid], $o[:col_type])
     $ptn_qry_title = /\<title\> (.*) \<\/title\>/
-    $query_lens = nil
-    case $col_id
-    when 'c0002_lists'
-      $manual_qrel = to_path("qrel_c0002_lists_manual")
-    when 'c0141_lists'
-      $manual_qrel = to_path("qrel_c0141_lists_manual")
-      #$field_prob = [["text", 107], ["subject", 38], ['%DOC%', 26], ["to", 2], ["name", 2]]
-      #$field_set = [["subject", "text", "to"], ["subject", "text", "text"], ["text", "text", "text", "subject", "text"], ["text", "subject"], ["text", "text"], ["name", "subject", "subject"], ["text"], ["text", "text", "text"], ["text", "text", "text"], ["text", "text", "text"], ["text", "text", "text", "text"], ["text", "text", "text"], ["subject", "subject", "text", "subject"], ["to", "subject"], ["text", "subject", "subject"], ["subject", "text", "subject", nil, "text"], ["subject", "text"], ["subject", "subject", nil], ["text", "text", nil], [nil, nil, "text"], [nil, nil, "subject", "text"], ["text", "text", "text"], [nil, "text"], ["subject", "text"], ["text", nil, "subject", "subject", "text", "subject"], [nil, nil, nil, "subject", "subject"], ["text", "text", nil, nil, "text"], [nil, "text", nil, "text", "text"], [nil, "subject", "subject"], ["text", "subject", "subject", "text"], ["text", "subject", "subject", "subject", "subject"], ["text", nil, "text", "text", "text"], ["text", "text", "text", "text", "subject"], ["text", "subject", "subject"], ["text", "text", "text", "text"], ["name", "subject", "subject"], [nil, "text", "subject", "text", "text"], ["subject", "subject", "subject", "text", "text", nil], ["text", "subject", "text"], ["text", "subject", "subject"], [nil, nil, "text"], ["text", "text", "text", "text"], ["text", "subject", "text"], ["subject", "subject", nil], ["text", "text", "text"], ["text", nil, "text"], ["subject", nil, "text"], ["text", nil, nil, "text"], ["text", "text"], [nil, "subject", "text", "text", "subject", "text"]]
-      #$query_lens = [1, 2, 2, 2, 2, 2, 2, 2, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 4, 4, 4, 4, 4, 4, 4, 5, 5, 5, 5, 5, 5, 5, 5, 5, 6, 6, 6]
-      #$topic_types = {'D_TIDF'=>20,'F_TIDF'=>20,'F_RN_subject'=>10}
-    when 'c0161_lists'
-      $manual_qrel = to_path("qrel_c0161_lists_manual")
-      #$field_prob = [["text", 122], ["subject", 15], ['%DOC%', 13], ["name", 8], ["to", 5]]
-      #$field_set = [["text", "text", "text"], ["subject", "subject", "text"], [nil, "subject", nil], ["text", "text", "text"], ["subject", "text"], ["text", "text", "text", "subject"], ["text"], ["name", "text"], ["text", "subject"], ["text", "text", "text"], [nil, nil, nil, "text"], ["to", "text"], ["subject", "text", "subject"], [nil, "text"], ["text", "subject"], ["text", "subject", "text"], ["text", "text"], ["text", nil], ["subject", nil, "subject"], ["text", "subject", "text"], ["text", "text", "to"], ["text", "text", "text"], [nil, "text", "text", "text", "text"], ["text", "text", "to", "text"], ["text", "text", "text", "text"], ["text", "text", "text", "text"], ["text", "name", "subject", "text"], ["text", "text", "text", "text"], ["text", "text", "text", "text"], ["subject", "text", "text", nil], ["text", "text", "text"], ["text", "text", "subject"], ["to", "subject"], ["text", "to"], ["text", "text", "text"], [nil, "text", nil], ["text", "text"], ["subject", "subject", "to"], ["subject", nil, nil], [nil, "text"], ["to", "text"], ["text", "text", "text", "text", "text"], ["subject", "text", "text", nil], ["text", "text", nil, "text", "text", "text"], ["text", nil, "name", "text"], ["text", "text", "text", "text"], ["text", "text", nil, "text", "text"], ["text", "text", "text", "subject"], ["subject", "text", "text", "text", "text", "text"], ["text", "text", nil, "name", "text", "text"]]
-      #$query_lens = [1, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 5, 5, 5, 6, 6, 6]
-      #$topic_types = {'D_RN'=>18,'F_RN_FF'=>25,'F_RN_subject'=>7}
-    end
 
     #Index Build
     if !File.exist?($index_path)
@@ -136,8 +136,7 @@ def init_collection(col)
     #Topic/Qrel Building
     $file_topic = "topic/" + ["topic", $col_id, $o[:topic_id]].join("_")
     $file_qrel =  "qrel/" + ["qrel" , $col_id, $o[:topic_id]].join("_")
-    dids = ($o[:pair])? read_qrel($manual_qrel).map_hash{|k,v|[k.to_i,v.keys.first]} : nil
-    $engine.build_knownitem_topics($file_topic, $file_qrel, $o.dup.merge(:dids=>dids)) if !File.exist?(to_path($file_topic))
+    $engine.build_knownitem_topics($file_topic, $file_qrel, $o) if !File.exist?(to_path($file_topic))
     $offset = 1 ; $count = $o[:topic_no] || 100
     $sparam = get_sparam('jm',0.1)
   #when 'pdm'
@@ -170,13 +169,23 @@ def add_prefix(fields, col_type)
 end
 
 def set_type_info(pid, col_type)
-  $index_path = "/work1/jykim/prj/dih/pd/index_#{pid}_#{col_type}"
-  $i.config_path( :work_path=>File.join($exp_root,$col) ,:index_path=>$index_path )
-  $fields = if col_type == 'all'
-              COL_TYPES.map{|c|add_prefix(get_fields_for(c), c)}.flatten
-            else
-              add_prefix(get_fields_for(col_type), col_type)
-            end
+  if pid
+    $index_path = "/work1/jykim/prj/dih/pd/index_#{pid}_#{col_type}"
+    $i.config_path( :work_path=>File.join($exp_root,$col) ,:index_path=>$index_path )
+    $fields = if col_type == 'all'
+                $col_types.map{|c|add_prefix(get_fields_for(c), c)}.flatten
+              else
+                add_prefix(get_fields_for(col_type), col_type)
+              end
+  else
+    $index_path = "/work1/jykim/prj/dih/cs/index_#{col_type}"
+    $i.config_path( :work_path=>File.join($exp_root,$col) ,:index_path=>$index_path )
+    $fields = if col_type == 'all'
+                $col_types.map{|c|add_prefix(CS_FIELD_DEF.concat(CS_FIELDS[c]), c)}.flatten
+              else
+                add_prefix(CS_FIELD_DEF.concat(CS_FIELDS[col_type]), col_type)
+              end    
+  end
 end
 
 def set_collection_param(col_id)
@@ -219,5 +228,6 @@ def set_collection_param(col_id)
     $hlm_weight = [0.944, 1.348, 0.0, 2.0, 0.0, 0.764, 0.944, 0.292, 0.833, 2.0, 2.0]
     $prmd_lambda = 0.9
   else
+    $prmd_lambda = 0.9
   end
 end

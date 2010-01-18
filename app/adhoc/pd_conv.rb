@@ -1,8 +1,8 @@
 load 'ilab.rb'
 
 # Convert each field so that collection type can be prefixd 
-PIDS.each do |pid|
-  COL_TYPES.each do |col_type|
+PD_PIDS.each do |pid|
+  $col_types.each do |col_type|
     fields = if col_type != 'lists'
       ['title','url','abstract','date','text']
     else

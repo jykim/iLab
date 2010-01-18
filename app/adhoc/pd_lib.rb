@@ -1,15 +1,21 @@
 TREC_PATH = "/work1/jykim/prj/dih/trec/"
+PD_PATH = "/work1/jykim/prj/dih/pd"
+CS_PATH = "/work1/jykim/prj/dih/cs"
 TREC_COL_PATH = "/work1/jykim/prj/dih/trec/raw/"
 TREC_LIST_COL_PATH = "/work1/jykim/prj/dih/trec/lists/"
-PD_PATH = "/work1/jykim/prj/dih/pd"
 PD_COL_PATH = "/work1/jykim/prj/dih/pd/raw"
+CS_COL_PATH = "/work1/jykim/prj/dih/cs/raw"
+
 TEXT_CONV_PATH = "java -jar /work1/jykim/app/apache-tika-0.3/target/tika-0.3-standalone.jar -t"
-COL_TYPES = ['msword','ppt','pdf','lists','html']
+CS_FIELD_DEF = [:title, :content, :uri]
+CS_FIELDS = {"calendar"=>[:start_at, :location], "email"=>[:from, :to, :date], "file"=>[:filename], "news"=>[:tag_list], "webpage"=>[:tag_list]}
+
 FIELD_EMAIL = ['subject','content','to','sent','name','email']
 FIELD_ETC = ['title','url','abstract','date','text']
-PIDS = ['c0161','c0002','c0141']
+PD_PIDS = ['c0161','c0002','c0141']
+
 TOPIC_TYPES = ['F_RN_TIDF','F_RN_TF','F_RN_IDF','F_RN_RN','D_TF','D_TIDF','D_IDF','D_RN']
-CS_TYPES = [:uniform, :cql, :mpmean]#[, :mpmax, :mpmaxcql, :mpmeancql]
+CSEL_TYPES = [:uniform, :cql, :mpmean]#[, :mpmax, :mpmaxcql, :mpmeancql]
 NORM_TYPES = [:none, :minmax] #[:minmax]
 MERGE_TYPES = [:cori, :multiply]
 #TOPIC_TYPES = ['F_subject_TF','F_text_TF','F_title_TF','F_text_TF']
@@ -39,7 +45,7 @@ def to_ext(col_type)
 end
 
 def did_to_col_type(did)
-  COL_TYPES.find_all{|col|did.scan(/#{to_ext(col)}/).size>0}[0]
+  $col_types.find_all{|col|did.scan(/#{to_ext(col)}/).size>0}[0]
 end
 
 # Generate document with metadata from the collection
@@ -82,8 +88,8 @@ def filter_result_file(file_name)
 end
 
 def list_index_info
-  PIDS.each do |pid|
-    COL_TYPES.each do |col_type|
+  PD_PIDS.each do |pid|
+    $col_types.each do |col_type|
       s = `dumpindex pd/index_#{pid}_#{col_type} s`
       a = s.split("\n").map{|l|l.split(/:\s+/)}
       puts "#{pid}\t#{col_type}\t#{a[1][1]}\t#{a[2][1]}\t#{a[3][1]}"
@@ -97,7 +103,7 @@ def ki_perf_summary(input_file)
   method_type=['DQL','PRM']
   s.split("\n").each do |l|
     e = l.split("|")
-    puts [PIDS.pfind(e[0]), COL_TYPES.pfind(e[0]), TOPIC_TYPES.pfind(e[0])].concat(e[2..-1]).join("|")
+    puts [PD_PIDS.pfind(e[0]), $col_types.pfind(e[0]), TOPIC_TYPES.pfind(e[0])].concat(e[2..-1]).join("|")
   end
   nil
 end

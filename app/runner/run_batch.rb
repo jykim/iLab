@@ -12,8 +12,8 @@ $r = []
 begin#exception handling
   topic_priors = ['length','pagerank']
   topic_types = $o[:topic_types] || TOPIC_TYPES
-  col_types = $o[:col_types] || COL_TYPES
-  pids = $o[:pids] || PIDS #
+  col_types = $o[:col_types] || $col_types
+  pids = $o[:pids] || PD_PIDS #
   anodes = get_anodes()
   query_method = $o[:query_method] || 'simple'
   case $method
@@ -69,7 +69,7 @@ begin#exception handling
     end
   when 'multi_col'
     topic_type = "F_RN_RN"
-    PIDS.each do |pid|
+    PD_PIDS.each do |pid|
       ['0708a','0708b','0708c'].each_with_thread do |topic_id,i|
         $r << run_ilab($root, get_expid_from_env($o.merge(:exp=>$exp,
           :method=>query_method,:topic_id=>"#{topic_type}_#{topic_id}",:topic_type=>topic_type)), nil, 
