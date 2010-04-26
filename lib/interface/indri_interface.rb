@@ -173,6 +173,9 @@ class IndriInterface
     (v > 0)? Math.log(v) : 0
   end
   
+  # - Options
+  #  - :freq : calculate frequency instead of probability
+  #  - :whole_doc : calculate the value for whole document intead of each field
   def calc_col_freq(filename , o={})
     o[:freq] = true #always calculate freq. in Indri
     info "calc_col_freq for #{filename}"

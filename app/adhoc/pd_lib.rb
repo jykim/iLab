@@ -1,14 +1,19 @@
 TREC_PATH = "/work1/jykim/prj/dih/trec/"
 PD_PATH = "/work1/jykim/prj/dih/pd"
 CS_PATH = "/work1/jykim/prj/dih/cs"
+SF_PATH = "/work1/jykim/prj/dih/sf"
 TREC_COL_PATH = "/work1/jykim/prj/dih/trec/raw/"
 TREC_LIST_COL_PATH = "/work1/jykim/prj/dih/trec/lists/"
 PD_COL_PATH = "/work1/jykim/prj/dih/pd/raw"
 CS_COL_PATH = "/work1/jykim/prj/dih/cs/raw"
+SF_COL_PATH = "/work1/jykim/prj/dih/sf/raw"
 
 TEXT_CONV_PATH = "java -jar /work1/jykim/app/apache-tika-0.3/target/tika-0.3-standalone.jar -t"
 CS_FIELD_DEF = [:title, :content, :uri]
 CS_FIELDS = {"calendar"=>[:start_at, :location], "email"=>[:from, :to, :date], "file"=>[:filename], "news"=>[:tag_list], "webpage"=>[:tag_list]}
+
+CS_FIELD_DEF = [:title, :content, :uri]
+CS_FIELDS = {'music'=>[:tag_list], 'photo'=>[:author], 'video'=>[:author], 'webpage'=>[:tags]}
 
 FIELD_EMAIL = ['subject','content','to','sent','name','email']
 FIELD_ETC = ['title','url','abstract','date','text']

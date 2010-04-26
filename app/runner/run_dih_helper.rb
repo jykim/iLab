@@ -107,6 +107,22 @@ def init_collection(col)
         $file_topic ,$file_qrel = 'ent05.known-item-topics', 'ent05.known-item-qrels'
       end
     end
+  when 'sf'
+    $col_types = ['webpage','music','photo','video'] 
+    set_type_info(nil, $o[:col_type])
+    $ptn_qry_title = /\<title\>(.*)\<\/title\>/
+
+    #Index Build
+    if !File.exist?($index_path)
+      $engine.build_index($col_id , "#{SF_COL_PATH}/#{$o[:col_type]}_doc" , $index_path , :fields=>$fields, :stopword=>true)
+    end
+
+    #Topic/Qrel Building
+    $file_topic = ["topic", $o[:topic_id]].join("_")
+    $file_qrel =  ["qrel" , $o[:topic_id]].join("_")
+    $engine.build_knownitem_topics($file_topic, $file_qrel) if !File.exist?(to_path($file_topic))
+    $offset = 1 ; $count = $o[:topic_no] || 50
+    $sparam = get_sparam('jm',0.1)
   when 'cs'
     $col_types = ['calendar','webpage','news','file','email'] 
     set_type_info(nil, $o[:col_type])
@@ -178,13 +194,24 @@ def set_type_info(pid, col_type)
                 add_prefix(get_fields_for(col_type), col_type)
               end
   else
-    $index_path = "/work1/jykim/prj/dih/cs/index_#{col_type}"
-    $i.config_path( :work_path=>File.join($exp_root,$col) ,:index_path=>$index_path )
-    $fields = if col_type == 'all'
-                $col_types.map{|c|add_prefix(CS_FIELD_DEF.concat(CS_FIELDS[c]), c)}.flatten
-              else
-                add_prefix(CS_FIELD_DEF.concat(CS_FIELDS[col_type]), col_type)
-              end    
+    case $col
+    when 'cs'
+      $index_path = "/work1/jykim/prj/dih/cs/index_#{col_type}"
+      $i.config_path( :work_path=>File.join($exp_root,$col) ,:index_path=>$index_path )
+      $fields = if col_type == 'all'
+                  $col_types.map{|c|add_prefix(CS_FIELD_DEF.concat(CS_FIELDS[c]), c)}.flatten
+                else
+                  add_prefix(CS_FIELD_DEF.concat(CS_FIELDS[col_type]), col_type)
+                end
+    when 'sf'
+      $index_path = "/work1/jykim/prj/dih/sf/index_#{col_type}"
+      $i.config_path( :work_path=>File.join($exp_root,$col) ,:index_path=>$index_path )
+      $fields = if col_type == 'all'
+                  $col_types.map{|c|add_prefix(SF_FIELD_DEF.concat(SF_FIELDS[c]), c)}.flatten
+                else
+                  add_prefix(SF_FIELD_DEF.concat(SF_FIELDS[col_type]), col_type)
+                end      
+    end
   end
 end
 
