@@ -114,13 +114,13 @@ def init_collection(col)
 
     #Index Build
     if !File.exist?($index_path)
-      $engine.build_index($col_id , "#{SF_COL_PATH}/#{$o[:col_type]}_doc" , $index_path , :fields=>$fields, :stopword=>true)
+      $engine.build_index($col_id , "#{SF_COL_PATH}/#{$o[:col_type]}_docs" , $index_path , :fields=>$fields, :stopword=>true)
     end
 
     #Topic/Qrel Building
     $file_topic = ["topic", $o[:topic_id]].join("_")
     $file_qrel =  ["qrel" , $o[:topic_id]].join("_")
-    $engine.build_knownitem_topics($file_topic, $file_qrel) if !File.exist?(to_path($file_topic))
+    $engine.build_knownitem_topics($file_topic, $file_qrel, $o) if !File.exist?(to_path($file_topic))
     $offset = 1 ; $count = $o[:topic_no] || 50
     $sparam = get_sparam('jm',0.1)
   when 'cs'
