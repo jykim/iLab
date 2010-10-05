@@ -23,7 +23,7 @@ def traverse_path(path, o={})
   result = []
   if o[:recursion]
     Find.find(path) do |fp|
-      puts "#{fp} started..."
+      #puts "#{fp} started..."
       fn = File.basename(fp)
       if FileTest.directory?(fp)
         if fn[0] == ?.

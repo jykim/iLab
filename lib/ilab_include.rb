@@ -4,7 +4,7 @@ require 'enumerator'
 #if ENV['HOSTNAME'] =~ /^compute/
 #  require 'external/gems/RedCloth-4.0.3/lib/redcloth'  
 #else
-  require 'redcloth'
+#  require 'redcloth'
 #end
 require "logger"
 include Test::Unit::Assertions
