@@ -75,6 +75,14 @@ def init_collection(col)
       #dids = ($o[:pair])? read_qrel($manual_qrel).map_hash{|k,v|[k.to_i,v.keys.first]} : nil
       $engine.build_knownitem_topics($file_topic, $file_qrel, $o.dup.merge(:dids=>dids)) if !File.exist?(to_path($file_topic))
     end
+  when 'enron'
+    $index_path = '/work1/jykim/prj/dih/index_enron'
+    $i.config_path( :work_path=>File.join($exp_root,col) ,:index_path=>$index_path )
+    $ptn_qry_title = /(.*)/
+    $fields =  ['subject','body','to','from','date']
+    #$field_prob = 
+    $sparam = get_sparam('jm',0.1)
+    $title_field = "SUBJECT"
   when 'trec'
     $index_path = '/work1/jykim/prj/dih/trec/index_lists'
     $i.config_path( :work_path=>File.join($exp_root,col) ,:index_path=>$index_path )
@@ -227,6 +235,15 @@ def set_collection_param(col_id)
     $bm25f_weight = [1.0, 0.292, 0.18, 0.18, 1.0, 0.0]
     $bs = [0.0, 0.138, 0.382, 0.0, 0.382, 0.0]
     $bm25_weight = [0.382, 0.382, 0.0, 0.382, 0.382, 0.0]
+  when 'enron'
+    $hlm_weight = [2.0, 0.652, 0.0, 0.0, 0.0]
+    $mflmf_weight = [1.0, 0.292, 1.0, 0.472, 0.0]
+    $mus = [2.631, 6.386, 18.034, 1.626, 3.947]
+    $prmd_lambda = 0.7
+    $bfs = [0.0, 0.549, 0.0, 0.0, 0.188]
+    $bm25f_weight = [1.0, 0.292, 0.18, 0.18, 1.0]
+    $bs = [0.0, 0.138, 0.382, 0.0, 0.382]
+    $bm25_weight = [0.382, 0.382, 0.0, 0.382, 0.382]
   when 'c0002_lists'
     $mus = [29.993, 0.0, 100.0, 0.0, 100.0, 5.573]#[10,0,15,15,15]#[15, 150, 10, 10, 10]
     $prmd_lambda = 0.9
