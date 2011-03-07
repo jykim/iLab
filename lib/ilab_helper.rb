@@ -1,3 +1,4 @@
+require 'redcloth'
 
 module ReportHelper
   HTML_HEADER = "<link href=\"print.css\" rel=\"Stylesheet\" media=\"screen\" type=\"text/css\" />\n"

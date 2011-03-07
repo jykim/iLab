@@ -4,7 +4,7 @@ load 'app/runner/run_dih_helper.rb'
 
 init_env()
 init_collection($col)
-load_csel_scores("cs/csel_scores.txt")
+#load_csel_scores("cs/csel_scores.txt")
 
 def $i.run_query( name, query, template, idx, sparam )
   crt_add_query_set(name, :adhoc_topic=>$o[:query], :index_path=>idx, :template=>template, :smoothing=>sparam, :field_doc=>[$field_doc])
@@ -212,8 +212,8 @@ def ILabLoader.build(ilab)
     #ilab.crt_add_query_set("#{$query_prefix}_BM25F", :template=>:hlm, :smoothing=>$bm25f_smt, 
     #                        :hlm_weights=>($bm25f_weight || [0.1]*($fields.size)), :indri_path=>$indri_path_dih, :param_query=>"-msg_path='#{$bm25f_path}'")
     ilab.crt_add_query_set("#{$query_prefix}_DQL" ,:smoothing=>$sparam)
-    #ilab.crt_add_query_set("#{$query_prefix}_MFLM" ,:template=>:hlm, :smoothing=>get_sparam('jm',0.5), 
-    #                        :hlm_weights=>($hlm_weight || [0.1]*($fields.size)))
+    ilab.crt_add_query_set("#{$query_prefix}_MFLM" ,:template=>:hlm, :smoothing=>get_sparam('jm',0.5), 
+                            :hlm_weights=>($hlm_weight || [0.1]*($fields.size)))
     ilab.crt_add_query_set("#{$query_prefix}_PRM-S", :template=>:prm, :smoothing=>$sparam)
     ilab.crt_add_query_set("#{$query_prefix}_PRM-D", :template=>:prm_ql ,:smoothing=>$sparam, :lambda=>$prmd_lambda)
     #ilab.crt_add_query_set("#{$query_prefix}_MFLM_u" ,:template=>:hlm ,:smoothing=>$sparam, 
