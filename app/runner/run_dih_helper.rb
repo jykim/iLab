@@ -20,7 +20,11 @@ def init_env()
 
   #Set Global Vars
   $t_start = Time.now
-  $col_id = "#{$col}_#{$o[:pid]}_#{$o[:col_type]}"
+  if $o[:col_type]
+    $col_id = "#{$col}_#{$o[:pid]}_#{$o[:col_type]}"
+  else
+    $col_id = $col
+  end
   $o[:topic_id] = $o[:topic_type] if !$o[:topic_id] && $o[:topic_type]
   $query_prefix = "#{$col_id}_#{$o[:topic_id]}"
   $file_topic = ["topic", $o[:topic_id]].join("_")
@@ -117,22 +121,6 @@ def init_collection(col)
         $file_topic ,$file_qrel = 'ent05.known-item-topics', 'ent05.known-item-qrels'
       end
     end
-  when 'sf'
-    $col_types = ['webpage','music','photo','video'] 
-    set_type_info(nil, $o[:col_type])
-    $ptn_qry_title = /\<title\>(.*)\<\/title\>/
-
-    #Index Build
-    if !File.exist?($index_path)
-      $engine.build_index($col_id , "#{SF_COL_PATH}/#{$o[:col_type]}_docs" , $index_path , :fields=>$fields, :stopword=>true)
-    end
-
-    #Topic/Qrel Building
-    $file_topic = ["topic", $o[:topic_id]].join("_")
-    $file_qrel =  ["qrel" , $o[:topic_id]].join("_")
-    $engine.build_knownitem_topics($file_topic, $file_qrel, $o) if !File.exist?(to_path($file_topic))
-    $offset = 1 ; $count = $o[:topic_no] || 50
-    $sparam = get_sparam('jm',0.1)
   when 'cs'
     $col_types = ['calendar','webpage','news','file','email'] 
     set_type_info(nil, $o[:col_type])
@@ -177,6 +165,22 @@ def init_collection(col)
   #  #$engine.build_knownitem_topics($file_topic, $file_qrel, $o.dup.merge(:dids=>dids)) if !File.exist?(to_path($file_topic))
   #  $offset = 1 ; $count = $o[:topic_no] || 50
   #  $sparam = get_sparam('jm',0.1)
+  when 'sf'
+    $col_types = ['webpage','music','photo','video'] 
+    set_type_info(nil, $o[:col_type])
+    $ptn_qry_title = /\<title\>(.*)\<\/title\>/
+
+    #Index Build
+    if !File.exist?($index_path)
+      $engine.build_index($col_id , "#{SF_COL_PATH}/#{$o[:col_type]}_docs" , $index_path , :fields=>$fields, :stopword=>true)
+    end
+
+    #Topic/Qrel Building
+    $file_topic = ["topic", $o[:topic_id]].join("_")
+    $file_qrel =  ["qrel" , $o[:topic_id]].join("_")
+    $engine.build_knownitem_topics($file_topic, $file_qrel, $o) if !File.exist?(to_path($file_topic))
+    $offset = 1 ; $count = $o[:topic_no] || 50
+    $sparam = get_sparam('jm',0.1)
   end
   # Post-configuration (after $work_path is set)
   $bm25f_path = to_path("#{$query_prefix}_bm25f.in")

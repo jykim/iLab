@@ -47,12 +47,11 @@ def ILabLoader.build(ilab)
   end
   # TRAINED PARAMETERS
   # $fields = ['subject','text','to','sent','name','email']
-  if $o[:param]
-    col_type_old = $col_id
-    $col_id = $o[:param]
+  if $o[:col_id]
+    set_collection_param($o[:col_id])
+  else
+    set_collection_param($col_id)
   end
-  set_collection_param($col_id)
-  $col_id = col_type_old if $o[:param]
   case $method
   # Fix weights for some of fields
   when 'hybrid'
