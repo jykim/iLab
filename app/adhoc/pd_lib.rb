@@ -12,8 +12,8 @@ TEXT_CONV_PATH = "java -jar /work1/jykim/app/apache-tika-0.3/target/tika-0.3-sta
 CS_FIELD_DEF = [:title, :content, :uri]
 CS_FIELDS = {"calendar"=>[:start_at, :location], "email"=>[:from, :to, :date], "file"=>[:filename], "news"=>[:tag_list], "webpage"=>[:tag_list]}
 
-CS_FIELD_DEF = [:title, :content, :uri]
-CS_FIELDS = {'music'=>[:tag_list], 'photo'=>[:author], 'video'=>[:author], 'webpage'=>[:tags]}
+#CS_FIELD_DEF = [:title, :content, :uri]
+#CS_FIELDS = {'music'=>[:tag_list], 'photo'=>[:author], 'video'=>[:author], 'webpage'=>[:tags]}
 
 FIELD_EMAIL = ['subject','content','to','sent','name','email']
 FIELD_ETC = ['title','url','abstract','date','text']

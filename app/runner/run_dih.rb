@@ -1,3 +1,4 @@
+$VERBOSE = nil
 load 'app/ilab.rb'
 load 'app/adhoc/pd_lib.rb'
 load 'app/runner/run_dih_helper.rb'
@@ -91,8 +92,8 @@ def ILabLoader.build(ilab)
         MERGE_TYPES.each do |merge_type| 
           #ilab.crt_add_meta_query_set("#{$query_prefix}_DQL"  , 
           #  $o.merge(:template=>:ql, :smoothing=>$sparam, :norm=>norm_type, :col_weight=>col_weight, :cs_type=>cs_type, :merge_type=>merge_type))
-          ilab.crt_add_meta_query_set("#{$query_prefix}_PRM-S", 
-            $o.merge(:template=>:prm, :smoothing=>$sparam, :norm=>norm_type, :col_weight=>col_weight, :cs_type=>cs_type, :merge_type=>merge_type))
+          #ilab.crt_add_meta_query_set("#{$query_prefix}_PRM-S", 
+          #  $o.merge(:template=>:prm, :smoothing=>$sparam, :norm=>norm_type, :col_weight=>col_weight, :cs_type=>cs_type, :merge_type=>merge_type))
         end
       end
     end
