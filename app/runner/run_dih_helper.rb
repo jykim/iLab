@@ -7,7 +7,7 @@ def init_env()
   $indri_path_dih = '/home/jykim/work/app/indri_dih'
   $indri_path_old = '/home/jykim/work/app/indri25'
   $lemur_path = ENV['LEMUR']
-  $trec_eval_path = ENV['WK']+'/app/trec_eval'
+  $trec_eval_path = ENV['INDRI']
 
   #Set Arguments
   #get_env_from_expid(ARGV[0]) if ARGV.size > 0
@@ -44,7 +44,7 @@ def init_collection(col)
   #Choose Collection
   case col
   when 'imdb'
-    $index_path = "/home/jykim/work/prj/dih/imdb/#{$o[:index_path] || 'index_plot'}"
+    $index_path = "#$exp_root/imdb/#{$o[:index_path] || 'index_plot'}"
     $i.config_path( :work_path=>$exp_root+'/imdb' ,:index_path=>$index_path )
     $field_prob = [["title", 406], ['%DOC%', 96], ["actors", 21], ["location", 7], ["releasedate", 5], ["year", 2], ["team", 1]]
     $query_lens = [0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 6, 6, 6, 6, 6, 6, 9]
@@ -60,7 +60,7 @@ def init_collection(col)
     #$hlm_weight =  [1.9, 0.3, 0.2, 0.3, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1]
     $title_field = 'title'
   when 'monster'
-    $index_path = "/home/jykim/work/prj/dih/monster/#{$o[:index_path] || 'index'}"
+    $index_path = "#$exp_root/monster/#{$o[:index_path] || 'index'}"
     $i.config_path( :work_path=>$exp_root+'/monster' ,:index_path=>$index_path )
     $ptn_qry_title = /\<title\> (.*)/
     # $ptn_qry_title = /\<simple\>(.*?)\<\/simple\>/
@@ -80,7 +80,7 @@ def init_collection(col)
       $engine.build_knownitem_topics($file_topic, $file_qrel, $o.dup.merge(:dids=>dids)) if !File.exist?(to_path($file_topic))
     end
   when 'enron'
-    $index_path = '/home/jykim/work/prj/dih/enron/index_enron'
+    $index_path = "#$exp_root/enron/index_enron"
     $i.config_path( :work_path=>File.join($exp_root,col) ,:index_path=>$index_path )
     puts "work_path : #$work_path"
     $ptn_qry_title = /= (.*)/
@@ -90,7 +90,7 @@ def init_collection(col)
     $sparam = get_sparam('jm',0.1)
     $title_field = "SUBJECT"
   when 'trec'
-    $index_path = '/home/jykim/work/prj/dih/trec/index_lists'
+    $index_path = "#$exp_root/trec/index_lists"
     $i.config_path( :work_path=>File.join($exp_root,col) ,:index_path=>$index_path )
     $ptn_qry_title = /\<title\> (.*) \<\/title\>/
     $fields =  ['subject','text','to','sent','name','email']
@@ -200,7 +200,7 @@ end
 
 def set_type_info(pid, col_type)
   if pid
-    $index_path = "/home/jykim/work/prj/dih/pd/index_#{pid}_#{col_type}"
+    $index_path = "#$exp_root/pd/index_#{pid}_#{col_type}"
     $i.config_path( :work_path=>File.join($exp_root,$col) ,:index_path=>$index_path )
     $fields = if col_type == 'all'
                 $col_types.map{|c|add_prefix(get_fields_for(c), c)}.flatten
@@ -210,7 +210,7 @@ def set_type_info(pid, col_type)
   else
     case $col
     when 'cs'
-      $index_path = "/home/jykim/work/prj/dih/cs/index_#{col_type}"
+      $index_path = "#$exp_root/cs/index_#{col_type}"
       $i.config_path( :work_path=>File.join($exp_root,$col) ,:index_path=>$index_path )
       $fields = if col_type == 'all'
                   $col_types.map{|c|add_prefix(CS_FIELD_DEF.concat(CS_FIELDS[c]), c)}.flatten
@@ -218,7 +218,7 @@ def set_type_info(pid, col_type)
                   add_prefix(CS_FIELD_DEF.concat(CS_FIELDS[col_type]), col_type)
                 end
     when 'sf'
-      $index_path = "/home/jykim/work/prj/dih/sf/index_#{col_type}"
+      $index_path = "#$exp_root/sf/index_#{col_type}"
       $i.config_path( :work_path=>File.join($exp_root,$col) ,:index_path=>$index_path )
       $fields = if col_type == 'all'
                   $col_types.map{|c|add_prefix(SF_FIELD_DEF.concat(SF_FIELDS[c]), c)}.flatten
