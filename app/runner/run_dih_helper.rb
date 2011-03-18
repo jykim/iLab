@@ -212,6 +212,7 @@ def set_type_info(pid, col_type)
     when 'cs'
       $index_path = "/home/jykim/work/prj/dih/cs/index_#{col_type}"
       $i.config_path( :work_path=>File.join($exp_root,$col) ,:index_path=>$index_path )
+      p CS_FIELDS
       $fields = if col_type == 'all'
                   $col_types.map{|c|add_prefix(CS_FIELD_DEF.concat(CS_FIELDS[c]), c)}.flatten
                 else
