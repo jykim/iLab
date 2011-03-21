@@ -6,7 +6,7 @@
   </corpus>
 <% end %>
 	<stemmer>
-		<name><%= o[:stemmer] || 'krovetz'%></name>
+		<name><%= o[:stemmer] || 'porter'%></name>
 	</stemmer>
 	<index><%= dest_path %></index>
 <% if o[:fields] %>
@@ -16,6 +16,10 @@
       <ordinal>true</ordinal>
     </field>
   <% end %>
+  <field>
+    <name>doc</name>
+    <ordinal>true</ordinal>
+  </field>
 <% end%>
 <% if o[:stopword]%>
 	<stopper>

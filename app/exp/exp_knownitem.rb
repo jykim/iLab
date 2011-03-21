@@ -36,8 +36,9 @@ end#each query
 #end#if
 
 #PRMf
-$sparam = ['method:raw',"node:wsum,method:dirichlet,mu:50"] if $method == 'prmf_test'
-indri_path = ($method == 'prmf_test')? $indri_path_dih : $indri_path
+#$sparam = ['method:raw',"node:wsum,method:dirichlet,mu:50"] if $method == 'prmf_test'
+#indri_path = ($method == 'prmf_test')? $indri_path_dih : $indri_path
+
 
 $field_prob = Hash.new(0) #{field1=>prob1, ...}
 $init_prob = Hash.new(0) #{field1=>prob1, ...}
@@ -47,7 +48,7 @@ $lambdas = []
 $feature_set, $feature_set_test , $actual_set_max = [nil], [nil], []
 $mps.each_with_index do |mps, i| #i : query no.
   qid = $offset+i #Assumption : query id starts from 0
-  #info "Query #{qid} started..."
+  info "== Finding Best Field Combination for Query #{qid} =="
   
   #Build candidate set of field mappings [[f1,f2,...]. [f1,f2]]
   if $actual[i].size > 1
@@ -66,10 +67,10 @@ $mps.each_with_index do |mps, i| #i : query no.
   case $o[:train_mode]
   when 'fmap'
     query_fields.each_with_index do |e,j|
-      #puts "[Q#{i+1}] Candidate Fields : #{e.inspect}"
       mps_cand = e.map_with_index{|e2,k|[mps[k][0], [[e2, 1.0]]]}.find_all{|mp|mp[1].first.first}
+      #puts "[Q#{i+1}] Candidate Fields : #{e.inspect}\n#{mps_cand.inspect}"
       next if mps_cand.size == 0
-      qs_c[j] = $i.create_query_set("TEW_#{$query_prefix}_q#{qid}_#{e.join("-")}", :indri_path=>indri_path, 
+      qs_c[j] = $i.create_query_set("TEW_#{$query_prefix}_q#{qid}_#{e.join("-")}", :indri_path=>$indri_path, 
                       :template=>:tew, :smoothing=>$sparam, :skip_result_set=>true, :mps=>[mps_cand], :offset=>(qid)) 
       if qs_c[j].stat.size > 0 && qs_c[j].stat['all']['map'] >= cur_max
         cur_max =  qs_c[j].stat['all']['map']
@@ -86,7 +87,7 @@ $mps.each_with_index do |mps, i| #i : query no.
         lambda_vals.each do |lambda|
           lambdas_tmp = lambdas_cur.dup
           lambdas_tmp[j] = lambda
-          qs_c << $i.create_query_set("DPRM_#{$query_prefix}_q#{qid}_#{lambdas_tmp.join("-")}", :indri_path=>indri_path,
+          qs_c << $i.create_query_set("DPRM_#{$query_prefix}_q#{qid}_#{lambdas_tmp.join("-")}", :indri_path=>$indri_path,
                     :template=>:dprm, :smoothing=>$sparam, :skip_result_set=>true, :lambdas=>[lambdas_tmp] , :mps=>[mps], :offset=>(qid)) 
           if qs_c[-1].stat.size > 0 && (qs_c[-1].stat['all']['map'] > cur_max || actual_set.size == 0)
             cur_max =  qs_c[-1].stat['all']['map']
@@ -117,9 +118,8 @@ $mps.each_with_index do |mps, i| #i : query no.
     info "Actual Set : #{actual.inspect}"
     features = [] ; right_count = 0
     mps.each_with_index do |mp,j|
-
       #Feature Lists
-      tf  = clm['DOC'][$engine.kstem(mp[0])] || 1 ; tf = ($o[:fine_bin])? Math.log10(tf).round : (tf>100)
+      tf  = clm['doc'][$engine.kstem(mp[0])] || 1 ; tf = ($o[:fine_bin])? Math.log10(tf).round : (tf>100)
       idf = dfh[$engine.kstem(mp[0])] || 1 ; idf = ($o[:fine_bin])? Math.log10(idf).round : (idf>500)
       qry_word = mp[0]# $engine.unstem(mp[0],qry_words)
       capital = ( qry_word == mp[0].capitalize)? "CapT" : "capf"

@@ -45,8 +45,8 @@ module PRMHelper
       qw_s = kstem(qw.downcase)
       weights = get_col_freq(:prob=>true).map_hash{|k,v|[k,v[qw_s]] if v[qw_s] && fields.include?(k)}
       mp = weights.map_hash{|e|v=e[1]/weights.values.sum ; [e[0],((v >= 0.0001)? v : 0.0)]}
-      mp = fields.map_hash{|f|[f, ((mp[f])? mp[f] : 0.0001)]} if o[:mp_all_fields]
-      o[:fix_mp_for].map{|k,v|mp[k] = v} if o[:fix_mp_for]
+      #mp = fields.map_hash{|f|[f, ((mp[f])? mp[f] : 0.0001)]} if o[:mp_all_fields]
+      #o[:fix_mp_for].map{|k,v|mp[k] = v} if o[:fix_mp_for]
       mps[i] = [qw, mp.find_all{|e|e[1]>0}.to_a.sort_val]
     end
     mps.find_all{|mp|mp[1].size>0}
@@ -116,6 +116,8 @@ module PRMHelper
   #end
   
   #Get query for field-level weighting
+  # - calculate mapping prob.
+  # - transform it appropriately
   def get_prm_query(query, o={})
     mps = get_map_prob(query, o)
     mps = mps.map{|e|[e[0], e[1].find_all{|e2|e2[1] > o[:mp_thr]}]} if o[:mp_thr]    
@@ -137,15 +139,17 @@ module PRMHelper
   end
 
   #PRM with DQL
-  #def get_dprm_query(mps, lambdas, o={})
-  #  queries = mps.map_with_index do |mp,i|
-  #    "#wsum(#{lambdas[i]} #{get_tew_query([mp], o)} #{1-lambdas[i]} #{mp[0]})"
-  #  end
-  #  return queries.join("\n")
-  #end
+  def get_dprm_query(mps, lambdas, o={})
+    queries = mps.map_with_index do |mp,i|
+      "#wsum(#{lambdas[i]} #{get_tew_query([mp], o)} #{1-lambdas[i]} #{mp[0]})"
+    end
+    return queries.join("\n")
+  end
 
   #Get Term-wise Element Weighting Query given Mapping Prob.
   def get_tew_query(mps, o)
+    #debugger
+    #info "[get_tew_query] #{mps.inspect}"
     mps_new = mps.map_with_index do |mp,i|
       #p "#{o[:topk_field]}"
       if o[:topk_field]

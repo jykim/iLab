@@ -8,10 +8,10 @@
         <workingSet><%= did %></workingSet>
 <% end %>
         <queryOffset><%= query_offset %></queryOffset>
-<% $o_tmp[:mps].each_with_index do |mps,i| %>
+<% o[:mps].each_with_index do |mps,i| %>
         <query>
         #combine (
-        <%= prior_clause%><%= get_dprm_query(mps, $o_tmp[:lambdas][i], $o_tmp) %>)
+        <%= prior_clause%><%= get_dprm_query(mps, o[:lambdas][i], o) %>)
         </query>
 <% end  %>
 </parameters>

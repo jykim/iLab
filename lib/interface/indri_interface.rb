@@ -161,10 +161,15 @@ class IndriInterface
   end
   
   # Apply Krovetz Stemming
+  #def kstem(str)
+  #  $kstem = {} if !defined?($kstem)
+  #  return str[0..2] if ['january','february','march','april','june','july','august','september','october','november','december'].include?(str.downcase)
+  #  $kstem[str] = $kstem[str] || `#{$lemur_path}/bin/kstemmer #{$lemur_path}/bin/param #{str}`.strip.downcase
+  #end
+  
+  # Apply porter stemmer
   def kstem(str)
-    $kstem = {} if !defined?($kstem)
-    return str[0..2] if ['january','february','march','april','june','july','august','september','october','november','december'].include?(str.downcase)
-    $kstem[str] = $kstem[str] || `#{$lemur_path}/bin/kstemmer #{$lemur_path}/bin/param #{str}`.strip.downcase
+    Lingua.stemmer(str.downcase)
   end
   
   # Calc Pointwise Mutual Information
@@ -176,10 +181,16 @@ class IndriInterface
   # - Options
   #  - :freq : calculate frequency instead of probability
   #  - :whole_doc : calculate the value for whole document intead of each field
+  #def calc_col_freq(filename , o={})
+  #  o[:freq] = true #always calculate freq. in Indri
+  #  info "calc_col_freq for #{filename}"
+  #  cmd = fwrite('cmd_calc_mp.log' , "#{$indri_path}/bin/calc_mp#{(o[:whole_doc])? "_doc" : ""}#{(o[:freq])? "_freq" : ""} #{$lemur_path}/bin/param #@index_path #{filename}", :mode=>'a')
+  #  `#{cmd}`
+  #end
+  
   def calc_col_freq(filename , o={})
-    o[:freq] = true #always calculate freq. in Indri
     info "calc_col_freq for #{filename}"
-    cmd = fwrite('cmd_calc_mp.log' , "#{$lemur_path}/bin/calc_mp#{(o[:whole_doc])? "_doc" : ""}#{(o[:freq])? "_freq" : ""} #{$lemur_path}/bin/param #@index_path #{filename}", :mode=>'a')
+    cmd = fwrite('cmd_calc_mp.log' , "#{$indri_path}/bin/calc_mp #@index_path #{filename}", :mode=>'a')
     `#{cmd}`
   end
   

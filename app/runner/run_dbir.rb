@@ -33,7 +33,7 @@ when 'monster'
   $hlm_weight = [1.236067949688, 1.236067949688, 1.236067949688, 0.0, 1.05572805765242, 0.790243232371999, 0.901699407062102, 2.0]
   # [1.5, 1.1, 1.3, 2.0, 1.7, 0.6, 1.0, 0.5] #using s_neighbor
   # $hlm_weight = [1.0, 0.2, 1.0, 0.2, 0.2, 1.0, 0.5, 0.2]
-  #$field_doc = 'DOC'
+  #$field_doc = 'doc'
   $title_field = 'ResumeTitle'
 when 'imdb'
   INDEX_PATH = '/work1/jykim/prj/dbir/imdb/index'

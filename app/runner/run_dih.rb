@@ -1,4 +1,3 @@
-$VERBOSE = nil
 load 'app/ilab.rb'
 load 'app/adhoc/pd_lib.rb'
 load 'app/runner/run_dih_helper.rb'

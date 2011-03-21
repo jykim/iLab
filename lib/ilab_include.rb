@@ -1,12 +1,15 @@
 load "exlib/rubylib_include.rb"
 require 'erb'
 require 'enumerator'
+require 'ruby-debug'
+
 #if ENV['HOSTNAME'] =~ /^compute/
 #  require 'external/gems/RedCloth-4.0.3/lib/redcloth'  
 #else
 #  require 'redcloth'
 #end
 require "logger"
+require 'lingua/stemmer'
 include Test::Unit::Assertions
 
 load 'lib/ilab_loader.rb'

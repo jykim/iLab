@@ -1,3 +1,4 @@
+$VERBOSE = nil
 load 'lib/ilab_include.rb'
 
 $ilab_root ||= ENV['ILAB_ROOT']

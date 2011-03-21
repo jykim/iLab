@@ -1,5 +1,4 @@
 require 'rubygems'
-#require 'ruby-debug'
 require 'test/unit'
 require 'extensions/extensions.rb'
 require 'extensions/exceptions.rb'
