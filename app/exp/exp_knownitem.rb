@@ -119,7 +119,7 @@ $mps.each_with_index do |mps, i| #i : query no.
     features = [] ; right_count = 0
     mps.each_with_index do |mp,j|
       #Feature Lists
-      tf  = clm['doc'][$engine.kstem(mp[0])] || 1 ; tf = ($o[:fine_bin])? Math.log10(tf).round : (tf>100)
+      tf  = clm['document'][$engine.kstem(mp[0])] || 1 ; tf = ($o[:fine_bin])? Math.log10(tf).round : (tf>100)
       idf = dfh[$engine.kstem(mp[0])] || 1 ; idf = ($o[:fine_bin])? Math.log10(idf).round : (idf>500)
       qry_word = mp[0]# $engine.unstem(mp[0],qry_words)
       capital = ( qry_word == mp[0].capitalize)? "CapT" : "capf"

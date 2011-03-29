@@ -13,6 +13,7 @@ class QuerySet
     o[:engine] ||= DEFAULT_ENGINE_TYPE
     @engine = case o[:engine]
       when :indri : IndriInterface.new(@name , o)
+      when :galago : GalagoInterface.new(@name , o)
       end
     @o = o
   end
@@ -46,10 +47,10 @@ class QuerySet
   def get_col_score(query, o = {})
     words = query.split(/\s+/).map{|w|@engine.kstem(w)}
     score = 1
-    bglm = $engine.get_col_freq(:whole_doc=>true)['doc']
+    bglm = $engine.get_col_freq(:whole_doc=>true)['document']
     case (o[:col_score] || "cql")
     when "cql"
-      clm = @engine.get_col_freq(:whole_doc=>true)['doc']
+      clm = @engine.get_col_freq(:whole_doc=>true)['document']
       #clm_s = clm.smooth(0.1,bglm)
       words.each do |w|
         #info("[get_col_score] zero prob for #{@name}/#{w}") if !clm[w]

@@ -4,6 +4,7 @@ def init_env()
   $exp_root = ENV['DH']
   $r_path = ENV['R_PROJECT']
   $indri_path = ENV['INDRI']
+  $crfpp_path = ENV['CRFPP']
   $indri_path_dih = '/home/jykim/work/app/indri_dih'
   $indri_path_old = '/home/jykim/work/app/indri25'
   $lemur_path = ENV['LEMUR']
@@ -86,9 +87,16 @@ def init_collection(col)
     $ptn_qry_title = /= (.*)/
     $offset = 201
     $fields =  ['subject','body','to','from','date']
+    if !File.exist?($index_path)
+      $engine.build_index($col_id , "#$exp_root/enron/doc" , $index_path , :fields=>$fields, :stopword=>false)
+    end
     #$field_prob = 
     $sparam = get_sparam('jm',0.1)
     $title_field = "SUBJECT"
+    if $o[:topic_type]
+      $offset = 1 ; $count = $o[:topic_no] || 50
+      $engine.build_knownitem_topics($file_topic, $file_qrel, $o) if !File.exist?(to_path($file_topic))
+    end
   when 'trec'
     $index_path = "#$exp_root/trec/index_lists"
     $i.config_path( :work_path=>File.join($exp_root,col) ,:index_path=>$index_path )

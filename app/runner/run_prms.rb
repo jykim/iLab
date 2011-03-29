@@ -1,0 +1,63 @@
+load 'app/ilab.rb'
+load 'app/adhoc/pd_lib.rb'
+load 'app/runner/run_prms_helper.rb'
+
+init_env()
+init_collection($col)
+
+#Choose Retrieval Method
+def ILabLoader.build(ilab)
+  puts "METHOD : #$method"
+  if $o[:col_id]
+    set_collection_param($o[:col_id])
+  else
+    set_collection_param($col_id)
+  end
+  case $method
+  #------------------ DIH Project ------------------#
+  when 'simple' #methods that doesn't require parameter tuning
+    #ilab.crt_add_query_set("#{$query_prefix}_BM25F", :template=>:hlm, :smoothing=>$bm25f_smt, 
+    #                        :hlm_weights=>($bm25f_weight || [0.1]*($fields.size)), :indri_path=>$indri_path_dih, :param_query=>"-msg_path='#{$bm25f_path}'")
+    ilab.crt_add_query_set("#{$query_prefix}_DQL" ,:smoothing=>$sparam)
+    ilab.crt_add_query_set("#{$query_prefix}_gDQL" ,:engine=>:galago ,:index_path=>$gindex_path, :smoothing=>'linear')
+    ilab.crt_add_query_set("#{$query_prefix}_MFLM" ,:template=>:hlm, :smoothing=>get_sparam('jm',0.5), 
+                            :hlm_weights=>($hlm_weight || [0.1]*($fields.size)))
+    ilab.crt_add_query_set("#{$query_prefix}_PRM-S", :template=>:prm, :smoothing=>$sparam)
+    ilab.crt_add_query_set("#{$query_prefix}_PRM-D", :template=>:prm_ql ,:smoothing=>$sparam, :lambda=>$prmd_lambda)
+    #ilab.crt_add_query_set("#{$query_prefix}_MFLM_u" ,:template=>:hlm ,:smoothing=>$sparam, 
+    #                        :hlm_weights=>([0.1]*($fields.size)))
+  end#case
+  if !ilab.fcheck($file_qrel)
+    warn "Create Qrel First!"
+    $exp = 'qrel'
+    return
+  end
+  ilab.add_relevant_set($file_qrel)
+  ilab.fetch_data
+end
+
+begin
+  $i = ILabLoader.load($i) if $exp != 'qrel' 
+rescue DataError
+  puts 'Data inconsistency found while loading..'
+  exit
+end
+
+def process_report
+  load to_path('exp_'+$exp+'.rb')
+  $i.create_report_index
+  #info("Sending report to belmont...")
+  #`ssh jykim@belmont 'source ~/.bash_profile;/usr/dan/users4/jykim/dev/rails/lifidea/script/sync_rpt.rb dih #{$col}'`
+end
+
+#Run Experiment & Generate Report
+info("Experiment '#{$exp}' started..")
+if $o[:env]
+  load to_path('exp_'+$exp+'.rb')
+  $r[:expid] = get_expid_from_env()
+  info("RETURN<#{$r.inspect}>RETURN")
+else
+  process_report()
+  #eval IO.read(to_path('exp_'+$exp+'.rb'))
+end
+info("For #{get_expid_from_env()} experiment, #{Time.now - $t_start} second elapsed...")

@@ -1,5 +1,8 @@
 # Interface for Indri Search Engine
 $indri_path = ENV['INDRI']
+DEF_LAMBDA = 0.5
+DEF_MU = 1500
+
 class IndriInterface
   DEF_SMOOTHING = ['method:dirichlet,mu:1500,operator:term','method:dirichlet,mu:4000,operator:window']
   attr_accessor :index_path, :title_field , :cf
@@ -20,7 +23,7 @@ class IndriInterface
   def build_query(topics , exp , o={})
     query_offset = o[:offset] || 1
     o[:template] = :ql if !o[:template]
-    o[:lambda] = o[:lambda] || 0.5
+    o[:lambda] = o[:lambda] || DEF_LAMBDA
     #err("[build_query] HLM weight not specified!") if o[:template] == :hlm && !o[:hlm_weights]
     working_set = o[:working_set] || []
     prior_clause = (o[:prior])? "#prior(#{o[:prior]}) " :""
@@ -35,7 +38,7 @@ class IndriInterface
   def build_index(name , src_docs , dest_path , o={})
     `mkdir -p #{dest_path}` if !File.exist?(dest_path)
     src_docs = (src_docs.class == String)? [src_docs] : src_docs
-    o[:template] = :def if !o[:template] #assign default template
+    o[:template] = :indri if !o[:template] #assign default template
     o[:template] = to_path("index_#{o[:template].to_s}.rhtml") if o[:template].class == Symbol
     template = ERB.new(IO.read(o[:template]))
     fwrite("index_#{name}.xml" , template.result(binding))

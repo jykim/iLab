@@ -1,0 +1,10 @@
+<parameters>
+        <scorer><%= smoothing %></scorer>
+				<mu><%= mu %></mu>
+				<lambda><%= lambda %></lambda>
+<% topics.each_with_index do |query,i| %>
+        <query>
+					<number><%= i + query_offset %></number>
+					<text><%= query %></text>
+				</query><% end  %>
+</parameters>

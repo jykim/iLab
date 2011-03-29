@@ -35,6 +35,20 @@ def $i.crt_add_meta_query_set(name, o = {})
   crt_add_query_set(qs_name , o)
 end
 
+def run_cprm_query(file_input, file_model, o)
+  if !$i.fcheck(to_path(file_input)) || !$i.fcheck(to_path(file_model))
+    err("[run_cprm_query] file doesn't exist (#{file_input} or #{file_model})")
+    return nil
+  end
+  result_crf = $crf.test(file_input, file_model, file_input+".out", o)
+
+  o_qs = o.merge({:template=>:tew, :smoothing=>get_sparam('jm',0.5),:mps=>result_crf[1], :redo=>true})
+  #o_qs.merge!{}
+  qs_crf = $i.create_query_set("#{$train}#{$col_type}_#{$o[:topic_id]}_#{o[:model_id]}_CPRM_#{$remark}", o_qs)
+  info "[run_cprm_query] Accuracy : #{result_crf[0].mean} MAP : #{qs_crf.stat['all']['map']}"
+  qs_crf
+end
+
 #Choose Retrieval Method
 def ILabLoader.build(ilab)
   puts "METHOD : #$method"

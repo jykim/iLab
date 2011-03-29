@@ -17,10 +17,8 @@ class ILab
     @name = exp_name
     @data_fetched = false
     @o = o
-    $engine = case (o[:engine_type] || DEFAULT_ENGINE_TYPE)
-              when :indri
-                IndriInterface.new(@name , o)
-              end
+    $engine = IndriInterface.new(@name , o)
+    $gengine = GalagoInterface.new(@name , o)
     clear
   end
 

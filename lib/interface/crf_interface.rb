@@ -7,12 +7,12 @@ class CRFInterface
   def train(input, model, o={})
     crf_c = o[:crf_c] || 1.0
     template = $o[:crf_template] || $o[:col_type] || $col
-    fwrite('crf_train.log' , `crf_learn -c #{crf_c} #{to_path("crfpp_#{template}.template")} #{to_path(input)} #{to_path(model)}`, :mode=>'a')
+    fwrite('crf_train.log' , `#$crfpp_path/bin/crf_learn -c #{crf_c} #{to_path("crfpp_#{template}.template")} #{to_path(input)} #{to_path(model)}`, :mode=>'a')
   end
   
   def test(input, model, output, o={})
     #if !fcheck(output)
-      fwrite('crf_test.log' , `crf_test -v2 -m #{to_path(model)} #{to_path(input)} > #{to_path(output)}`, :mode=>'a')
+      fwrite('crf_test.log' , `#$crfpp_path/bin/crf_test -v2 -m #{to_path(model)} #{to_path(input)} > #{to_path(output)}`, :mode=>'a')
     #end
     col_no = fread(input).split("\n").find_all{|e|e.size > 15}[0].split(" ").size
     info "[CRFInterface::test] col_no = #{col_no}"
@@ -35,5 +35,4 @@ class CRFInterface
      end
      [precs,result]
   end
-  
 end
