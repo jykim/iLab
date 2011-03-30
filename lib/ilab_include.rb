@@ -27,6 +27,7 @@ load 'lib/etc/stat_length.rb'
 load 'lib/etc/stemmer.rb'
 load 'lib/field/field_helper.rb'
 load 'lib/field/prm_helper.rb'
+load 'lib/field/prm_multicol_helper.rb'
 load 'lib/field/gen_helper.rb'
 
 load 'lib/interface/gnuplot_interface.rb'

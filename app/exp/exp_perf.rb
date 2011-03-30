@@ -10,33 +10,32 @@ $tbl_all.concat $i.qsa.map{|qs|["\"#{qs.short_name}\":#{'qry_'+qs.name+'.txt'}"]
 if $o[:verbose]
   #Length Stat
   #$i.calc_length_stat
-
+  #debugger
   #Perform. Stat
   $i.fetch_data if $i.rl
 
   #Stat (e.g. MAP)
-  #$i.calc_stat
+  $i.calc_stat
 
   #$tbl_qry[0] << topic_types if $o[:gen_prob]
   #doc_no = $engine.get_col_stat()[:doc_no] if $o[:gen_prob]
   #gen_probs = topic_types.map{|topic_type| $engine.get_gen_prob(q.text, dno_rl , topic_type, :doc_no=>doc_no) }
   
   $did_rl = $qrys.map_hash{|q|[q.qid, q.rl.docs[0].did]}
-  $col_rl = $qrys.map_hash{|q|[q.qid, did_to_col_type($did_rl[q.qid])]}
-  
-  $tbl_qry.add_cols CSEL_TYPES.map{|e|"r#{e}"}, 
-    $qrys.map{|q|CSEL_TYPES.map{|e|$did_rl[q.qid].scan(to_ext($csel_scores[q.qid][e].r3.to_a.sort_val[0][0])).size}}
-
-  $tbl_qry.add_cols CSEL_TYPES.map{|e|"s#{e}"}, 
-  $qrys.map{|q|CSEL_TYPES.map{|e|$csel_scores[q.qid][e][$col_rl[q.qid]].r3}}
-    
+  #$col_rl = $qrys.map_hash{|q|[q.qid, did_to_col_type($did_rl[q.qid])]}
+  #
+  #$tbl_qry.add_cols CSEL_TYPES.map{|e|"r#{e}"}, 
+  #  $qrys.map{|q|CSEL_TYPES.map{|e|$did_rl[q.qid].scan(to_ext($csel_scores[q.qid][e].r3.to_a.sort_val[0][0])).size}}
+  #
+  #$tbl_qry.add_cols CSEL_TYPES.map{|e|"s#{e}"}, 
+  #$qrys.map{|q|CSEL_TYPES.map{|e|$csel_scores[q.qid][e][$col_rl[q.qid]].r3}}
+  #  
   $tbl_qry.add_cols $i.qsa.map{|e|e.short_name = e.name.gsub($query_prefix+'_',"")}, 
     $qrys.map{|q|$i.qsa.map{|e|(e.stat[q.qid.to_s])? e.stat[q.qid.to_s]['map'] : 0.0}}
 
-  #$tbl_qry.add_cols $ret_models, 
-  #  $ret_models.map{|e|$avg_doc_scores[q.qid][e].to_p[$col_rl[q.qid]].r3}
+  #$tbl_qry.add_cols $ret_models, $ret_models.map{|e|$avg_doc_scores[q.qid][e].to_p[$col_rl[q.qid]].r3}
   
-  #$tbl_qry << ["AVG" , "PERF" , (2..9).to_a.map{|i|$tbl_qry[1..-1].avg_col(i).r3} , "COL_SCORE" , (11..14).to_a.map{|i|$tbl_qry[1..-1].avg_col(i).r3}].flatten
+  #$tbl_qry << ["AVG" , "PERF" , (2..9).to_a.map{|i|$tbl_qry[1..-1].avg_col(i).r3}].flatten
   $sig_test, $log_reg = {}, {}
   if $i.check_R()
     $i.qsa.map{|qs|qs.name}.to_comb.each_with_index do |qs,i|

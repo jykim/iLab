@@ -59,9 +59,9 @@ def init_collection(col)
     if !File.exist?($index_path)
       $engine.build_index($col_id , "#$exp_root/trec/raw_doc" , $index_path , :fields=>$fields, :stemmer=>:porter, :stopword=>false)
     end
-    if !File.exist?($gindex_path)
-      $gengine.build_index($col_id , "#$exp_root/trec/gdoc/w3c-lists_small.trecweb" , $gindex_path , :fields=>$fields, :stopword=>false)
-    end
+    #if !File.exist?($gindex_path)
+    #  $gengine.build_index($col_id , "#$exp_root/trec/gdoc/w3c-lists_small.trecweb" , $gindex_path , :fields=>$fields, :stopword=>false)
+    #end
     #$field_prob = 
     $sparam = get_sparam('jm',0.1)
     $title_field = "SUBJECT"
