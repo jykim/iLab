@@ -1,0 +1,14 @@
+<parameters>
+<% src_docs.each do |c| %>
+	<corpusPath><%= c %></corpusPath>
+<% end %>
+	<stemming><%= o[:stemmer] || 'porter'%></stemming>
+	<indexPath><%= dest_path %></indexPath>
+<% if o[:fields] %>
+	<tokenizer>
+	  <% o[:fields].each do |f|%>
+	    <field><%= f %></field>
+	  <% end %>
+	<tokenizer>
+<% end%>
+</parameters>

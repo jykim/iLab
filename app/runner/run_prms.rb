@@ -18,14 +18,18 @@ def ILabLoader.build(ilab)
   when 'simple' #methods that doesn't require parameter tuning
     #ilab.crt_add_query_set("#{$query_prefix}_BM25F", :template=>:hlm, :smoothing=>$bm25f_smt, 
     #                        :hlm_weights=>($bm25f_weight || [0.1]*($fields.size)), :indri_path=>$indri_path_dih, :param_query=>"-msg_path='#{$bm25f_path}'")
-    ilab.crt_add_query_set("#{$query_prefix}_DQL" ,:smoothing=>$sparam)
+    ilab.crt_add_query_set("#{$query_prefix}_DQL" , :smoothing=>get_sparam('jm',0.1))
     ilab.crt_add_query_set("#{$query_prefix}_gDQL" ,:engine=>:galago ,:index_path=>$gindex_path, :smoothing=>'linear')
     ilab.crt_add_query_set("#{$query_prefix}_MFLM" ,:template=>:hlm, :smoothing=>get_sparam('jm',0.5), 
                             :hlm_weights=>($hlm_weight || [0.1]*($fields.size)))
     ilab.crt_add_query_set("#{$query_prefix}_PRM-S", :template=>:prm, :smoothing=>$sparam)
     ilab.crt_add_query_set("#{$query_prefix}_PRM-D", :template=>:prm_ql ,:smoothing=>$sparam, :lambda=>$prmd_lambda)
     #ilab.crt_add_query_set("#{$query_prefix}_MFLM_u" ,:template=>:hlm ,:smoothing=>$sparam, 
-    #                        :hlm_weights=>([0.1]*($fields.size)))
+    #                        :hlm_weights=>([0.1]*($fields.size)))    
+  when 'mp_smooth'
+    [0.0,0.1,0.25,0.5,0.75,1.0].each do |mp_smooth|
+      ilab.crt_add_query_set("#{$query_prefix}_PRM-S_s#{mp_smooth}", :template=>:prm, :smoothing=>$sparam, :mp_smooth=>mp_smooth)
+    end
   end#case
   if !ilab.fcheck($file_qrel)
     warn "Create Qrel First!"

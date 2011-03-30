@@ -1,6 +1,6 @@
 # Interface for Indri Search Engine
 $indri_path = ENV['INDRI']
-DEF_LAMBDA = 0.5
+DEF_LAMBDA = 0.1
 DEF_MU = 1500
 
 class IndriInterface
