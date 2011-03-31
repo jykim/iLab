@@ -25,14 +25,22 @@ def ILabLoader.build(ilab)
     ilab.crt_add_query_set("#{$query_prefix}_PRM-D", :template=>:prm_ql ,:smoothing=>$sparam, :lambda=>$prmd_lambda)
     #ilab.crt_add_query_set("#{$query_prefix}_MFLM_u" ,:template=>:hlm ,:smoothing=>$sparam, 
     #                        :hlm_weights=>([0.1]*($fields.size)))    
-  when 'prms'
-    ilab.crt_add_query_set("#{$query_prefix}_PRM-S", :template=>:prm, :smoothing=>$sparam)
+  when 'engines_prms'
+    o = $o.dup.merge(:template=>:prm, :smoothing=>get_sparam('jm',0.5))
+    ilab.crt_add_query_set("#{$query_prefix}_PRM-S", o)
+    ilab.crt_add_query_set("#{$query_prefix}_gPRM-S", :template=>:prm, :smoothing=>'linear', :lambda=>0.5,
+                            :engine=>:galago ,:index_path=>$gindex_path)
   when 'engines_dir'
     ilab.crt_add_query_set("#{$query_prefix}_DQL" , :smoothing=>get_sparam('dirichlet',500))
     ilab.crt_add_query_set("#{$query_prefix}_gDQL" ,:engine=>:galago ,:index_path=>$gindex_path, :smoothing=>'dirichlet',:mu=>500)
   when 'engines_jm'
     ilab.crt_add_query_set("#{$query_prefix}_DQL" , :smoothing=>get_sparam('jm',$o[:lambda]))
     ilab.crt_add_query_set("#{$query_prefix}_gDQL" ,:engine=>:galago ,:index_path=>$gindex_path, :smoothing=>'linear',:lambda=>$o[:lambda])
+  when 'engines_mflm'
+    ilab.crt_add_query_set("#{$query_prefix}_MFLM" ,:template=>:hlm, :smoothing=>get_sparam('jm',0.5), 
+                            :hlm_weights=>([0.1]*($fields.size)))
+    ilab.crt_add_query_set("#{$query_prefix}_gMFLM" ,:template=>:hlm, :smoothing=>'linear', :lambda=>0.5, 
+                            :hlm_weights=>([0.1]*($fields.size)),:engine=>:galago ,:index_path=>$gindex_path)
   when 'mp_noise'
     [0.0,0.5,1.0,2.0,5.0].each do |mp_noise|
       ilab.crt_add_query_set("#{$query_prefix}_PRM-S_n#{mp_noise}", :template=>:prm, :smoothing=>$sparam, :mp_noise=>mp_noise)

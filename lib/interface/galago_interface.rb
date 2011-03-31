@@ -32,7 +32,7 @@ class GalagoInterface
     #template = ERB.new(IO.read(o[:template]))
     #fwrite("index_#{name}.xml" , template.result(binding))
     #{}`#{$galago_path}/bin/galago build #{to_path("index_#{name}.xml")}`
-    cmd = "#{$galago_path}/bin/galago build -stemming=#{o[:stemmer]||'porter'} #{dest_path} #{src_docs}"
+    cmd = "#{$galago_path}/bin/galago build-fast --field=#{$fields.join(",")} --stemming=#{o[:stemmer]||'porter'} #{dest_path} #{src_docs}"
     puts cmd
     `#{cmd}`
   end

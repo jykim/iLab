@@ -58,7 +58,7 @@ def init_collection(col)
     col_path = "#$exp_root/trec/raw_gdoc/w3c-lists_small.trecweb"
     $index_path = "#$exp_root/trec/index_lists"
     gindex_path = "#$exp_root/trec/gindex_lists"
-    stemmer = "porter"
+    stemmer = nil#"porter"
     $i.config_path( :work_path=>File.join($exp_root,col) ,:index_path=>$index_path )
     $ptn_qry_title = /\<title\> (.*) \<\/title\>/
     $fields =  ['subject','text','to','sent','name','email']

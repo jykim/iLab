@@ -56,12 +56,24 @@ module PRMHelper
     #mps_new.map{|mp| " #wsum(#{mp[1].sort_by{|e|e[1]}.reverse.map{|e|"#{e[1].r3} #{mp[0]}.(#{e[0]})"}.join(' ')})" }.join("\n")
   end
   
-  
-  
   def get_hlm_query(query, weights, fields = nil)
     fields ||= $fields
     query.split(" ").map{|qw| s = weights.map_with_index{|w,i|"#{w} #{qw}.(#{fields[i]})"}.join(" ") ; " #wsum(#{s})" }.join(" ")
   end
+  
+  def get_hlm_gquery(query, weights, fields = nil)
+    fields ||= $fields
+    query.split(" ").map{|qw| 
+      s = weights.map_with_index{|w,i|"#{qw}.#{fields[i]}"}.join(" ")
+      " #combine(#{s})" 
+    }.join(" ")
+  end
+  
+  def get_prm_gquery(query, fields = nil)
+    fields ||= $fields
+    " #prms:fields=#{fields.join(",")}(#{query})" 
+  end
+  
   
   ##### DEPRECATED #####
 
