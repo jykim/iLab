@@ -111,7 +111,7 @@ class ILab
     #Read topic file & generate query list
     topics = o[:adhoc_topic] || 
     IO.read(to_path(o[:file_topic])).scan(o[:topic_pattern]).
-    map{|e| (o[:adhoc_topic])? e[0] : e[0].gsub(/[^A-Za-z0-9 ]/ , " ") }.
+    map{|e| (o[:adhoc_topic])? e[0] : e[0].gsub(/[^A-Za-z0-9 \-]/ , " ") }.
     find_all{|e| (block_given?)? filter.call(e) : true }
     
     if topics.size < 1 then err 'No query found!' ; return end

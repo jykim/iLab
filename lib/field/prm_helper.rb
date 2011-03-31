@@ -1,6 +1,7 @@
 #Functions Related to PRM
 #
-module PRMHelper  
+module PRMHelper
+  MP_MIN = 0.0001
   # Get Mapping Prob. for given query
   # result = [[qw1,[[f1,mp1],[f2,mp2]]], [qw2,...]]
   def get_map_prob(query, o={})
@@ -11,8 +12,12 @@ module PRMHelper
       #Read Collection Stat.
       qw_s = kstem(qw.downcase)
       weights = get_col_freq(:prob=>true).map_hash{|k,v|[k,v[qw_s]] if v[qw_s] && fields.include?(k)}
-      mp = weights.map_hash{|e|v=e[1]/weights.values.sum ; [e[0],((v >= 0.0001)? v : 0.0)]}
-      mp = fields.map_hash{|f|[f, ((mp[f])? mp[f] : 0.0001)]} if o[:mp_all_fields]
+      mp = weights.map_hash{|e|v=e[1]/weights.values.sum ; [e[0],((v >= MP_MIN)? v : MP_MIN)]}
+      if o[:mp_all_fields]
+        mp = fields.map_hash{|f|[f, ((mp[f])? mp[f] : MP_MIN )]}
+      elsif mp.size == 0
+        error "[get_map_prob] Query-term [#{qw}->#{qw_s}] not found!"
+      end
       #o[:fix_mp_for].map{|k,v|mp[k] = v} if o[:fix_mp_for]
       mps[i] = [qw, mp.find_all{|e|e[1]>0}.to_a.sort_val]
     end
