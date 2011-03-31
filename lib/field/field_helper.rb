@@ -4,7 +4,7 @@ module FieldHelper
   # return : {'FIELD1'=>{term1=>prob1,...},... }
   def get_col_freq(o = {})
     cf_fn = "FREQ_#{File.basename(@index_path)}.in"
-    if !File.exist?(to_path(cf_fn))
+    if !File.exist?(to_path(cf_fn)) #|| $o[:redo]
       calc_col_freq( to_path(cf_fn))
       puts "[get_col_freq] Creating #{cf_fn}..."
     end

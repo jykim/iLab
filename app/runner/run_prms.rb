@@ -27,9 +27,12 @@ def ILabLoader.build(ilab)
     #                        :hlm_weights=>([0.1]*($fields.size)))    
   when 'prms'
     ilab.crt_add_query_set("#{$query_prefix}_PRM-S", :template=>:prm, :smoothing=>$sparam)
-  when 'indri_galago'
-    ilab.crt_add_query_set("#{$query_prefix}_DQL" , :smoothing=>get_sparam('jm',0.1))
-    ilab.crt_add_query_set("#{$query_prefix}_gDQL" ,:engine=>:galago ,:index_path=>$gindex_path, :smoothing=>'linear')
+  when 'engines_dir'
+    ilab.crt_add_query_set("#{$query_prefix}_DQL" , :smoothing=>get_sparam('dirichlet',500))
+    ilab.crt_add_query_set("#{$query_prefix}_gDQL" ,:engine=>:galago ,:index_path=>$gindex_path, :smoothing=>'dirichlet',:mu=>500)
+  when 'engines_jm'
+    ilab.crt_add_query_set("#{$query_prefix}_DQL" , :smoothing=>get_sparam('jm',$o[:lambda]))
+    ilab.crt_add_query_set("#{$query_prefix}_gDQL" ,:engine=>:galago ,:index_path=>$gindex_path, :smoothing=>'linear',:lambda=>$o[:lambda])
   when 'mp_noise'
     [0.0,0.5,1.0,2.0,5.0].each do |mp_noise|
       ilab.crt_add_query_set("#{$query_prefix}_PRM-S_n#{mp_noise}", :template=>:prm, :smoothing=>$sparam, :mp_noise=>mp_noise)

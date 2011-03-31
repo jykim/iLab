@@ -14,9 +14,9 @@ class GalagoInterface
     query_offset = o[:offset] || 1
     o[:template] = :ql if !o[:template]
     
-    smoothing = o[:smoothing] || DEF_SMOOTHING
-    lambda = o[:lambda] || DEF_LAMBDA
-    mu = o[:mu] || DEF_MU
+    smoothing = o[:smoothing] #|| DEF_SMOOTHING
+    lambda = o[:lambda] #|| DEF_LAMBDA
+    mu = o[:mu] #|| DEF_MU
     #err("[build_query] HLM weight not specified!") if o[:template] == :hlm && !o[:hlm_weights]
     #working_set = o[:working_set] || []
     #prior_clause = (o[:prior])? "#prior(#{o[:prior]}) " :""

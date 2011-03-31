@@ -54,17 +54,20 @@ def init_collection(col)
     $sparam = get_sparam('jm',0.1)
     $title_field = "SUBJECT"
   when 'trec'
+    #$col_path = "#$exp_root/trec/raw_gdoc/wsj89_small.trectext"
+    col_path = "#$exp_root/trec/raw_gdoc/w3c-lists_small.trecweb"
     $index_path = "#$exp_root/trec/index_lists"
-    $gindex_path = "#$exp_root/trec/gindex_lists"
+    gindex_path = "#$exp_root/trec/gindex_lists"
+    stemmer = "porter"
     $i.config_path( :work_path=>File.join($exp_root,col) ,:index_path=>$index_path )
     $ptn_qry_title = /\<title\> (.*) \<\/title\>/
     $fields =  ['subject','text','to','sent','name','email']
-    if !File.exist?($index_path)
-      $engine.build_index($col_id , "#$exp_root/trec/raw_doc" , $index_path , :fields=>$fields, :stemmer=>nil, :stopword=>false)
+    if !File.exist?($index_path)#"#$exp_root/trec/raw_doc"
+      $engine.build_index($col_id , col_path , $index_path , :fields=>$fields, :stemmer=>stemmer, :stopword=>false)
     end
-    #if !File.exist?($gindex_path)
-    #  $gengine.build_index($col_id , "#$exp_root/trec/gdoc/w3c-lists_small.trecweb" , $gindex_path , :fields=>$fields, :stopword=>false)
-    #end
+    if !File.exist?($gindex_path)#
+      $gengine.build_index($col_id , col_path , gindex_path , :fields=>$fields, :stemmer=>stemmer, :stopword=>false)
+    end
     #$field_prob = 
     $sparam = get_sparam('jm',0.1)
     $title_field = "SUBJECT"
