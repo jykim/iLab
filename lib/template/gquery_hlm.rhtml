@@ -1,0 +1,12 @@
+<parameters>
+<% if smoothing %>
+        <scorer><%= smoothing %></scorer>
+				<mu><%= mu %></mu>
+				<lambda><%= lambda %></lambda>
+<% end %>
+<% topics.each_with_index do |query,i| %>
+        <query>
+					<number><%= i + query_offset %></number>
+					<text><%= get_hlm_gquery(query, o[:hlm_weights], o[:hlm_fields]) %></text>
+				</query><% end  %>
+</parameters>
