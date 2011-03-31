@@ -5,9 +5,11 @@
   <class><%= o[:class] || 'trectext' %></class>
   </corpus>
 <% end %>
+<% if o[:stemmer] %>
 	<stemmer>
-		<name><%= o[:stemmer] || 'porter'%></name>
+		<name><%= o[:stemmer] %></name>
 	</stemmer>
+<% end %>
 	<index><%= dest_path %></index>
 <% if o[:fields] %>
   <% o[:fields].each do |f|%>
