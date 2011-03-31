@@ -57,7 +57,7 @@ def init_collection(col)
     $ptn_qry_title = /\<title\> (.*) \<\/title\>/
     $fields =  ['subject','text','to','sent','name','email']
     if !File.exist?($index_path)
-      $engine.build_index($col_id , "#$exp_root/trec/raw_doc" , $index_path , :fields=>$fields, :stemmer=>:porter, :stopword=>false)
+      $engine.build_index($col_id , "#$exp_root/trec/raw_doc" , $index_path , :fields=>$fields, :stemmer=>nil, :stopword=>false)
     end
     #if !File.exist?($gindex_path)
     #  $gengine.build_index($col_id , "#$exp_root/trec/gdoc/w3c-lists_small.trecweb" , $gindex_path , :fields=>$fields, :stopword=>false)
