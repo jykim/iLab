@@ -25,6 +25,8 @@ def ILabLoader.build(ilab)
     ilab.crt_add_query_set("#{$query_prefix}_PRM-D", :template=>:prm_ql ,:smoothing=>$sparam, :lambda=>$prmd_lambda)
     #ilab.crt_add_query_set("#{$query_prefix}_MFLM_u" ,:template=>:hlm ,:smoothing=>$sparam, 
     #                        :hlm_weights=>([0.1]*($fields.size)))    
+  when 'prms'
+    ilab.crt_add_query_set("#{$query_prefix}_PRM-S", :template=>:prm, :smoothing=>$sparam)
   when 'indri_galago'
     ilab.crt_add_query_set("#{$query_prefix}_DQL" , :smoothing=>get_sparam('jm',0.1))
     ilab.crt_add_query_set("#{$query_prefix}_gDQL" ,:engine=>:galago ,:index_path=>$gindex_path, :smoothing=>'linear')

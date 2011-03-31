@@ -47,6 +47,9 @@ def init_collection(col)
     $ptn_qry_title = /= (.*)/
     $offset = 201
     $fields =  ['subject','body','to','from','date']
+    if !File.exist?($index_path)
+      $engine.build_index($col_id , "#$exp_root/enron/raw_doc" , $index_path , :fields=>$fields, :stemmer=>:porter, :stopword=>false)
+    end
     #$field_prob = 
     $sparam = get_sparam('jm',0.1)
     $title_field = "SUBJECT"
