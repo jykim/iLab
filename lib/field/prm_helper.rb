@@ -8,7 +8,7 @@ module PRMHelper
     return query if query.scan(/\(/).size > 0
     mps = [] ; col_scores = {}
     fields = o[:prm_fields] || $fields
-    flm = o[:flm] || get_col_freq(:prob=>true)
+    flm = o[:flm] || get_col_freq((o[:df]) ? {:df=>true} : {}).map_hash{|k,v|[k,v.to_p]}
     #puts "[get_map_prob] flm = #{o[:flm]}" if o[:flm]
     query.split(" ").each_with_index do |qw,i|
       #Read Collection Stat.

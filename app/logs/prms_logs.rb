@@ -5,6 +5,16 @@
 \rm -r index_lists gindex_lists in/FREQ_index_lists.in
 
 
+
+#== Indri Apps Deployment
+
+scp kstem.cpp calc_mp.cpp $SYH/work/dev/indri-5.0
+cp Makefile.app Makefile.kstem
+cp Makefile.app Makefile.calc_mp
+make -f Makefile.kstem
+make -f Makefile.calc_mp
+cp kstem calc_mp $INDRI/bin
+
 # Finding whether an Indri index is stemmed
 $cf = $engine.get_col_freq ;puts $cf['document']['agents'] ,$cf['document']['agent']
 
@@ -24,4 +34,3 @@ $o = {:redo=>true, :verbose=>:mp, :topic_type=>'F_RN_RN', :topic_id=>'0404b', :t
 
 # TREC col / test topic
 $o = {:redo=>true, :verbose=>:mp, :topic_id=>'test'}; $method='prms_ora'; $col='trec'; $exp='perf'; $remark='0404_krovetz'; eval IO.read('run_prms.rb')
-

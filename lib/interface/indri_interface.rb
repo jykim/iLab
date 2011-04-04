@@ -166,7 +166,7 @@ class IndriInterface
   # Apply Krovetz Stemming
   def kstem(str)
     $kstem = {} if !defined?($kstem)
-    return str[0..2] if ['january','february','march','april','june','july','august','september','october','november','december'].include?(str.downcase)
+    #return str[0..2] if ['january','february','march','april','june','july','august','september','october','november','december'].include?(str.downcase)
     $kstem[str] = $kstem[str] || `#{$indri_path}/bin/kstem #{str}`.strip#.downcase
   end
   
