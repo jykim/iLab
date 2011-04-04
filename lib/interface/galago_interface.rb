@@ -1,7 +1,7 @@
 class GalagoInterface
   DEF_SMOOTHING = 'linear'
   include ILabHelper , OptionHandler, Math
-  include FieldHelper, GenHelper, PRMHelper
+  include IndriFieldHelper, GenHelper, PRMHelper
   
   def initialize(name = "" , o={})
     @name = name

@@ -6,7 +6,7 @@ $tbl_qry = [['qid', 'text']].concat($qrys.map{|q|[q.qid,q.text]}).concat([["%","
 
 $tbl_all = [['Measure','map','P5','P10','P20']]
 $tbl_all.concat $i.qsa.map{|qs|["\"#{qs.short_name}\":#{'qry_'+qs.name+'.txt'}"].concat($tbl_all[0][1..-1].map{|e|qs.stat['all'][e]})}
-
+#debugger
 if $o[:verbose]
   #Length Stat
   #$i.calc_length_stat
@@ -32,6 +32,15 @@ if $o[:verbose]
   #  
   $tbl_qry.add_cols $i.qsa.map{|e|e.short_name = e.name.gsub($query_prefix+'_',"")}, 
     $qrys.map{|q|$i.qsa.map{|e|(e.stat[q.qid.to_s])? e.stat[q.qid.to_s]['map'] : 0.0}}
+    
+  if $o[:verbose] == :mp
+    $mprel = $rdocs.map_with_index{|e,i|$engine.get_map_prob($qrys[i].text, :flm=>e[:flm]).map_hash{|e|[e[0], e[1].to_h]}}
+    $mpcol = $qrys.map{|q| $engine.get_map_prob(q.text).map_hash{|e|[e[0], e[1].to_h]}}
+    $tbl_qry.add_cols "MPrel", $mprel.map{|e|e.map{|k,v|"[#{k}] "+v.print}.join("<br>")}, :summary=>:none
+    $tbl_qry.add_cols "MPcol", $mpcol.map{|e|e.map{|k,v|"[#{k}] "+v.print}.join("<br>")}, :summary=>:none
+    # Aggregate KL-divergence (sum term-wise scores)
+    $tbl_qry.add_cols "D_KL", $qrys.map_with_index{|q,i| $mprel[i].map{|k,v|v.kld($mpcol[i][k])}.sum}
+  end
 
   #$tbl_qry.add_cols $ret_models, $ret_models.map{|e|$avg_doc_scores[q.qid][e].to_p[$col_rl[q.qid]].r3}
   

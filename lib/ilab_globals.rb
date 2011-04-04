@@ -99,8 +99,8 @@ def to_path(file_name , arg_path = nil)
   path = arg_path || $work_path || "."
   result = case file_name
            when /^exp_.*\.(rhtml|rb)/ #experiment-specific source
-             File.join( $ilab_root , "app/exp/#{file_name}")
-           when /\.(rhtml|rxml|template)/
+             File.join( $ilab_root , "app/experiments/#{file_name}")
+           when /\.(rhtml|rxml|erb|template)$/
              File.join( $ilab_root , "lib/template/#{file_name}")
            when /\.R/
              File.join( $ilab_root , "lib/interface/#{file_name}")
@@ -124,6 +124,8 @@ def to_path(file_name , arg_path = nil)
              File.join( path , "query/#{file_name}")
            when /\.(log|err)/
              File.join( path , "log/#{file_name}")
+           when /\.(trecweb|trectext)$/
+             File.join( path , "raw_doc/#{file_name}")
            when /\.(dmp)/
              File.join( path , "dmp/#{file_name}")
            when /\.(tmp)/

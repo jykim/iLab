@@ -2,6 +2,7 @@
 # - correspondance of M.P. estimation and actual occurrence of query-terms
 $qs_prm = $i.qsa.find{|e|e[:template]==:prm}
 $result = []
+$o[:train_mode] ||= "fmap"
 
 # Find query-terms in relevant documents and
 # - calc. accuracy of MP estimation

@@ -45,6 +45,7 @@ class ILab
     Dir.mkdir( $work_path ) if !File.exist?( $work_path )
     Dir.mkdir( $work_path+"/query" ) if !File.exist?( $work_path+"/query" )
     Dir.mkdir( $work_path+"/qrel" ) if !File.exist?( $work_path+"/qrel" )
+    Dir.mkdir( $work_path+"/raw_doc" ) if !File.exist?( $work_path+"/raw_doc" )
     Dir.mkdir( $work_path+"/topic" ) if !File.exist?( $work_path+"/topic" )
     Dir.mkdir( $work_path+"/log" ) if !File.exist?( $work_path+"/log" )
     Dir.mkdir( $work_path+"/in"  ) if !File.exist?( $work_path+"/in"  )

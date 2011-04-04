@@ -8,10 +8,11 @@
         <workingSet><%= did %></workingSet>
 <% end %>
         <queryOffset><%= query_offset %></queryOffset>
-<% topics.each do |query| %>
+<% topics.each_with_index do |query, topic_id| %>
+	<% flm = $rdocs[topic_id][:flm] if o[:oracle] %>
         <query>
         #combine (
-        <%= prior_clause%><%= get_prm_query(query, o) %>)
+        <%= prior_clause%><%= get_prm_query(query, o.merge(:flm=>flm)) %>)
         </query>
 <% end  %>
 </parameters>

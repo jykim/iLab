@@ -7,7 +7,7 @@ class IndriInterface
   DEF_SMOOTHING = ['method:dirichlet,mu:1500,operator:term','method:dirichlet,mu:4000,operator:window']
   attr_accessor :index_path, :title_field , :cf
   include ILabHelper , OptionHandler, Math
-  include FieldHelper, GenHelper, PRMHelper, PRMMulticolHelper
+  include IndriFieldHelper, GenHelper, PRMHelper, PRMMulticolHelper
   
   def initialize(name = "" , o={})
     @name = name
@@ -71,7 +71,7 @@ class IndriInterface
   end
   
   def to_dno(did)
-    #p did
+    #puts "[to_dno] did=#{did}"
     get_index_info( 'di', "docno #{did}").to_i
   end
   
@@ -190,29 +190,6 @@ class IndriInterface
   #  cmd = fwrite('cmd_calc_mp.log' , "#{$indri_path}/bin/calc_mp#{(o[:whole_doc])? "_doc" : ""}#{(o[:freq])? "_freq" : ""} #{$lemur_path}/bin/param #@index_path #{filename}", :mode=>'a')
   #  `#{cmd}`
   #end
-  
-  def calc_col_freq(filename , o={})
-    info "calc_col_freq for #{filename}"
-    cmd = fwrite('cmd_calc_mp.log' , "#{$indri_path}/bin/calc_mp #@index_path #{filename}", :mode=>'a')
-    `#{cmd}`
-  end
-  
-  def get_doc_field_lm(dno)
-    dno = to_dno(dno) if dno.class == String
-    return nil if !dno
-    info "[get_doc_field_lm] dno = #{dno}"
-    dv = get_index_info("dv", dno).split(/--- .*? ---\n/)
-    fields = dv[1].split("\n").find_all{|l|!l.include?("document ")}.map_hash{|l|e = l.split(" ") ; [(e[1].to_i...e[2].to_i) , e[0]]}
-    #return nil if fields.values.size !=  fields.values.uniq.size
-    dv[2].split("\n").map{|l|l.split(" ")}.
-      group_by{|e|f = fields.find{|k,v|k === e[0].to_i} ; (f)? f[1] : nil }. #FIXME Support overlapping elements
-      map_hash{|k,v|[k,v.find_all{|e|e[2]!="[OOV]"}.map{|e|e[2]}.to_pdist]}    
-  end
-  
-  def get_doc_lm(dno)
-    dv = get_index_info("dv", dno).split(/--- .*? ---\n/)
-    dv[2].split("\n").map{|l|l.split(" ")}.find_all{|e|e[2]!="[OOV]"}.map{|e|e[2]}.to_pdist
-  end
 end
 
 

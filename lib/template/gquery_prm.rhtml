@@ -7,6 +7,6 @@
 <% topics.each_with_index do |query,i| %>
         <query>
 					<number><%= i + query_offset %></number>
-					<text><%= get_prm_gquery(query) %></text>
+					<text><%= get_prm_gquery(query, o[:hlm_weights]) %></text>
 				</query><% end  %>
 </parameters>
