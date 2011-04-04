@@ -23,12 +23,12 @@ def init_env()
   if $o[:col_type]
     $col_id = "#{$col}_#{$o[:pid]}_#{$o[:col_type]}"
   else
-    $col_id = $col
+    $col_id = [$col,$o[:col_id]].join("_")
   end
   $o[:topic_id] = $o[:topic_type] if !$o[:topic_id] && $o[:topic_type]
   $query_prefix = "#{$col_id}_#{$o[:topic_id]}"
-  $file_topic = ["topic", $o[:topic_id]].join("_")
-  $file_qrel =  ["qrel" , $o[:topic_id]].join("_")
+  $file_topic = ["topic", $col_id ,$o[:topic_id]].join("_")
+  $file_qrel =  ["qrel" , $col_id, $o[:topic_id]].join("_")
 
   #Default Retrieval Parameter
   $mu = $o[:mu] || 100
@@ -40,6 +40,33 @@ end
 def init_collection(col)
   #Choose Collection
   case col
+  when 'syn'
+    col_path = "#$exp_root/#$col/raw_doc/#$col_id.trecweb"
+    $index_path = "#$exp_root/#$col/index_#$col_id"
+    $gindex_path = "#$exp_root/#$col/gindex_#$col_id"
+    stemmer = nil
+    field_no = 5
+    $i.config_path( :work_path=>File.join($exp_root,col) ,:index_path=>$index_path )
+    if !File.exist?(col_path)
+      $engine.build_collection($col_id, 100, field_no, $o[:mix_ratio] || 0.5)
+    end
+    $ptn_qry_title = /\<title\> (.*) \<\/title\>/
+    $fields = (1..field_no).to_a.map{|i| "f#{i}" }
+    if !File.exist?($index_path)#"#$exp_root/trec/raw_doc"
+      $engine.build_index($col_id , col_path , $index_path , :fields=>$fields, :stemmer=>stemmer, :stopword=>false)
+    end
+    if !File.exist?($gindex_path)#
+      $gengine.build_index($col_id , col_path , $gindex_path , :fields=>$fields, :stemmer=>stemmer, :stopword=>false)
+    end
+    $sparam = get_sparam('jm',0.1)
+    $title_field = "f1"
+    #Topic/Qrel Building
+    if $o[:topic_type]
+      $offset = 1 ; $count = $o[:topic_no] || 50
+      $rdocs = $engine.build_knownitem_topics($file_topic, $file_qrel, $o) if !File.exist?(to_path($file_topic))
+    else
+      error "topic_type not specified!"
+    end
   when 'enron'
     $index_path = "#$exp_root/enron/index_enron"
     $i.config_path( :work_path=>File.join($exp_root,col) ,:index_path=>$index_path )
@@ -68,13 +95,12 @@ def init_collection(col)
     if !File.exist?($gindex_path)#
       $gengine.build_index($col_id , col_path , $gindex_path , :fields=>$fields, :stemmer=>stemmer, :stopword=>false)
     end
-    #$field_prob = 
     $sparam = get_sparam('jm',0.1)
     $title_field = "SUBJECT"
     #Topic/Qrel Building
     if $o[:topic_type]
       $offset = 1 ; $count = $o[:topic_no] || 50
-      $engine.build_knownitem_topics($file_topic, $file_qrel, $o) if !File.exist?(to_path($file_topic))
+      $rdocs = $engine.build_knownitem_topics($file_topic, $file_qrel, $o) if !File.exist?(to_path($file_topic))
     else
       case $o[:topic_id]
       when 'train'
@@ -85,6 +111,8 @@ def init_collection(col)
         $file_topic ,$file_qrel = 'ent05.known-item-topics', 'ent05.known-item-qrels'
       end
     end
+    # Get Rdoc list (needed for oracle MP calculation)
+    $rdocs = $engine.get_rdocs($file_qrel) if !$rdocs
   end
 end
 

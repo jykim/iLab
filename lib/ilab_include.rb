@@ -1,4 +1,4 @@
-load "exlib/rubylib_include.rb"
+load "rubylib/rubylib_include.rb"
 require 'erb'
 require 'enumerator'
 require 'ruby-debug'
@@ -10,7 +10,7 @@ require 'ruby-debug'
 #end
 require "logger"
 require 'lingua/stemmer'
-include Test::Unit::Assertions
+#include Test::Unit::Assertions
 
 load 'lib/ilab_loader.rb'
 load 'lib/ilab_helper.rb'
@@ -25,10 +25,10 @@ load 'lib/etc/file_handler.rb'
 load 'lib/etc/trec_handler.rb'
 load 'lib/etc/stat_length.rb'
 load 'lib/etc/stemmer.rb'
-load 'lib/field/field_helper.rb'
 load 'lib/field/prm_helper.rb'
 load 'lib/field/prm_multicol_helper.rb'
 load 'lib/field/gen_helper.rb'
+load 'lib/field/indri_field_helper.rb'
 
 load 'lib/interface/gnuplot_interface.rb'
 load 'lib/interface/crf_interface.rb'
