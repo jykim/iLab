@@ -108,6 +108,8 @@ def to_path(file_name , arg_path = nil)
              File.join( $ilab_root , "lib/template/#{file_name}")
            when /^qrel_.*/
              File.join( path , "qrel/#{file_name}")
+           when /\.(in|stem)/
+             File.join( path , "in/#{file_name}")
            when /^topic_.*/
              File.join( path , "topic/#{file_name}")
            when /doc_.*/
@@ -118,8 +120,6 @@ def to_path(file_name , arg_path = nil)
              File.join( path , "rpt/#{get_expid_from_env()}/#{file_name}")
            when /\.(prior|txt|out|doclist|qrel)$/
              File.join( path , "out/#{file_name}")
-           when /\.(in)/
-             File.join( path , "in/#{file_name}")
            when /\.(qry|res|eval)/
              File.join( path , "query/#{file_name}")
            when /\.(log|err)/

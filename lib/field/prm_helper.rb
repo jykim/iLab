@@ -12,7 +12,12 @@ module PRMHelper
     #puts "[get_map_prob] flm = #{o[:flm]}" if o[:flm]
     query.split(" ").each_with_index do |qw,i|
       #Read Collection Stat.
-      qw_s = qw.downcase#kstem(qw.downcase)
+      qw_s = case (o[:stemmer] || $stemmer)
+      when 'krovetz' : kstem(qw)
+      when 'porter' : pstem(qw)
+      else
+        qw.downcase
+      end
       weights = flm.map_hash{|k,v|[k,v[qw_s]] if v[qw_s] && fields.include?(k)}
       mp = weights.map_hash{|e|v=e[1]/weights.values.sum ; [e[0],((v >= MP_MIN)? v : MP_MIN)]}
       if mp.size == 0

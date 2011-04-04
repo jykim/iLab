@@ -1,7 +1,12 @@
 
 
-\rm -r index_lists gindex_lists query/*gPRM-S* in/FREQ_index_lists.in
+#== Useful Commands
 
+\rm -r index_lists gindex_lists in/FREQ_index_lists.in
+
+
+# Finding whether an Indri index is stemmed
+$cf = $engine.get_col_freq ;puts $cf['document']['agents'] ,$cf['document']['agent']
 
 #== Building a Synthetic Collection
 
@@ -15,5 +20,8 @@ $o = {:redo=>true,:verbose=>true,:topic_type=>'F_RN_RN',:topic_id=>'0401',:col_i
 $o = {:redo=>true,:verbose=>true,:mix_ratio=>0.2,:topic_type=>'F_RN_RN',:topic_id=>'0404',:col_id=>'m02', :topic_no=>50}; $method='prms_ora'; $col='syn'; $exp='perf';$remark='0404'; eval IO.read('run_prms.rb')
 
 # TREC collection
-$o = {:redo=>true, :verbose=>:mp, :topic_type=>'F_RN_RN', :topic_id=>'0404a', :topic_no=>100}; $method='prms_ora'; $col='trec'; $exp='perf'; $remark='0404'; eval IO.read('run_prms.rb')
+$o = {:redo=>true, :verbose=>:mp, :topic_type=>'F_RN_RN', :topic_id=>'0404b', :topic_no=>100}; $method='prms_ora'; $col='trec'; $exp='perf'; $remark='0404'; eval IO.read('run_prms.rb')
+
+# TREC col / test topic
+$o = {:redo=>true, :verbose=>:mp, :topic_id=>'test'}; $method='prms_ora'; $col='trec'; $exp='perf'; $remark='0404_krovetz'; eval IO.read('run_prms.rb')
 
