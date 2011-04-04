@@ -12,11 +12,14 @@ def ILabLoader.build(ilab)
   case $method
     
   # Getting Optimal MP results
-  when 'prms_ora'
+  when 'prms'
     o = $o.dup.merge(:template=>:prm, :smoothing=>$sparam)
     ilab.crt_add_query_set("#{$query_prefix}_DQL" , :smoothing=>$sparam)
     #ilab.crt_add_query_set("#{$query_prefix}_PRMSall", o.merge(:mp_all_fields=>true))
     ilab.crt_add_query_set("#{$query_prefix}_PRMS", o)
+    ilab.crt_add_query_set("#{$query_prefix}_PRMSdf", o.merge(:df=>true))
+    ilab.crt_add_query_set("#{$query_prefix}_PRMSo", o.merge(:oracle=>true))
+  when 'prms_ora'
     ilab.crt_add_query_set("#{$query_prefix}_PRMSo", o.merge(:oracle=>true))
     ilab.crt_add_query_set("#{$query_prefix}_PRMSo1", o.merge(:oracle=>true, :topk_field=>1))
     ilab.crt_add_query_set("#{$query_prefix}_PRMSo2", o.merge(:oracle=>true, :topk_field=>2))

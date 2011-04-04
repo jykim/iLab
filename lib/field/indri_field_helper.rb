@@ -4,24 +4,24 @@ module IndriFieldHelper
   # return : {'FIELD1'=>{term1=>prob1,...},... }
   def get_col_freq(o = {})
     cf_fn = "FREQ_#{File.basename(@index_path)}.in"
-    if !File.exist?(to_path(cf_fn)) #|| $o[:redo]
-      calc_col_freq( to_path(cf_fn))
-      puts "[get_col_freq] Creating #{cf_fn}..."
+    df_fn = "DOC_FREQ_#{File.basename(@index_path)}.in"
+    if !File.exist?(to_path(cf_fn)) || !File.exist?(to_path(df_fn))
+      cmd = fwrite('cmd_calc_mp.log' , "#{$indri_path}/bin/calc_mp #@index_path #{to_path(cf_fn)} #{to_path(df_fn)}", :mode=>'a')
+      `#{cmd}`
+      puts "[get_col_freq] Creating #{cf_fn} (#{o.inspect})..."
     end
-    if !@cf[o.to_s]
-      cf_raw = IO.read(to_path(cf_fn)).split("\n").
-        map_hash{|l|la = l.split("\t");[la[0], la[1..-1].map_hash{|e|a = e.split ; [a[0] , a[1].to_f]}]}
-      puts "[get_col_freq] Fields read : #{cf_raw.keys.inspect}"
-      @cf[o.to_s] = ((o[:prob])? cf_raw.map_hash{|k,v|[k,v.to_p]} : cf_raw)
-    else
-      @cf[o.to_s]
-    end
+    parse_col_freq(cf_fn)
+    parse_col_freq(df_fn, :df=>true)
+    @cf[o.to_s]
   end
-
-  def calc_col_freq(filename , o={})
-    info "calc_col_freq for #{filename}"
-    cmd = fwrite('cmd_calc_mp.log' , "#{$indri_path}/bin/calc_mp #@index_path #{filename}", :mode=>'a')
-    `#{cmd}`
+  
+  def parse_col_freq(filename, o = {})
+    if !@cf[o.to_s]
+      cf_raw = IO.read(to_path(filename)).split("\n").
+        map_hash{|l|la = l.split("\t");[la[0], la[1..-1].map_hash{|e|a = e.split ; [a[0] , a[1].to_f]}]}
+      #puts "[parse_col_freq] Fields read : #{cf_raw.keys.inspect}"
+      @cf[o.to_s] = cf_raw
+    end    
   end
   
   def get_doc_field_lm(dno)
