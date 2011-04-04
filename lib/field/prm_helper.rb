@@ -10,7 +10,7 @@ module PRMHelper
     fields = o[:prm_fields] || $fields
     query.split(" ").each_with_index do |qw,i|
       #Read Collection Stat.
-      qw_s = kstem(qw.downcase)
+      qw_s = qw.downcase#kstem(qw.downcase)
       weights = get_col_freq(:prob=>true).map_hash{|k,v|[k,v[qw_s]] if v[qw_s] && fields.include?(k)}
       mp = weights.map_hash{|e|v=e[1]/weights.values.sum ; [e[0],((v >= MP_MIN)? v : MP_MIN)]}
       if o[:mp_all_fields]
