@@ -40,6 +40,7 @@ module IndriFieldHelper
   def get_rdocs( file_qrel )
     IO.read( to_path(file_qrel) ).split("\n").map do |l|
       dno = to_dno(l.split(" ")[2])
+      p l.split(" ")[2], dno
       {:dno=>dno, :flm=>get_doc_field_lm(dno)}
     end
   end

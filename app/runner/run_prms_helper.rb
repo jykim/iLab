@@ -85,15 +85,14 @@ def init_collection(col)
     col_path = "#$exp_root/trec/raw_doc"
     $index_path = "#$exp_root/trec/index_lists"
     $gindex_path = "#$exp_root/trec/gindex_lists"
-    stemmer = nil#"porter"
     $i.config_path( :work_path=>File.join($exp_root,col) ,:index_path=>$index_path )
     $ptn_qry_title = /\<title\> (.*) \<\/title\>/
     $fields =  ['subject','text','to','sent','name','email']
     if !File.exist?($index_path)#"#$exp_root/trec/raw_doc"
-      $engine.build_index($col_id , col_path , $index_path , :fields=>$fields, :stemmer=>stemmer, :stopword=>false)
+      $engine.build_index($col_id , col_path , $index_path , :fields=>$fields, :stemmer=>'krovetz' , :stopword=>false)
     end
     if !File.exist?($gindex_path)#
-      $gengine.build_index($col_id , col_path , $gindex_path , :fields=>$fields, :stemmer=>stemmer, :stopword=>false)
+      $gengine.build_index($col_id , col_path , $gindex_path , :fields=>$fields, :stemmer=>'porter', :stopword=>false)
     end
     $sparam = get_sparam('jm',0.1)
     $title_field = "SUBJECT"
@@ -112,6 +111,7 @@ def init_collection(col)
       end
     end
     # Get Rdoc list (needed for oracle MP calculation)
+    $engine.init_kstem($file_topic)
     $rdocs = $engine.get_rdocs($file_qrel) if !$rdocs
   end
 end

@@ -164,14 +164,24 @@ class IndriInterface
   end
   
   # Apply Krovetz Stemming
-  #def kstem(str)
-  #  $kstem = {} if !defined?($kstem)
-  #  return str[0..2] if ['january','february','march','april','june','july','august','september','october','november','december'].include?(str.downcase)
-  #  $kstem[str] = $kstem[str] || `#{$lemur_path}/bin/kstemmer #{$lemur_path}/bin/param #{str}`.strip.downcase
-  #end
+  def kstem(str)
+    $kstem = {} if !defined?($kstem)
+    return str[0..2] if ['january','february','march','april','june','july','august','september','october','november','december'].include?(str.downcase)
+    $kstem[str] = $kstem[str] || `#{$indri_path}/bin/kstem #{str}`.strip#.downcase
+  end
+  
+  def init_kstem(file)
+    puts "[init_kstem] using #{to_path("#{file}.stem")}"
+    $stemmer = 'krovetz'
+    $kstem = {} if !defined?($kstem)
+    File.open(to_path("#{file}.stem"),"w"){|f| 
+      f.puts IO.read(to_path(file)).scan(/[A-Za-z0-9]+/).uniq.join("\n")}
+    result = `#$indri_path/bin/kstem #{to_path("#{file}.stem")}`
+    result.split("\n").map{|e| s = e.split("\t") ; $kstem[s[0]] = s[1] }
+  end
   
   # Apply porter stemmer
-  def kstem(str)
+  def pstem(str)
     Lingua.stemmer(str.downcase)
   end
   
