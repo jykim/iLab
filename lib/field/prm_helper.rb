@@ -41,7 +41,7 @@ module PRMHelper
         error "[get_mixture_map_prob] no mp found!"
         next
       else
-        mps = mps.map{|e|e[0][1].to_h}
+        mps = mps.map{|e|e[0] ? e[0][1].to_h : {}}
       end
       mp_results << [qw, fields.map_hash{|f| [f, mps.map_with_index{|mp,j|(mp[f] || 0) * weights[j]}.sum ]}.to_p.to_a.sort_val]
     end
@@ -58,7 +58,14 @@ module PRMHelper
   # 
   def get_mpset_klds( mpset1, mpset2  )
     return error "Length not equal!" if mpset1.size != mpset2.size
-    mpset1.map_with_index{|mps,i| mps.map{|k,v|v.kld(mpset2[i][k])}.sum}
+    mpset1.map_with_index{|mps,i| 
+      begin
+        mps.map{|k,v|v.kld(mpset2[i][k].to_p)}.sum
+      rescue Exception => e
+        error "[get_mpset_klds] error in #{i}th query : #{$queries[i]} \n#{mps.inspect}-#{mpset2[i].inspect} #{e.inspect}"
+        0
+      end      
+      }
   end
   
   # Get MPs estimated from collection FLMs
@@ -75,6 +82,7 @@ module PRMHelper
   # - calculate mapping prob.
   # - transform it appropriately
   def get_prm_query(query, o={})
+    #p query
     mps = get_map_prob(query, o)
     mps = mps.map{|e|[e[0], e[1].find_all{|e2|e2[1] > o[:mp_thr]}]} if o[:mp_thr]    
     mps = mps.map{|e|[e[0], e[1].to_h.add_noise(o[:mp_noise]).to_a]} if o[:mp_noise]

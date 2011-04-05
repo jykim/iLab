@@ -41,9 +41,10 @@ if $o[:verbose]
     #$tbl_qry.add_cols "MPrel", $mprel.map{|e|e.map{|k,v|"[#{k}] "+v.print}.join("<br>")}, :summary=>:none
     #$tbl_qry.add_cols "MPcol", $mpcol.map{|e|e.map{|k,v|"[#{k}] "+v.print}.join("<br>")}, :summary=>:none
     # Aggregate KL-divergence (sum term-wise scores)
-    #$tbl_qry.add_cols "D_KL", $engine.get_mpset_klds( $mprel, $mpcol )
+    $tbl_qry.add_cols "D_KL", $engine.get_mpset_klds( $mprel, $mpcol )
     $tbl_qry.add_cols "D_KL(rs)", $engine.get_mpset_klds( $mprel, $mpres )
-    $tbl_qry.add_cols "D_KL(df)", $engine.get_mpset_klds( $mprel, $mpcol_df )
+    #$tbl_qry.add_cols "D_KL(rs_col)", $engine.get_mpset_klds( $mprel, $mpres )
+    #$tbl_qry.add_cols "D_KL(df)", $engine.get_mpset_klds( $mprel, $mpcol_df )
   end
 
   #$tbl_qry.add_cols $ret_models, $ret_models.map{|e|$avg_doc_scores[q.qid][e].to_p[$col_rl[q.qid]].r3}
