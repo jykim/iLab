@@ -154,8 +154,8 @@ class ILab
   def crt_add_query_set(set_name , o = {} , &filter)
     @qsa << @qs[set_name] = create_query_set(set_name , o.dup , &filter)
     @rsa << @rs[set_name] = @qs[set_name].rs if @qs[set_name].rs
-    @qs[set_name]
     info("[crt_add_query_set] query set '#{set_name}' added.")
+    @qs[set_name]
   end
   
   #Fetch relevance from relevant set

@@ -86,8 +86,7 @@ module Gnuplot
     def method_missing( methId, *args )
       set methId.id2name, *args
     end
-
-
+    
     # Set a variable to the given value.  +Var+ must be a gnuplot variable and
     # +value+ must be the value to set it to.  Automatic quoting will be
     # performed if the variable requires it.  

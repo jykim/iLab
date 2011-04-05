@@ -63,7 +63,7 @@ def init_collection(col)
     #Topic/Qrel Building
     if $o[:topic_type]
       $offset = 1 ; $count = $o[:topic_no] || 50
-      $rdocs = $engine.build_knownitem_topics($file_topic, $file_qrel, $o) if !File.exist?(to_path($file_topic))
+      $rlflms = $engine.build_knownitem_topics($file_topic, $file_qrel, $o) if !File.exist?(to_path($file_topic))
     else
       error "topic_type not specified!"
     end
@@ -99,7 +99,7 @@ def init_collection(col)
     #Topic/Qrel Building
     if $o[:topic_type]
       $offset = 1 ; $count = $o[:topic_no] || 50
-      $rdocs = $engine.build_knownitem_topics($file_topic, $file_qrel, $o) if !File.exist?(to_path($file_topic))
+      $rlflms = $engine.build_knownitem_topics($file_topic, $file_qrel, $o) if !File.exist?(to_path($file_topic))
     else
       case $o[:topic_id]
       when 'train'
@@ -112,7 +112,7 @@ def init_collection(col)
     end
     # Get Rdoc list (needed for oracle MP calculation)
     $engine.init_kstem($file_topic)
-    $rdocs = $engine.get_rdocs($file_qrel) if !$rdocs
+    $rlflms = $engine.get_rel_flms($file_qrel) if !$rlflms
   end
 end
 
