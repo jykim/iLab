@@ -37,7 +37,7 @@ module PRMHelper
     query.split(" ").map_with_index do |qw,i|
       mps = flms.map{|flm| get_map_prob(qw, :flm => flm)}
       #p mps
-      if mps.flatten.uniq.size == 2
+      if mps.flatten.uniq.size == 0
         error "[get_mixture_map_prob] no mp found!"
         next
       else
