@@ -98,7 +98,7 @@ class ILab
   end
   
   def parse_topic_file(file_topic, topic_pattern)
-    IO.read(to_path(file_topic)).scan(topic_pattern).map{|e| e[0].gsub(/[^A-Za-z0-9\- ]/," ") }
+    IO.read(to_path(file_topic)).scan(topic_pattern).map{|e| e[0].gsub(/[^A-Za-z0-9 ]/," ") }
   end
   
   # Add query & result set
