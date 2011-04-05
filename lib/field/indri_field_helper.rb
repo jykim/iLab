@@ -5,13 +5,14 @@ module IndriFieldHelper
   def get_col_freq(o = {})
     cf_fn = "FREQ_#{File.basename(@index_path)}.in"
     df_fn = "DOC_FREQ_#{File.basename(@index_path)}.in"
-    if !File.exist?(to_path(cf_fn)) || !File.exist?(to_path(df_fn))
-      cmd = fwrite('cmd_calc_mp.log' , "#{$indri_path}/bin/calc_mp #@index_path #{to_path(cf_fn)} #{to_path(df_fn)}", :mode=>'a')
+    bgram_fn = "BGRAM_FREQ_#{File.basename(@index_path)}.in"
+    if !File.exist?(to_path(cf_fn)) || !File.exist?(to_path(df_fn)) || !File.exist?(to_path(bgram_fn))
+      cmd = fwrite('cmd_calc_mp.log' , "#{$indri_path}/bin/calc_mp #@index_path #{to_path(cf_fn)} #{to_path(df_fn)} #{to_path(bgram_fn)}", :mode=>'a')
       `#{cmd}`
-      puts "[get_col_freq] Creating #{cf_fn} (#{o.inspect})..."
     end
     parse_col_freq(cf_fn)
-    parse_col_freq(df_fn, :df=>true)
+    #parse_col_freq(df_fn, :df=>true)
+    #parse_col_freq(bgram_fn, :bgram=>true)
     @cf[o.to_s]
   end
   
@@ -19,9 +20,10 @@ module IndriFieldHelper
     if !@cf[o.to_s]
       cf_raw = IO.read(to_path(filename)).split("\n").
         map_hash{|l|la = l.split("\t");[la[0], la[1..-1].map_hash{|e|a = e.split ; [a[0] , a[1].to_f]}]}
+      puts "[parse_col_freq] reading #{filename} (#{o.inspect})..."
       #puts "[parse_col_freq] Fields read : #{cf_raw.keys.inspect}"
       @cf[o.to_s] = cf_raw
-    end    
+    end
   end
   
   def get_doc_field_lm(dno)
@@ -37,12 +39,27 @@ module IndriFieldHelper
   end
   
   # Get the list and LM of relevant docs from TREC QRel
-  def get_rdocs( file_qrel )
+  def get_rel_flms( file_qrel )
     IO.read( to_path(file_qrel) ).split("\n").map do |l|
-      dno = to_dno(l.split(" ")[2])
-      p l.split(" ")[2], dno
-      {:dno=>dno, :flm=>get_doc_field_lm(dno)}
+      get_doc_field_lm(l.split(" ")[2])
     end
+  end
+  
+  # Get FLM from top K result documents
+  def get_res_flm( res_docs )
+    max_score = res_docs[0].score
+    result = nil
+    nscores = res_docs.map{|e|e.score - max_score}.map{|e|Math.exp(e)}
+    res_docs.each_with_index do |d,i|
+      dflm = get_doc_field_lm(d.did)
+      if !result
+        result = dflm
+      else
+        result = result.map_hash{|k,v|
+          [k,v.sum_prob(dflm[k].map_hash{|k2,v2|[k2, v2*nscores[i]]})]}
+      end
+    end
+    result
   end
   
   def get_doc_lm(dno)

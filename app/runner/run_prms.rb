@@ -9,21 +9,32 @@ set_collection_param($col_id)
 #Choose Retrieval Method
 def ILabLoader.build(ilab)
   puts "METHOD : #$method"
-  case $method
-    
+  o = $o.dup.merge(:template=>:prm, :smoothing=>$sparam)
+  case $method    
   # Getting Optimal MP results
   when 'prms'
-    o = $o.dup.merge(:template=>:prm, :smoothing=>$sparam)
     ilab.crt_add_query_set("#{$query_prefix}_DQL" , :smoothing=>$sparam)
     #ilab.crt_add_query_set("#{$query_prefix}_PRMSall", o.merge(:mp_all_fields=>true))
     ilab.crt_add_query_set("#{$query_prefix}_PRMS", o)
     ilab.crt_add_query_set("#{$query_prefix}_PRMSdf", o.merge(:df=>true))
-    ilab.crt_add_query_set("#{$query_prefix}_PRMSo", o.merge(:oracle=>true))
+    ilab.crt_add_query_set("#{$query_prefix}_PRMSo", o.merge(:flms=>$rlflms))
+  when 'prms_res'
+    qs = ilab.crt_add_query_set("#{$query_prefix}_DQL" , :smoothing=>$sparam)
+    ilab.crt_add_query_set("#{$query_prefix}_PRMS", o)
+    
+    $rsflms = qs.qrys.map{|q|$engine.get_res_flm q.rs.docs[0..($o[:topk] || 5)]} #if !$rsflms
+    ilab.crt_add_query_set("#{$query_prefix}_PRMSrs#{$o[:topk]}", o.merge(:flms=>$rsflms))
+    ilab.crt_add_query_set("#{$query_prefix}_PRMSrl", o.merge(:flms=>$rlflms))
+  # Right cutoff in getting MP estimated?
+  when 'mp_cutoff'
+    1.upto(5) do |i|
+      ilab.crt_add_query_set("#{$query_prefix}_PRMS_mpco#{i}", o.merge(:mp_cutoff=>mp_cutoff))
+    end
   when 'prms_ora'
-    ilab.crt_add_query_set("#{$query_prefix}_PRMSo", o.merge(:oracle=>true))
-    ilab.crt_add_query_set("#{$query_prefix}_PRMSo1", o.merge(:oracle=>true, :topk_field=>1))
-    ilab.crt_add_query_set("#{$query_prefix}_PRMSo2", o.merge(:oracle=>true, :topk_field=>2))
-    ilab.crt_add_query_set("#{$query_prefix}_PRMSo3", o.merge(:oracle=>true, :topk_field=>3))
+    ilab.crt_add_query_set("#{$query_prefix}_PRMSo", o.merge(:flms=>$rlflms))
+    ilab.crt_add_query_set("#{$query_prefix}_PRMSo1", o.merge(:flms=>$rlflms, :topk_field=>1))
+    ilab.crt_add_query_set("#{$query_prefix}_PRMSo2", o.merge(:flms=>$rlflms, :topk_field=>2))
+    ilab.crt_add_query_set("#{$query_prefix}_PRMSo3", o.merge(:flms=>$rlflms, :topk_field=>3))
   when 'mp_noise'
     [0.0,0.5,1.0,2.0,5.0].each do |mp_noise|
       ilab.crt_add_query_set("#{$query_prefix}_PRM-S_n#{mp_noise}", :template=>:prm, :smoothing=>$sparam, :mp_noise=>mp_noise)

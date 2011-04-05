@@ -31,6 +31,28 @@ module PRMHelper
     mps.find_all{|mp|mp[1].size>0}
   end
   
+  def get_mixture_mp(query, weights, o = {})
+    raw = []
+    raw << get_map_prob(query) << get_map_prob(query, :df=>true)
+  end
+  
+  # Get the KL-divrgence between two MP sets
+  # 
+  def get_mpset_klds( mpset1, mpset2  )
+    return error "Length not equal!" if mpset1.size != mpset2.size
+    mpset1.map_with_index{|mps,i| mps.map{|k,v|v.kld(mpset2[i][k])}.sum}
+  end
+  
+  # Get MPs estimated from collection FLMs
+  def get_mpset( query_set, o = {} )
+    query_set.map{|q| get_map_prob(q, o).map_hash{|e|[e[0], e[1].to_h]}}
+  end
+  
+  # Get MPs estimated from a set of FLMs
+  def get_mpset_from_flms( queries, flms, o = {} )
+    flms.map_with_index{|e,i|get_map_prob(queries[i], o.merge(:flm=>e)).map_hash{|e2|[e2[0], e2[1].to_h]}}
+  end
+  
   #Get query for field-level weighting
   # - calculate mapping prob.
   # - transform it appropriately

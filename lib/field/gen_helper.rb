@@ -62,7 +62,7 @@ module GenHelper
                   get_knownitem_topic(dno, o[:topic_type], topic_len, o.merge(:doc_no=>doc_no))
                 end
         raise DataError, "No content in query!" if query.join(" ").blank?
-        results << {:dno=>dno, :flm=>get_doc_field_lm(dno)}
+        results << get_doc_field_lm(dno) #{:dno=>dno, :flm=>get_doc_field_lm(dno)}
       rescue Exception => e
         warn "[build_knownitem_topics] Unable to process doc ##{dno} (#{e})"
         next

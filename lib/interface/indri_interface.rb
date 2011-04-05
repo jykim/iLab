@@ -171,7 +171,7 @@ class IndriInterface
   end
   
   def init_kstem(file)
-    puts "[init_kstem] using #{to_path("#{file}.stem")}"
+    #puts "[init_kstem] using #{to_path("#{file}.stem")}"
     $stemmer = 'krovetz'
     $kstem = {} if !defined?($kstem)
     File.open(to_path("#{file}.stem"),"w"){|f| 

@@ -34,12 +34,17 @@ if $o[:verbose]
     $qrys.map{|q|$i.qsa.map{|e|(e.stat[q.qid.to_s])? e.stat[q.qid.to_s]['map'] : 0.0}}
     
   if $o[:verbose] == :mp
-    $mprel = $rdocs.map_with_index{|e,i|$engine.get_map_prob($qrys[i].text, :flm=>e[:flm]).map_hash{|e|[e[0], e[1].to_h]}}
-    $mpcol = $qrys.map{|q| $engine.get_map_prob(q.text).map_hash{|e|[e[0], e[1].to_h]}}
-    $tbl_qry.add_cols "MPrel", $mprel.map{|e|e.map{|k,v|"[#{k}] "+v.print}.join("<br>")}, :summary=>:none
-    $tbl_qry.add_cols "MPcol", $mpcol.map{|e|e.map{|k,v|"[#{k}] "+v.print}.join("<br>")}, :summary=>:none
+    queries = $qrys.map{|e|e.text}
+    $mprel = $engine.get_mpset_from_flms(queries, $rlflms)
+    $mpres = $engine.get_mpset_from_flms(queries, $rsflms)
+    $mpcol = $engine.get_mpset(queries)
+    $mpcol_df = $engine.get_mpset(queries, :df=>true)
+    #$tbl_qry.add_cols "MPrel", $mprel.map{|e|e.map{|k,v|"[#{k}] "+v.print}.join("<br>")}, :summary=>:none
+    #$tbl_qry.add_cols "MPcol", $mpcol.map{|e|e.map{|k,v|"[#{k}] "+v.print}.join("<br>")}, :summary=>:none
     # Aggregate KL-divergence (sum term-wise scores)
-    $tbl_qry.add_cols "D_KL", $qrys.map_with_index{|q,i| $mprel[i].map{|k,v|v.kld($mpcol[i][k])}.sum}
+    $tbl_qry.add_cols "D_KL", $engine.get_mpset_klds( $mprel, $mpcol )
+    $tbl_qry.add_cols "D_KL(rs)", $engine.get_mpset_klds( $mprel, $mpres )
+    $tbl_qry.add_cols "D_KL(df)", $engine.get_mpset_klds( $mprel, $mpcol_df )
   end
 
   #$tbl_qry.add_cols $ret_models, $ret_models.map{|e|$avg_doc_scores[q.qid][e].to_p[$col_rl[q.qid]].r3}
