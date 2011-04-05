@@ -57,6 +57,7 @@ module IndriFieldHelper
         result = dflm
       else
         result = result.map_hash{|k,v|
+          dflm[k] = {} if !dflm[k]
           [k,v.sum_prob(dflm[k].map_hash{|k2,v2|[k2, v2*nscores[i]]})]}
       end
     end

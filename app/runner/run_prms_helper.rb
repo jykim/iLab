@@ -114,6 +114,7 @@ def init_collection(col)
     $engine.init_kstem($file_topic)
     $rlflms = $engine.get_rel_flms($file_qrel) if !$rlflms
   end
+  $queries =  $i.parse_topic_file($file_topic, $ptn_qry_title)
 end
 
 

@@ -31,9 +31,27 @@ module PRMHelper
     mps.find_all{|mp|mp[1].size>0}
   end
   
-  def get_mixture_mp(query, weights, o = {})
-    raw = []
-    raw << get_map_prob(query) << get_map_prob(query, :df=>true)
+  def get_mixture_map_prob(query, flms, weights, o = {})
+    fields = o[:prm_fields] || $fields
+    mp_results = []
+    query.split(" ").map_with_index do |qw,i|
+      mps = flms.map{|flm| get_map_prob(qw, :flm => flm)}
+      #p mps
+      if mps.flatten.uniq.size == 2
+        error "[get_mixture_map_prob] no mp found!"
+        next
+      else
+        mps = mps.map{|e|e[0][1].to_h}
+      end
+      mp_results << [qw, fields.map_hash{|f| [f, mps.map_with_index{|mp,j|(mp[f] || 0) * weights[j]}.sum ]}.to_p.to_a.sort_val]
+    end
+    mp_results
+  end
+  
+  def get_mixture_mpset(queries, weights, o = {})
+    queries.map_with_index do |q,i|
+      get_mixture_map_prob(q, [get_col_freq(), $rsflms[i]], weights )
+    end
   end
   
   # Get the KL-divrgence between two MP sets
@@ -44,8 +62,8 @@ module PRMHelper
   end
   
   # Get MPs estimated from collection FLMs
-  def get_mpset( query_set, o = {} )
-    query_set.map{|q| get_map_prob(q, o).map_hash{|e|[e[0], e[1].to_h]}}
+  def get_mpset( queries, o = {} )
+    queries.map{|q| get_map_prob(q, o).map_hash{|e|[e[0], e[1].to_h]}}
   end
   
   # Get MPs estimated from a set of FLMs
@@ -66,6 +84,7 @@ module PRMHelper
   end
 
   #Get Term-wise Element Weighting Query given Mapping Prob.
+  # mps = [[qw1, [f1, prob1], [...]], [qw2, ]]
   def get_tew_query(mps, o)
     #debugger
     #info "[get_tew_query] #{mps.inspect}"

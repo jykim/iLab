@@ -22,8 +22,13 @@ def ILabLoader.build(ilab)
     qs = ilab.crt_add_query_set("#{$query_prefix}_DQL" , :smoothing=>$sparam)
     ilab.crt_add_query_set("#{$query_prefix}_PRMS", o)
     
-    $rsflms = qs.qrys.map{|q|$engine.get_res_flm q.rs.docs[0..($o[:topk] || 5)]} #if !$rsflms
+    $rsflms = qs.qrys.map_with_index{|q,i|
+      puts "[get_res_flm] #{i}th query processed" if i % 5 == 1      
+      $engine.get_res_flm q.rs.docs[0..($o[:topk] || 5)]} if $o[:redo] || !$rsflms
     ilab.crt_add_query_set("#{$query_prefix}_PRMSrs#{$o[:topk]}", o.merge(:flms=>$rsflms))
+
+    $mps = $engine.get_mixture_mpset($queries, [1.0, 1.0])
+    ilab.crt_add_query_set("#{$query_prefix}_PRMSrs#{$o[:topk]}_col", o.merge(:template=>:tew, :mps=>$mps ))
     ilab.crt_add_query_set("#{$query_prefix}_PRMSrl", o.merge(:flms=>$rlflms))
   # Right cutoff in getting MP estimated?
   when 'mp_cutoff'
