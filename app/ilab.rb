@@ -97,6 +97,10 @@ class ILab
     info("relevant set added.")
   end
   
+  def parse_topic_file(file_topic, topic_pattern)
+    IO.read(to_path(file_topic)).scan(topic_pattern).map{|e| e[0].gsub(/[^A-Za-z0-9\- ]/," ") }
+  end
+  
   # Add query & result set
   # - build query based on 1) given adhoc topic 2) topic_file & RegExp pattern (&filter)
   # - limit query by range as is needed
@@ -111,10 +115,7 @@ class ILab
     
     #Read topic file & generate query list
     # Hypen(\-) is deleted from queries now
-    topics = o[:adhoc_topic] || 
-      IO.read(to_path(o[:file_topic])).scan(o[:topic_pattern]).
-      map{|e| (o[:adhoc_topic])? e[0] : e[0].gsub(/[^A-Za-z0-9 ]/ , " ") }.
-      find_all{|e| (block_given?)? filter.call(e) : true }
+    topics = o[:adhoc_topic] || parse_topic_file(o[:file_topic], o[:topic_pattern]).find_all{|e| (block_given?)? filter.call(e) : true }
     
     if topics.size < 1 then err 'No query found!' ; return end
 
