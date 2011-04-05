@@ -6,8 +6,9 @@ module IndriFieldHelper
     cf_fn = "FREQ_#{File.basename(@index_path)}.in"
     df_fn = "DOC_FREQ_#{File.basename(@index_path)}.in"
     bgram_fn = "BGRAM_FREQ_#{File.basename(@index_path)}.in"
-    if !File.exist?(to_path(cf_fn)) || !File.exist?(to_path(df_fn)) || !File.exist?(to_path(bgram_fn))
-      cmd = fwrite('cmd_calc_mp.log' , "#{$indri_path}/bin/calc_mp #@index_path #{to_path(cf_fn)} #{to_path(df_fn)} #{to_path(bgram_fn)}", :mode=>'a')
+    if !File.exist?(to_path(cf_fn)) #|| !File.exist?(to_path(df_fn)) || !File.exist?(to_path(bgram_fn))
+      cmd = fwrite('cmd_calc_mp.log' , "#{$indri_path}/bin/calc_mp #@index_path #{to_path(cf_fn)}", :mode=>'a')
+      #cmd = fwrite('cmd_calc_mp.log' , "#{$indri_path}/bin/calc_mp #@index_path #{to_path(cf_fn)} #{to_path(df_fn)} #{to_path(bgram_fn)}", :mode=>'a')
       `#{cmd}`
     end
     parse_col_freq(cf_fn)
