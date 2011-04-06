@@ -72,13 +72,17 @@ def init_collection(col)
     $index_path = "#$exp_root/enron/index_enron"
     $i.config_path( :work_path=>File.join($exp_root,col) ,:index_path=>$index_path )
     puts "work_path : #$work_path"
-    $ptn_qry_title = /= (.*)/
+    $ptn_qry_title = /\<title\> (.*) \<\/title\>/
     $offset = 201
     $fields =  ['subject','body','to','from','date']
     if !File.exist?($index_path)
-      $engine.build_index($col_id , "#$exp_root/enron/raw_doc" , $index_path , :fields=>$fields, :stemmer=>:porter, :stopword=>false)
+      $engine.build_index($col_id , "#$exp_root/enron/raw_doc" , $index_path , :fields=>$fields, :stemmer=>:krovetz, :stopword=>false)
     end
-    #$field_prob = 
+    case $o[:topic_id]
+    when 'all'
+      $offset, $count = 1, 214
+      $file_topic ,$file_qrel = 'queries.all' , 'qrels.all'
+    end
     $sparam = get_sparam('jm',0.1)
     $title_field = "SUBJECT"
   when 'trec'
@@ -112,9 +116,9 @@ def init_collection(col)
       end
     end
     # Get Rdoc list (needed for oracle MP calculation)
-    $engine.init_kstem($file_topic)
-    $rlflms = $engine.get_rel_flms($file_qrel) if !$rlflms
-  end
+  end#case
+  $engine.init_kstem($file_topic)
+  $rlflms = $engine.get_rel_flms($file_qrel) if !$rlflms
   $queries =  $i.parse_topic_file($file_topic, $ptn_qry_title)
 end
 
