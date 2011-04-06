@@ -14,11 +14,10 @@ def ILabLoader.build(ilab)
   # Getting Optimal MP results
   when 'prms'
     ilab.crt_add_query_set("#{$query_prefix}_DQL" , :smoothing=>$sparam)
-    #ilab.crt_add_query_set("#{$query_prefix}_PRMSall", o.merge(:mp_all_fields=>true))
     ilab.crt_add_query_set("#{$query_prefix}_PRMS", o)
     ilab.crt_add_query_set("#{$query_prefix}_PRMSdf", o.merge(:df=>true))
     ilab.crt_add_query_set("#{$query_prefix}_PRMSo", o.merge(:flms=>$rlflms))
-  when 'prms_res'
+  when 'prms_mix'
     qs = ilab.crt_add_query_set("#{$query_prefix}_DQL" , :smoothing=>$sparam)
     ilab.crt_add_query_set("#{$query_prefix}_PRMS", o)
     
@@ -26,17 +25,13 @@ def ILabLoader.build(ilab)
       puts "[get_res_flm] #{i}th query processed" if i % 5 == 1      
       $engine.get_res_flm q.rs.docs[0..($o[:topk] || 5)]} if $o[:redo] || !$rsflms
     ilab.crt_add_query_set("#{$query_prefix}_PRMSrs#{$o[:topk]}", o.merge(:flms=>$rsflms))
-    [0.2, 0.4, 0.6, 0.8].each do |lambda|
-      $mps = $engine.get_mixture_mpset($queries, [lambda, 1-lambda])
-      ilab.crt_add_query_set("#{$query_prefix}_PRMSrs#{$o[:topk]}_col#{lambda}", o.merge(:template=>:tew, :mps=>$mps ))
+    [0].each do |lambda|
+      $mpmix = $engine.get_mixture_mpset($queries, [0.4, 0.6, lambda])
+      ilab.crt_add_query_set("#{$query_prefix}_PRMSmx#{$o[:topk]}_bgram#{lambda}", o.merge(:template=>:tew, :mps=>$mps ))
     end
     ilab.crt_add_query_set("#{$query_prefix}_PRMSrl", o.merge(:flms=>$rlflms))
-  # Right cutoff in getting MP estimated?
-  when 'mp_cutoff'
-    1.upto(5) do |i|
-      ilab.crt_add_query_set("#{$query_prefix}_PRMS_mpco#{i}", o.merge(:mp_cutoff=>mp_cutoff))
-    end
   when 'prms_ora'
+    ilab.crt_add_query_set("#{$query_prefix}_PRMS", o)
     ilab.crt_add_query_set("#{$query_prefix}_PRMSo", o.merge(:flms=>$rlflms))
     ilab.crt_add_query_set("#{$query_prefix}_PRMSo1", o.merge(:flms=>$rlflms, :topk_field=>1))
     ilab.crt_add_query_set("#{$query_prefix}_PRMSo2", o.merge(:flms=>$rlflms, :topk_field=>2))

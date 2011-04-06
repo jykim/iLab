@@ -6,24 +6,25 @@ module IndriFieldHelper
     cf_fn = "FREQ_#{File.basename(@index_path)}.in"
     df_fn = "DOC_FREQ_#{File.basename(@index_path)}.in"
     bgram_fn = "BGRAM_FREQ_#{File.basename(@index_path)}.in"
-    if !File.exist?(to_path(cf_fn)) #|| !File.exist?(to_path(df_fn)) || !File.exist?(to_path(bgram_fn))
-      cmd = fwrite('cmd_calc_mp.log' , "#{$indri_path}/bin/calc_mp #@index_path #{to_path(cf_fn)}", :mode=>'a')
+    if !File.exist?(to_path(cf_fn)) || !File.exist?(to_path(bgram_fn))
+      cmd = fwrite('cmd_calc_mp.log' , "#{$indri_path}/bin/calc_mp #@index_path #{to_path(cf_fn)} #{to_path(bgram_fn)}", :mode=>'a')
+      #cmd = fwrite('cmd_calc_mp.log' , "#{$indri_path}/bin/calc_mp #@index_path #{to_path(cf_fn)}", :mode=>'a')
       #cmd = fwrite('cmd_calc_mp.log' , "#{$indri_path}/bin/calc_mp #@index_path #{to_path(cf_fn)} #{to_path(df_fn)} #{to_path(bgram_fn)}", :mode=>'a')
       `#{cmd}`
     end
     parse_col_freq(cf_fn)
+    parse_col_freq(bgram_fn, :bgram=>true)
     #parse_col_freq(df_fn, :df=>true)
-    #parse_col_freq(bgram_fn, :bgram=>true)
-    @cf[o.to_s]
+    $cf[o.to_s]
   end
   
   def parse_col_freq(filename, o = {})
-    if !@cf[o.to_s]
+    if !$cf[o.to_s]
       cf_raw = IO.read(to_path(filename)).split("\n").
         map_hash{|l|la = l.split("\t");[la[0], la[1..-1].map_hash{|e|a = e.split ; [a[0] , a[1].to_f]}]}
       puts "[parse_col_freq] reading #{filename} (#{o.inspect})..."
       #puts "[parse_col_freq] Fields read : #{cf_raw.keys.inspect}"
-      @cf[o.to_s] = cf_raw
+      $cf[o.to_s] = cf_raw
     end
   end
   

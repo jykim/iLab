@@ -17,6 +17,7 @@ def init_env()
   $r = $o.dup
   #$cf= {}
   $dflm = {} if !defined?($dflm)
+  $cf = {} if !defined?($cf)
 
   #Set Global Vars
   $t_start = Time.now

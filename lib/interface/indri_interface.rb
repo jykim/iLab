@@ -11,7 +11,6 @@ class IndriInterface
   
   def initialize(name = "" , o={})
     @name = name
-    @cf = {}
     @index_path = o[:index_path] || $index_path
     @title_field = o[:title_field] || $title_field #The field that denotes document title
     # @index_path = [@index_path] if @index_path.class == String 

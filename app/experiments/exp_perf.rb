@@ -35,14 +35,18 @@ if $o[:verbose]
     
   if $o[:verbose] == :mp
     $mprel = $engine.get_mpset_from_flms($queries, $rlflms)
-    $mpres = $engine.get_mpset_from_flms($queries, $rsflms)
+    #$mpres = $engine.get_mpset_from_flms($queries, $rsflms)
     $mpcol = $engine.get_mpset($queries)
+    $mpmix_h = $mpmix.map{|e|$engine.mp2hash e}
     #$mpcol_df = $engine.get_mpset(queries, :df=>true)
+
     #$tbl_qry.add_cols "MPrel", $mprel.map{|e|e.map{|k,v|"[#{k}] "+v.print}.join("<br>")}, :summary=>:none
     #$tbl_qry.add_cols "MPcol", $mpcol.map{|e|e.map{|k,v|"[#{k}] "+v.print}.join("<br>")}, :summary=>:none
+
     # Aggregate KL-divergence (sum term-wise scores)
     $tbl_qry.add_cols "D_KL", $engine.get_mpset_klds( $mprel, $mpcol )
-    $tbl_qry.add_cols "D_KL(rs)", $engine.get_mpset_klds( $mprel, $mpres )
+    $tbl_qry.add_cols "D_KL(mix)", $engine.get_mpset_klds( $mprel, $mpmix_h )
+    #$tbl_qry.add_cols "D_KL(rs)", $engine.get_mpset_klds( $mprel, $mpres )
     #$tbl_qry.add_cols "D_KL(rs_col)", $engine.get_mpset_klds( $mprel, $mpres )
     #$tbl_qry.add_cols "D_KL(df)", $engine.get_mpset_klds( $mprel, $mpcol_df )
   end
