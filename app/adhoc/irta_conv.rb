@@ -18,13 +18,13 @@ col.each do |c|
   traverse_path("#{$path}/raw/#{c}", :filter=>/\.$/, :recursion=>true) do |fp , fn|
     fc = IO.read(fp)
     #debugger
-    new_path = "#{$path}/doc/#{c}/#{fp.gsub(/\//,'_')}xml"
+    new_path = "#{$path}/raw_doc/#{c}/#{fp.gsub(/\//,'_')}xml"
     fields = $fields[c].map_hash{|e|[e, fc.find_tag_enron(e)]}
     fields['Body'] = fc.split("\r\n\r\n")[1..-1]
     #puts fields['Body']
     text = 
     result = "<DOC>
-<DOCNO>#{fc.find_tag_enron('Message-ID')}</DOCNO>
+<DOCNO>#{fc.find_tag_enron('Message-ID').strip}</DOCNO>
 <DOCHDR>
 blah
 </DOCHDR>

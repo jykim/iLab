@@ -11,8 +11,10 @@ Find.find(TREC_LIST_COL_PATH) do |fp|
     did = doc.scan(/\<DOCNO\> (.*?) \<\/DOCNO\>/)[0][0]
     puts "(ORIGINAL)\n#{doc}" if first_doc
     [0.75,0.5,0.25].each do |cut_ratio|
-      fnew = $fields.map_hash{|field|str = doc.find_tag(field)[0] ; [field, ((str) ? str.cut(cut_ratio,:method=>:random).join(" ") : "")]}
-      path = TREC_PATH + "lists_#{cut_ratio}_r"
+      fnew = $fields.map_hash{|field|str = doc.find_tag(field)[0] ; [field, str]}
+      #$fields.map_hash{|field|str = doc.find_tag(field)[0] ; [field, ((str) ? str.cut(cut_ratio,:method=>:random).join(" ") : "")]}
+      path = TREC_PATH + "lists_new"
+      #path = TREC_PATH + "lists_#{cut_ratio}_r"
       doc_new = <<END
 <DOC>
 <DOCNO> #{did} </DOCNO>
