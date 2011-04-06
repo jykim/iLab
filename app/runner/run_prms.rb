@@ -15,7 +15,7 @@ def ILabLoader.build(ilab)
   when 'prms'
     ilab.crt_add_query_set("#{$query_prefix}_DQL" , :smoothing=>$sparam)
     ilab.crt_add_query_set("#{$query_prefix}_PRMS", o)
-    ilab.crt_add_query_set("#{$query_prefix}_PRMSdf", o.merge(:df=>true))
+    #ilab.crt_add_query_set("#{$query_prefix}_PRMSdf", o.merge(:df=>true))
     ilab.crt_add_query_set("#{$query_prefix}_PRMSo", o.merge(:flms=>$rlflms))
   when 'prms_mix'
     qs = ilab.crt_add_query_set("#{$query_prefix}_DQL" , :smoothing=>$sparam)
@@ -27,7 +27,7 @@ def ILabLoader.build(ilab)
     ilab.crt_add_query_set("#{$query_prefix}_PRMSrs#{$o[:topk]}", o.merge(:flms=>$rsflms))
     [0].each do |lambda|
       $mpmix = $engine.get_mixture_mpset($queries, [0.4, 0.6, lambda])
-      ilab.crt_add_query_set("#{$query_prefix}_PRMSmx#{$o[:topk]}_bgram#{lambda}", o.merge(:template=>:tew, :mps=>$mps ))
+      ilab.crt_add_query_set("#{$query_prefix}_PRMSmx#{$o[:topk]}_bgram#{lambda}", o.merge(:template=>:tew, :mps=>$mpmix ))
     end
     ilab.crt_add_query_set("#{$query_prefix}_PRMSrl", o.merge(:flms=>$rlflms))
   when 'prms_ora'
