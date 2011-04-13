@@ -37,3 +37,10 @@ blah
     File.open("#{$path}/doc/#{c}_All.txt", 'a'){|f|f.puts fc}
   end
 end
+
+# Batch Removing numm character at the end of DOCNO
+load 'app/ilab.rb'
+input_dir = '/home/jykim/work/prj/dih/enron/raw_doc/'
+batch_edit(input_dir, :new_path=>'/home/jykim/work/prj/dih/enron/raw_doc_new') do |fn , e|
+  e.gsub!(/\<DOCNO\><([\S]+)>\s\<\/DOCNO\>/, "<DOCNO>\\1</DOCNO>")
+end

@@ -170,6 +170,16 @@ class Array
     each{|e|result.concat arr.map{|e2|[e,e2].flatten}}
     result
   end
+  
+  # Get a set of weights for grid optimization
+  def get_weight_comb(set_size)
+    result = self
+    0.upto(set_size - 2) do |i|
+      result = result.cproduct self
+    end
+    #p result
+    result.find_all{|e|e.sum > 0}.map{|e|e.to_p}.uniq
+  end
 
   # Return all the elements that given string matches
   def pfind(str)
@@ -188,10 +198,10 @@ class Array
   end
   
   #self : [[k1,v1],[k2,v2],...]
-  def to_p(factor = 1.0)
-    sum = map{|e|e[1]}.sum.to_f
-    map{|e| [e[0] , e[1] / sum * factor]}
-  end
+  #def to_p(factor = 1.0)
+  #  sum = map{|e|e[1]}.sum.to_f
+  #  map{|e| [e[0] , e[1] / sum * factor]}
+  #end
   
   # Format each row as table with min/max highlight
   # self : [e1-1, e1-2, ...]

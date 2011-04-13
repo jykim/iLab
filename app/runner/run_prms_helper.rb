@@ -17,6 +17,7 @@ def init_env()
   $r = $o.dup
   #$cf= {}
   $dflm = {} if !defined?($dflm)
+  $dfv = {} if !defined?($dfv)
   $cf = {} if !defined?($cf)
 
   #Set Global Vars
@@ -64,7 +65,7 @@ def init_collection(col)
     #Topic/Qrel Building
     if $o[:topic_type]
       $offset = 1 ; $count = $o[:topic_no] || 50
-      $rlflms = $engine.build_knownitem_topics($file_topic, $file_qrel, $o) if !File.exist?(to_path($file_topic))
+      $engine.build_knownitem_topics($file_topic, $file_qrel, $o) if !File.exist?(to_path($file_topic))
     else
       error "topic_type not specified!"
     end
@@ -87,12 +88,12 @@ def init_collection(col)
     $title_field = "SUBJECT"
   when 'trec'
     #$col_path = "#$exp_root/trec/raw_gdoc/wsj89_small.trectext"
-    col_path = "#$exp_root/trec/raw_doc"
+    col_path = "#$exp_root/trec/raw_doc/lists_all.trecweb"
     $index_path = "#$exp_root/trec/index_lists"
     $gindex_path = "#$exp_root/trec/gindex_lists"
     $i.config_path( :work_path=>File.join($exp_root,col) ,:index_path=>$index_path )
     $ptn_qry_title = /\<title\> (.*) \<\/title\>/
-    $fields =  ['subject','text','to','sent','name','email']
+    $fields =  ['sent','name','email','subject','to','text']
     if !File.exist?($index_path)#"#$exp_root/trec/raw_doc"
       $engine.build_index($col_id , col_path , $index_path , :fields=>$fields, :stemmer=>'krovetz' , :stopword=>false)
     end
@@ -102,9 +103,9 @@ def init_collection(col)
     $sparam = get_sparam('jm',0.1)
     $title_field = "SUBJECT"
     #Topic/Qrel Building
-    if $o[:topic_type]
+    if $o[:topic_type] #&& $o[:topic_type] != "MKV"
       $offset = 1 ; $count = $o[:topic_no] || 50
-      $rlflms = $engine.build_knownitem_topics($file_topic, $file_qrel, $o) if !File.exist?(to_path($file_topic))
+      $engine.build_knownitem_topics($file_topic, $file_qrel, $o) if !File.exist?(to_path($file_topic))
     else
       case $o[:topic_id]
       when 'train'
@@ -118,7 +119,7 @@ def init_collection(col)
     # Get Rdoc list (needed for oracle MP calculation)
   end#case
   $engine.init_kstem($file_topic)
-  $rlflms = $engine.get_rel_flms($file_qrel) if !$rlflms
+  $rlflms1 = $engine.get_rel_flms($file_qrel).map{|e|e[1]} #if !$rlflms1
   $queries =  $i.parse_topic_file($file_topic, $ptn_qry_title)
 end
 

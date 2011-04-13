@@ -15,7 +15,7 @@ $qs_prm.qrys.each_with_index do |q,i|
 
   #Fetch RelDocs
   rls = $i.rl.docs.find_all{|d|d.qid==q.qid}
-  dflm = $dflm[rls.first.did] || ($dflm[rls.first.did] = $engine.get_doc_field_lm(rls.first.did))
+  dflm = $dflm[rls.first.did] || ($dflm[rls.first.did] = $engine.get_doc_field_lm(rls.first.did)[1])
   #dflm =  $engine.get_doc_field_lm(rls.first.did)
   if dflm
     rls.each{|rd| dflms << dflm}

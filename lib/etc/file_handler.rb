@@ -56,34 +56,34 @@ end
 
 # Perform batch rename
 # e.g. batch_rename('.',/candidate([0-9]+)/,"c\\1", :commit=>true)
-def batch_rename(path , ptn_fr, ptn_to, o={})
-  traverse_path(path, o.merge(:filter=>ptn_fr)) do |fp,fn|
-    puts cmd = "mv #{fp} #{File.join(File.dirname(fp), fn.gsub(ptn_fr,ptn_to))}"
-    `#{cmd}` if o[:commit]
-  end
-  nil
-end
-
-
-def batch_edit(path , o = {})
-  new_path = o[:new_path] || 'tmp'
-  begin
-    Dir.mkdir( new_path ) if !File.exist?( new_path ) &&  !o[:skip_output]
-    traverse_path(path, o) do |fp,fn|
-      new_file = File.join(new_path , fn)
-      while File.exists?(new_file)
-        #puts "[batch_edit] Duplicated Filename : #{new_file}"
-        if (no = new_file.scan(/\[([0-9]+)\]/)).size == 0
-          new_file = new_file[0..-5] + '[1].xml'            
-        else
-          new_file = new_file.gsub!("[#{no[-1][0]}]" , "[#{no[-1][0].to_i+1}]")
-        end
-      end
-      result = yield new_file, IO.read(fp)
-      File.open(new_file, 'w'){|f| f.puts result} if !o[:skip_output]
-      puts "#{fn} finished..."
-    end
-  rescue SystemCallError
-    $stderr.print "[batch_edit] IO failed: " + $! + "\n"
-  end
-end
+#def batch_rename(path , ptn_fr, ptn_to, o={})
+#  traverse_path(path, o.merge(:filter=>ptn_fr)) do |fp,fn|
+#    puts cmd = "mv #{fp} #{File.join(File.dirname(fp), fn.gsub(ptn_fr,ptn_to))}"
+#    `#{cmd}` if o[:commit]
+#  end
+#  nil
+#end
+#
+#
+#def batch_edit(path , o = {})
+#  new_path = o[:new_path] || 'tmp'
+#  begin
+#    Dir.mkdir( new_path ) if !File.exist?( new_path ) &&  !o[:skip_output]
+#    traverse_path(path, o) do |fp,fn|
+#      new_file = File.join(new_path , fn)
+#      while File.exists?(new_file)
+#        #puts "[batch_edit] Duplicated Filename : #{new_file}"
+#        if (no = new_file.scan(/\[([0-9]+)\]/)).size == 0
+#          new_file = new_file[0..-5] + '[1].xml'            
+#        else
+#          new_file = new_file.gsub!("[#{no[-1][0]}]" , "[#{no[-1][0].to_i+1}]")
+#        end
+#      end
+#      result = yield new_file, IO.read(fp)
+#      File.open(new_file, 'w'){|f| f.puts result} if !o[:skip_output]
+#      puts "#{fn} finished..."
+#    end
+#  rescue SystemCallError
+#    $stderr.print "[batch_edit] IO failed: " + $! + "\n"
+#  end
+#end

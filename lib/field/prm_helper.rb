@@ -20,39 +20,39 @@ module PRMHelper
       end
       weights = flm.map_hash{|k,v|[k,v[qw_s]] if v[qw_s] && fields.include?(k)}
       mp = weights.map_hash{|e|v=e[1]/weights.values.sum ; [e[0],((v >= MP_MIN)? v : MP_MIN)]}
-      if mp.size == 0
-        error "[get_map_prob] Query-term [#{qw}->#{qw_s}] not found!"
-      elsif o[:mp_all_fields]
-        mp = fields.map_hash{|f|[f, ((mp[f])? mp[f] : MP_MIN )]}
-      end
+      #if mp.size == 0
+      #  error "[get_map_prob] Query-term [#{qw}->#{qw_s}] not found!"
+      #elsif o[:mp_all_fields]
+      #  mp = fields.map_hash{|f|[f, ((mp[f])? mp[f] : MP_MIN )]}
+      #end
       #o[:fix_mp_for].map{|k,v|mp[k] = v} if o[:fix_mp_for]
-      mps[i] = [qw, mp.find_all{|e|e[1]>0}.to_a.sort_val]
+      mps << [qw , mp]
     end
-    mps.find_all{|mp|mp[1].size>0}
+    mhash2arr mps
   end
   
   # Estimate MP based on the mixture of prob. distributions
   def get_mixture_map_prob(query, flms, weights, o = {})
     fields = o[:prm_fields] || $fields
-    mp_results = [] ; prev_qw = nil
+    mps = [] ; prev_qw = nil
     query.split(" ").map_with_index do |qw,i|
-      mps = flms[0..-2].map{|flm| get_map_prob(qw, :flm => flm)}
+      mp_flms = flms[0..-2].map{|flm| get_map_prob(qw, :flm => flm)}
       # Last flm is based on Bigram 
       if weights[-1] > 0 && prev_qw
-        mps << get_map_prob([prev_qw,qw].join("_"), :flm => flms[-1]) 
-        p mps[-1]
+        mp_flms << get_map_prob([prev_qw,qw].join("_"), :flm => flms[-1]) 
+        #p mp_flms[-1]
       end
       prev_qw = qw
-      #p mps
-      if mps.flatten.uniq.size == 0
+      #p mp_flms
+      if mp_flms.flatten.uniq.size == 0
         error "[get_mixture_map_prob] no mp found!"
         next
       else
-        mps = mps.map{|e|e[0] ? e[0][1].to_h : {}}
+        mp_flms = mp_flms.map{|e|e[0] ? e[0][1].to_h : {}}
       end
-      mp_results << [qw, fields.map_hash{|f| [f, mps.map_with_index{|mp,j|(mp[f] || 0) * weights[j]}.sum ]}.to_p.to_a.sort_val]
+      mps << [qw, fields.map_hash{|f| [f, mp_flms.map_with_index{|mp,j|(mp[f] || 0) * weights[j]}.sum ]}]
     end
-    mp_results
+   mhash2arr mps
   end
   
   def get_mixture_mpset(queries, weights, o = {})
@@ -67,27 +67,33 @@ module PRMHelper
     return error "Length not equal!" if mpset1.size != mpset2.size
     mpset1.map_with_index{|mps,i| 
       begin
-        mps.map{|k,v|v.kld(mpset2[i][k].to_p)}.sum
+        mps.map_with_index{|mp,j|
+          mp[1].kld_s(mpset2[i][j][1].to_p)}.sum
       rescue Exception => e
-        error "[get_mpset_klds] error in #{i}th query : #{$queries[i]} \n#{mps.inspect}-#{mpset2[i].inspect} #{e.inspect}"
+        error "[get_mpset_klds] error in #{i}th query : #{$queries[i]} \n#{mps[i].inspect}-#{mpset2[i].inspect} #{e.inspect}"
         0
       end      
       }
   end
   
+  # Turn Hash form of MP to Array
+  def mhash2arr(mps)
+    mps.map{|e|[e[0], e[1].to_p.find_all{|term,prob|prob > 0}.sort_val]}.find_all{|mp|mp[1].size>0}
+  end
+  
   # Turn Array form of MP to Hash
-  def mp2hash(mp)
-    mp.map_hash{|e|[e[0], e[1].to_h]}
+  def marr2hash(mps)
+    mps.map{|e|[e[0], e[1].to_h]}
   end
   
   # Get MPs estimated from collection FLMs
   def get_mpset( queries, o = {} )
-    queries.map{|q| mp2hash get_map_prob(q, o)}
+    queries.map{|q| marr2hash get_map_prob(q, o)}
   end
   
   # Get MPs estimated from a set of FLMs
   def get_mpset_from_flms( queries, flms, o = {} )
-    flms.map_with_index{|e,i|mp2hash get_map_prob(queries[i], o.merge(:flm=>e))}
+    flms.map_with_index{|e,i|marr2hash get_map_prob(queries[i], o.merge(:flm=>e))}
   end
   
   #Get query for field-level weighting

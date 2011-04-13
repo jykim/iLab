@@ -28,22 +28,93 @@ module IndriFieldHelper
     end
   end
   
-  def get_doc_field_lm(dno)
+  def get_doc_lm(dno)
+    dv = get_index_info("dv", dno).split(/--- .*? ---\n/)
+    words = dv[2].split("\n").map{|l|l.split(" ")}.map{|e|e[2]}
+    get_unigram_lm(words)
+  end
+  
+  # Get the field-level term vector for given document
+  def get_doc_field_vector(dno)
+    return $dfv[dno] if $dfv[dno]
     dno = to_dno(dno) if dno.class == String
     return nil if !dno
-    #info "[get_doc_field_lm] dno = #{dno}"
-    dv = get_index_info("dv", dno).split(/--- .*? ---\n/)
-    fields = dv[1].split("\n").find_all{|l|!l.include?("document ")}.map_hash{|l|e = l.split(" ") ; [(e[1].to_i...e[2].to_i) , e[0]]}
+    
+    dv = get_index_info("dv", dno).split(/--- .*? ---\n/)    
+    # Get the range of each field
+    fields = dv[1].split("\n").find_all{|l|!l.include?("document ")}.
+      map_hash{|l|e = l.split(" ") ; [(e[1].to_i...e[2].to_i) , e[0]]}
     #return nil if fields.values.size !=  fields.values.uniq.size
-    dv[2].split("\n").map{|l|l.split(" ")}.
-      group_by{|e|f = fields.find{|k,v|k === e[0].to_i} ; (f)? f[1] : nil }. #FIXME Support overlapping elements
-      map_hash{|k,v|[k,v.find_all{|e|e[2]!="[OOV]"}.map{|e|e[2]}.to_pdist]}    
+    $dfv[dno] = dv[2].split("\n").map{|l|l.split(" ")}.
+      group_by{|e|f = fields.find{|k,v|k === e[0].to_i} ; (f)? f[1] : nil }.
+      map_hash{|k,v|[k, v.map{|e|e[2]}]}
+  end
+  
+  def get_doc_field_lm(dno, n = 1)
+    results = {}
+    field_terms = get_doc_field_vector(dno)
+    1.upto(n) do |i|
+      if i == 1
+        results[i] = field_terms.map_hash{|k,v|[ k , get_unigram_lm(v) ]}
+      else
+        results[i] = field_terms.map_hash{|k,v|[ k , get_ngram_lm(v, i) ]}
+      end
+    end
+    results
+  end
+  
+  def get_unigram_lm(words)
+    words.find_all{|e|e != "[OOV]"}.to_pdist
+  end
+  
+  def get_ngram_lm(words, n)
+    result = []
+    words.each_cons(n){|ngram|result << ngram unless ngram.find{|word|word == "[OOV]"}}
+    result.group_by{|e|e}.map_hash{|k,v| [k.join("_"), v.size] }
+  end
+  
+  def get_doc_field_text(dno, fields)
+    dno = to_dno(dno) if dno.class == String
+    return nil if !dno
+    dt = get_index_info("dt", dno)
+    fields.map do |field|
+      dt.find_tag(field)[0].clear_tags().strip
+    end
+  end
+  
+  def annotate_text_with_query(text, query, fields)
+    query_s = query.scan(/\w+/).map_hash_with_index{|qw,i|[kstem(qw), i]}
+    fields.map_with_index do |field,i|
+      text[i].scan(/\W+|\w+/).map_with_index{|token, j|
+        word = token.scan(/\w+/)[0]
+        if word && (n_qw = query_s[kstem(word)])
+            "[#{n_qw}]#{token}"
+        else
+          token
+        end
+      }.join("")
+    end
   end
   
   # Get the list and LM of relevant docs from TREC QRel
-  def get_rel_flms( file_qrel )
+  def get_rel_flms( file_qrel, n = 1 )
     IO.read( to_path(file_qrel) ).split("\n").map do |l|
-      get_doc_field_lm(l.split(" ")[2])
+      get_doc_field_lm(l.split(" ")[2], n)
+    end
+  end
+  
+  # Get the list and term vectors of relevant docs from TREC QRel
+  def get_rel_fvs( file_qrel)
+    IO.read( to_path(file_qrel) ).split("\n").map do |l|
+      get_doc_field_vector(l.split(" ")[2])
+    end
+  end
+  
+  # Get the list and LM of relevant docs from TREC QRel
+  def get_rel_texts( file_qrel)
+    IO.read( to_path(file_qrel) ).split("\n").map do |l|
+      qrel_finename = l.split(" ")[2]
+      [qrel_finename, get_doc_field_text(qrel_finename , $fields)]
     end
   end
   
@@ -53,7 +124,7 @@ module IndriFieldHelper
     result = nil
     nscores = res_docs.map{|e|e.score - max_score}.map{|e|Math.exp(e)}
     res_docs.each_with_index do |d,i|
-      dflm = get_doc_field_lm(d.did)
+      dflm = get_doc_field_lm(d.did)[1]
       if !result
         result = dflm
       else
@@ -63,10 +134,5 @@ module IndriFieldHelper
       end
     end
     result
-  end
-  
-  def get_doc_lm(dno)
-    dv = get_index_info("dv", dno).split(/--- .*? ---\n/)
-    dv[2].split("\n").map{|l|l.split(" ")}.find_all{|e|e[2]!="[OOV]"}.map{|e|e[2]}.to_pdist
   end
 end

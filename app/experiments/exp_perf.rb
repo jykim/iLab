@@ -21,7 +21,7 @@ if $o[:verbose]
   #doc_no = $engine.get_col_stat()[:doc_no] if $o[:gen_prob]
   #gen_probs = topic_types.map{|topic_type| $engine.get_gen_prob(q.text, dno_rl , topic_type, :doc_no=>doc_no) }
   
-  $did_rl = $qrys.map_hash{|q|[q.qid, q.rl.docs[0].did]}
+  #$did_rl = $qrys.map_hash{|q|[q.qid, q.rl.docs[0].did]}
   #$col_rl = $qrys.map_hash{|q|[q.qid, did_to_col_type($did_rl[q.qid])]}
   #
   #$tbl_qry.add_cols CSEL_TYPES.map{|e|"r#{e}"}, 
@@ -34,10 +34,9 @@ if $o[:verbose]
     $qrys.map{|q|$i.qsa.map{|e|(e.stat[q.qid.to_s])? e.stat[q.qid.to_s]['map'] : 0.0}}
     
   if $o[:verbose] == :mp
-    $mprel = $engine.get_mpset_from_flms($queries, $rlflms)
+    $mprel = $engine.get_mpset_from_flms($queries, $rlflms1)
     #$mpres = $engine.get_mpset_from_flms($queries, $rsflms)
     $mpcol = $engine.get_mpset($queries)
-    $mpmix_h = $mpmix.map{|e|$engine.mp2hash e}
     #$mpcol_df = $engine.get_mpset(queries, :df=>true)
 
     #$tbl_qry.add_cols "MPrel", $mprel.map{|e|e.map{|k,v|"[#{k}] "+v.print}.join("<br>")}, :summary=>:none
@@ -45,7 +44,11 @@ if $o[:verbose]
 
     # Aggregate KL-divergence (sum term-wise scores)
     $tbl_qry.add_cols "D_KL", $engine.get_mpset_klds( $mprel, $mpcol )
-    $tbl_qry.add_cols "D_KL(mix)", $engine.get_mpset_klds( $mprel, $mpmix_h )
+
+    if $mpmix
+      $mpmix_h = $mpmix.map{|e|$engine.marr2hash e}
+      $tbl_qry.add_cols "D_KL(mix)", $engine.get_mpset_klds( $mprel, $mpmix_h )
+    end
     #$tbl_qry.add_cols "D_KL(rs)", $engine.get_mpset_klds( $mprel, $mpres )
     #$tbl_qry.add_cols "D_KL(rs_col)", $engine.get_mpset_klds( $mprel, $mpres )
     #$tbl_qry.add_cols "D_KL(df)", $engine.get_mpset_klds( $mprel, $mpcol_df )

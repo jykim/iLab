@@ -1,0 +1,6 @@
+<% $cand_set.each_with_index do |cands,i| %>
+h3. Query : <%= cands[0][0] %>
+
+|Query|Fields|Length|Field|Position|Stopword|Sum|
+<%= cands.map{|c|c.to_tbl}.join("\n") %>
+<% end %>

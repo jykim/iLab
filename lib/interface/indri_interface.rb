@@ -110,6 +110,44 @@ class IndriInterface
     a.map{|l|[l[0], Math.log(Math.exp(l[1])/sum)]}
     fbkup(filename) ; dsvwrite(filename, a)
   end
+
+  #[1,2,3] => #(1 2) #(2 3) 
+  def get_combination(str , prefix)
+    tokens = str.split ; result = ""
+    return str if tokens.size == 1
+    0.upto(tokens.size-2) do |i|
+      result += "##{prefix}(#{tokens[i..i+1].join(' ')}) "
+    end
+    result
+  end
+  
+  # Apply Krovetz Stemming
+  def kstem(str)
+    $kstem = {} if !defined?($kstem)
+    #return str[0..2] if ['january','february','march','april','june','july','august','september','october','november','december'].include?(str.downcase)
+    $kstem[str] = $kstem[str] || `#{$indri_path}/bin/kstem #{str}`.strip#.downcase
+  end
+  
+  def init_kstem(file)
+    #puts "[init_kstem] using #{to_path("#{file}.stem")}"
+    $stemmer = 'krovetz'
+    $kstem = {} if !defined?($kstem)
+    File.open(to_path("#{file}.stem"),"w"){|f| 
+      f.puts IO.read(to_path(file)).scan(/[A-Za-z0-9]+/).uniq.join("\n")}
+    result = `#$indri_path/bin/kstem #{to_path("#{file}.stem")}`
+    result.split("\n").map{|e| s = e.split("\t") ; $kstem[s[0]] = s[1] }
+  end
+  
+  # Apply porter stemmer
+  def pstem(str)
+    Lingua.stemmer(str.downcase)
+  end
+  
+  # Calc Pointwise Mutual Information
+  def calc_mi(t1, t2)
+    v = `#{$lemur_path}/bin/calc_mi #{$lemur_path}/bin/param #@index_path #{t1} #{t2}`.split("\n").last.to_f
+    (v > 0)? Math.log(v) : 0
+  end
   
   #Get Smoothing Parameter
   def self.get_sparam(method, param_value , field = nil, operator = 'term')
@@ -150,44 +188,6 @@ class IndriInterface
   # Field-level bf(BM25) Parameter
   def self.get_field_bparam2(xvals , yvals, k1 = 1.0)
     xvals.map_with_index{|f,i| get_sparam2('bm25',  {"bf"=>yvals[i]}, f, nil)}  << "node:wsum,method:bm25,k1:#{$k1}"
-  end
-  
-  #[1,2,3] => #(1 2) #(2 3) 
-  def get_combination(str , prefix)
-    tokens = str.split ; result = ""
-    return str if tokens.size == 1
-    0.upto(tokens.size-2) do |i|
-      result += "##{prefix}(#{tokens[i..i+1].join(' ')}) "
-    end
-    result
-  end
-  
-  # Apply Krovetz Stemming
-  def kstem(str)
-    $kstem = {} if !defined?($kstem)
-    #return str[0..2] if ['january','february','march','april','june','july','august','september','october','november','december'].include?(str.downcase)
-    $kstem[str] = $kstem[str] || `#{$indri_path}/bin/kstem #{str}`.strip#.downcase
-  end
-  
-  def init_kstem(file)
-    #puts "[init_kstem] using #{to_path("#{file}.stem")}"
-    $stemmer = 'krovetz'
-    $kstem = {} if !defined?($kstem)
-    File.open(to_path("#{file}.stem"),"w"){|f| 
-      f.puts IO.read(to_path(file)).scan(/[A-Za-z0-9]+/).uniq.join("\n")}
-    result = `#$indri_path/bin/kstem #{to_path("#{file}.stem")}`
-    result.split("\n").map{|e| s = e.split("\t") ; $kstem[s[0]] = s[1] }
-  end
-  
-  # Apply porter stemmer
-  def pstem(str)
-    Lingua.stemmer(str.downcase)
-  end
-  
-  # Calc Pointwise Mutual Information
-  def calc_mi(t1, t2)
-    v = `#{$lemur_path}/bin/calc_mi #{$lemur_path}/bin/param #@index_path #{t1} #{t2}`.split("\n").last.to_f
-    (v > 0)? Math.log(v) : 0
   end
   
   # - Options
