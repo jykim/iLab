@@ -67,3 +67,5 @@ $o = {:redo=>true, :verbose=>:mp, :topic_type=>'MKV', :topic_id=>'MKV0415'}; $me
 #== Optimal Parameter finding for HLM
 $o={:mode=>:hlm_weights,:topic_id=>'0404'}; $col='trec' ;$exp='optimize_prm'; $method='golden'; eval IO.read('run_prms.rb')
 
+#== Optimal Parameter finding for Mixture MP model
+$o={:mode=>:mix_weights,:topic_id=>'train'}; $col='trec' ;$exp='optimize_rpm'; $method='golden'; eval IO.read('run_prms.rb')

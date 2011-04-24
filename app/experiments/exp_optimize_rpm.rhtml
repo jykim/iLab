@@ -1,0 +1,23 @@
+= Experiment
+Optimization of <%=$mode%> Parameter for <%=$template_query%> 
+
+/*
+= The Curve of Optimal <%=$mode%>
+!<%= $i.get_plot "Optimal Weights by Field" , "Field" , "Lambda" , :plot => plot_length_lambda %>!
+*/
+
+|Iteration|MAP|Prec@10|Prec@30|Parameter|
+<% best_results.each do |e| %>
+<%="|#{e[0]}|#{e[1]}|#{e[2]}|#{e[3]}|#{e[4]}|"%><% end %>
+
+/*
+<% if ['gradient'].include?($method) %>
+!<%= $i.get_plot "MAP for Varying #{$mode} for Each Field" , $mode , "MAP" , :xrange => '[0.75:1]' , :size=>'1.5,1' , :plot => plot_lambda_perf %>!
+<% else %>
+<% $xvals.each_with_index do |len , j|%>
+== Field <%= "#{len} - #{j}th" %>
+!<%= $i.get_plot "MAP for Varying #{$mode}  at Field #{len}" , $mode , "MAP" , :plot => plot_lambda_perf[len] %>!
+<% end %>
+
+<% end %>
+*/

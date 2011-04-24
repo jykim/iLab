@@ -27,10 +27,9 @@ begin
       puts "[get_res_flm] #{i}th query processed" if i % 20 == 1      
       $engine.get_res_flm q.rs.docs[0..topk]} if $o[:redo] || !$rsflms
     $i.crt_add_query_set("#{$query_prefix}_PRMSrs#{topk}", o.merge(:flms=>$rsflms))
-    [0.25,0.5,0.75,1].each do |lambda|
-      $mpmix = $engine.get_mixture_mpset($queries, [0.4, 0.6, lambda])
-      $i.crt_add_query_set("#{$query_prefix}_PRMSmx#{topk}_bgram#{lambda}", o.merge(:template=>:tew, :mps=>$mpmix ))
-    end
+    $mix_weights = [0.382, 0.382, 0.146] #[0.4, 0.6, 0.25]
+    $mpmix = $engine.get_mixture_mpset($queries, $mix_weights)
+    $i.crt_add_query_set("#{$query_prefix}_PRMSmx#{topk}_bgram#{lambda}", o.merge(:template=>:tew, :mps=>$mpmix ))
     $i.crt_add_query_set("#{$query_prefix}_PRMSrl", o.merge(:flms=>$rlflms1))
   when 'prms_ora'
     $i.crt_add_query_set("#{$query_prefix}_PRMS", o)
@@ -71,11 +70,6 @@ begin
     $i.crt_add_query_set("#{$query_prefix}_gPRM-S" ,:template=>:prm, :smoothing=>'linear', :lambda=>0.5, :engine=>:galago ,:index_path=>$gindex_path)
   end#case
   if $exp == 'perf'
-    #if !$i.fcheck($file_qrel)
-    #  warn "Create Qrel First!"
-    #  $exp = 'qrel'
-    #  return
-    #end
     $i.add_relevant_set($file_qrel)
     $i.fetch_data
   end
