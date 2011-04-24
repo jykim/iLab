@@ -35,9 +35,10 @@ if $o[:verbose]
   if $o[:verbose] == :mp
     $mprel = $engine.get_mpset_from_flms($queries, $rlflms1)
     #$mpres = $engine.get_mpset_from_flms($queries, $rsflms)
+    puts "[exp_perf] MPs calculated from RelDocs..."
     $mpcol = $engine.get_mpset($queries)
     #$mpcol_df = $engine.get_mpset(queries, :df=>true)
-    puts "[exp_perf] MPs calculated..."
+    puts "[exp_perf] MPs calculated from Collection..."
 
     #$tbl_qry.add_cols "MPrel", $mprel.map{|e|e.map{|k,v|"[#{k}] "+v.print}.join("<br>")}, :summary=>:none
     #$tbl_qry.add_cols "MPcol", $mpcol.map{|e|e.map{|k,v|"[#{k}] "+v.print}.join("<br>")}, :summary=>:none

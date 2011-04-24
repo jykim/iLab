@@ -1,5 +1,5 @@
-load 'ilab.rb'
-load 'adhoc/pd_lib.rb'
+load 'app/ilab.rb'
+load 'app/adhoc/pd_lib.rb'
 $fields =  ['SUBJECT','TEXT','TO','SENT','NAME','EMAIL']
 first_doc = true
 $file_hash = {}
