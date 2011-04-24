@@ -2,7 +2,7 @@ load 'app/experiments/exp_optimize_method.rb'
 
 $iter_count = $o[:iter_count] || 3
 #$tune_set   = $o[:tune_set] || false
-$opt_for = $o[:opt_for] || :map
+$opt_for = $o[:opt_for] || 'map'
 #$remote = $o[:remote] || false
 $mode = $o[:mode] || :smoothing
 $template_query = $o[:template] || :prm
@@ -15,14 +15,14 @@ o_opt = $o.dup
 case $mode
 when :mix_weights
   $yvals << [0.5] * $xvals.size
-  o_opt.merge!(:ymax=>1.0)
+  o_opt.merge!(:ymax=>1.0, :ymin=>0.01)
 end
 
 $qs = $i.crt_add_query_set("#{$query_prefix}_DQL" , :smoothing=>$sparam) if !$qs
 $rsflms = $qs.qrys.map_with_index{|q,i|
   puts "[get_res_flm] #{i}th query processed" if i % 20 == 1      
   $engine.get_res_flm q.rs.docs[0..($o[:topk] || 5)]} if $o[:redo] || !$rsflms
-
+$mprel = $engine.get_mpset_from_flms($queries, $rlflms1)
 
 def get_opt_qry_name(xvals , yvals, o)
   global_param = $mu
@@ -31,13 +31,16 @@ end
 
 #Run retrieval at given point
 def evaluate_at(xvals , yvals , o={})
+  $mpmix = $engine.get_mixture_mpset($queries, yvals)
   case $opt_for
-  when :map
-    $mpmix = $engine.get_mixture_mpset($queries, yvals)
+  when 'map'
     qs = $i.create_query_set(get_opt_qry_name(xvals , yvals, o), o.merge(:template=>:tew, :mps=>$mpmix, :skip_result_set=>true ))
-    map = qs.calc_stat($file_qrel)['all']
-    #puts "[evaluate_at::#{$mode}] #{yvals.inspect} = #{map}"
-    map
+    qs.calc_stat($file_qrel)['all']
+  when 'dkl'
+    $mpmix_h = $mpmix.map{|e|$engine.marr2hash e}
+    dkls = $engine.get_mpset_klds( $mprel, $mpmix_h )
+    #p dkls
+    {'dkl'=>(-dkls.avg)}
   end
 end
 
@@ -56,7 +59,7 @@ $search_method = case $method
                  end
 
 $results = $search_method.search($iter_count , $o) do |xvals , yvals , type , remote|
-  evaluate_at(xvals , yvals.map{|e|(e.to_s.scan(/e/).size>0)? 0.0 : e} , $o.merge(:remote_query=>remote))['map']
+  evaluate_at(xvals , yvals.map{|e|(e.to_s.scan(/e/).size>0)? 0.0 : e} , $o.merge(:remote_query=>remote))[$opt_for]
 end
 
 if $method == 'grid'
@@ -73,7 +76,7 @@ else
   0.upto($iter_count) do |i|
     break if !$yvals[i]
     result = evaluate_at($xvals, $yvals[i] )#, :ex_range=> [$range_tune,$range_test]
-    best_results << [ i , result['map'] , result['P10'] , result['P30'] ,  $yvals[i].map{|e|e.to_f.r3}.inspect ]
+    best_results << [ i , result[$opt_for] ,  $yvals[i].map{|e|e.to_f.r3}.inspect ]
   end
 
   if ['gradient'].include?($method)

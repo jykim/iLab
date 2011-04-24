@@ -40,7 +40,7 @@ $o = {:redo=>true, :verbose=>:mp, :topic_type=>'F_RN_RN', :topic_id=>'0404b', :t
 $o = {:topk=>5, :verbose=>:mp, :topic_type=>'F_RN_RN', :topic_id=>'0405', :topic_no=>100}; $method='prms_res'; $col='trec'; $exp='perf'; $remark='0405'; eval IO.read('run_prms.rb')
 
 # TREC col / test topic
-$o = {:verbose=>:mp, :topic_id=>'test'}; $method='prms_mix'; $col='trec'; $exp='perf'; $remark='0424'; eval IO.read('run_prms.rb')
+$o = {:topic_id=>'test'}; $method='prms_mix'; $col='trec'; $exp='perf'; $remark='0424_weightrain'; eval IO.read('run_prms.rb')
 
 $o = {:redo=>true, :verbose=>:mp, :topic_id=>'test'}; $method='prms'; $col='trec'; $exp='perf'; $remark='0424'; eval IO.read('run_prms.rb')
 
@@ -69,3 +69,5 @@ $o={:mode=>:hlm_weights,:topic_id=>'0404'}; $col='trec' ;$exp='optimize_prm'; $m
 
 #== Optimal Parameter finding for Mixture MP model
 $o={:mode=>:mix_weights,:topic_id=>'train'}; $col='trec' ;$exp='optimize_rpm'; $method='golden'; eval IO.read('run_prms.rb')
+
+$o={:mode=>:mix_weights,:opt_for=>'dkl',:topic_id=>'train'}; $col='trec' ;$exp='optimize_rpm'; $method='golden'; eval IO.read('run_prms.rb')
