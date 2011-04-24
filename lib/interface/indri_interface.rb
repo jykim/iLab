@@ -7,7 +7,8 @@ class IndriInterface
   DEF_SMOOTHING = ['method:dirichlet,mu:1500,operator:term','method:dirichlet,mu:4000,operator:window']
   attr_accessor :index_path, :title_field , :cf
   include ILabHelper , OptionHandler, Math
-  include IndriFieldHelper, GenHelper, PRMHelper, PRMMulticolHelper
+  include IndriFieldHelper, CalcMapProb, PRMHelper, PRMMulticolHelper
+  include GenQuery, GenMarkovQuery, GenCollection
   
   def initialize(name = "" , o={})
     @name = name

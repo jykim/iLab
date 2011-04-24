@@ -103,7 +103,9 @@ def init_collection(col)
     $sparam = get_sparam('jm',0.1)
     $title_field = "SUBJECT"
     #Topic/Qrel Building
-    if $o[:topic_type] #&& $o[:topic_type] != "MKV"
+    if $o[:topic_type] == "MKV"
+      $offset, $count = 1, 125
+    elsif $o[:topic_type]
       $offset = 1 ; $count = $o[:topic_no] || 50
       $engine.build_knownitem_topics($file_topic, $file_qrel, $o) if !File.exist?(to_path($file_topic))
     else
@@ -114,6 +116,9 @@ def init_collection(col)
       when 'test'
         $offset, $count = 26, 125
         $file_topic ,$file_qrel = 'ent05.known-item-topics', 'ent05.known-item-qrels'
+      #when 'MKV'
+      #  $offset, $count = 26, 125
+      #  $file_topic ,$file_qrel = 'topic_trec__MKV', 'qrel_trec__MKV'
       end
     end
     # Get Rdoc list (needed for oracle MP calculation)

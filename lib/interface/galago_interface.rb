@@ -1,7 +1,8 @@
 class GalagoInterface
   DEF_SMOOTHING = 'linear'
   include ILabHelper , OptionHandler, Math
-  include IndriFieldHelper, GenHelper, PRMHelper
+  include IndriFieldHelper, CalcMapProb, PRMHelper, PRMMulticolHelper
+  include GenQuery, GenMarkovQuery, GenCollection
   
   def initialize(name = "" , o={})
     @name = name

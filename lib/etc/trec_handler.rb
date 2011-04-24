@@ -2,7 +2,7 @@
 # Build trec-topic 
 # - topics [{:title=>'title', ...}, ...]
 def write_topic(file , topics , o={})
-  return if File.exist?(file)
+  #return if File.exist?(file)
   o[:template] = :trec if !o[:template] #assign default template
   o[:template] = to_path("topic_#{o[:template].to_s}.rhtml") if o[:template].class == Symbol
   template = ERB.new(IO.read(o[:template]))

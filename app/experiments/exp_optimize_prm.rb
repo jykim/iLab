@@ -8,14 +8,14 @@ $remote = $o[:remote] || false
 $mode = $o[:mode] || :smoothing
 $template_query = $o[:template] || :prm
 $ptn_qry = $ptn_qry_title
-if $o[:limit_fields]
-  $fields = $fields[0..($o[:limit_fields]-1)]
-  if $o[:reset_param]
-    $bs = [0.5] * $fields.size
-    $bfs = [0.5] * $fields.size
-    $mus = nil
-  end
-end
+#if $o[:limit_fields]
+#  $fields = $fields[0..($o[:limit_fields]-1)]
+#  if $o[:reset_param]
+#    $bs = [0.5] * $fields.size
+#    $bfs = [0.5] * $fields.size
+#    $mus = nil
+#  end
+#end
 $xvals = $fields ; info "$xvals : #{$xvals.inspect}"
 $yvals = []
 

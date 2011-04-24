@@ -32,12 +32,12 @@ if $o[:verbose]
   #  
   $tbl_qry.add_cols $i.qsa.map{|e|e.short_name = e.name.gsub($query_prefix+'_',"")}, 
     $qrys.map{|q|$i.qsa.map{|e|(e.stat[q.qid.to_s])? e.stat[q.qid.to_s]['map'] : 0.0}}
-    
   if $o[:verbose] == :mp
     $mprel = $engine.get_mpset_from_flms($queries, $rlflms1)
     #$mpres = $engine.get_mpset_from_flms($queries, $rsflms)
     $mpcol = $engine.get_mpset($queries)
     #$mpcol_df = $engine.get_mpset(queries, :df=>true)
+    puts "[exp_perf] MPs calculated..."
 
     #$tbl_qry.add_cols "MPrel", $mprel.map{|e|e.map{|k,v|"[#{k}] "+v.print}.join("<br>")}, :summary=>:none
     #$tbl_qry.add_cols "MPcol", $mpcol.map{|e|e.map{|k,v|"[#{k}] "+v.print}.join("<br>")}, :summary=>:none
@@ -49,6 +49,7 @@ if $o[:verbose]
       $mpmix_h = $mpmix.map{|e|$engine.marr2hash e}
       $tbl_qry.add_cols "D_KL(mix)", $engine.get_mpset_klds( $mprel, $mpmix_h )
     end
+    puts "[exp_perf] D_KL calculated..."
     #$tbl_qry.add_cols "D_KL(rs)", $engine.get_mpset_klds( $mprel, $mpres )
     #$tbl_qry.add_cols "D_KL(rs_col)", $engine.get_mpset_klds( $mprel, $mpres )
     #$tbl_qry.add_cols "D_KL(df)", $engine.get_mpset_klds( $mprel, $mpcol_df )

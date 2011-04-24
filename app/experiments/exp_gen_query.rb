@@ -20,9 +20,8 @@ file_qrel =  ["qrel" , $col_id , $o[:new_topic_id]].join("_")
 $best_cand = $cand_set.map{|cands|cands[1..-1].max{|c1,c2|c1[-1]<=>c2[-1]}[0]}
 
 write_topic(to_path(file_topic), $best_cand.map{|e|{:title=>e}})
-`cp #{to_path($file_qrel)} #{to_path(file_qrel)}`
-#File.open(to_path(file_qrel), IO.read(to_path($file_qrel)))
-#quit
+write_qrel(to_path(file_qrel), IO.read( to_path($file_qrel) ).split("\n").map_hash_with_index{|e,i|did = e.split(" ")[2] ; [i+1,{did=>1}]})
+#}`cp #{to_path($file_qrel)} #{to_path(file_qrel)}`
 # Text extraction
 
 if $o[:verbose]
@@ -33,14 +32,14 @@ if $o[:verbose]
       atext = $engine.annotate_text_with_query($rltxts[i][1], c[0], $fields)
       afilename = to_path("doc_#{$rltxts[i][0]}-#{c[0].gsub(" ","_")}.txt")
       c << "\"link\":#{afilename}"
-      File.open(afilename, "w") do |f| 
+      File.open(afilename, "w") do |f|
         f.puts "Query : #{c[0]}"
         $fields.each_with_index do |field,j|
           f.puts "<#{field}> #{atext[j]}"
         end
       end
     end
-  end  
+  end
 end
 
 $i.create_report(binding)
