@@ -42,6 +42,9 @@ $o = {:topk=>5, :verbose=>:mp, :topic_type=>'F_RN_RN', :topic_id=>'0405', :topic
 # TREC col / test topic
 $o = {:verbose=>:mp, :topic_id=>'test'}; $method='prms_mix'; $col='trec'; $exp='perf'; $remark='0424'; eval IO.read('run_prms.rb')
 
+$o = {:redo=>true, :verbose=>:mp, :topic_id=>'test'}; $method='prms'; $col='trec'; $exp='perf'; $remark='0424'; eval IO.read('run_prms.rb')
+
+
 # Enron col / all topics
 $o = {:verbose=>true, :topic_id=>'all'}; $method='prms'; $col='enron'; $exp='perf'; $remark='0406'; eval IO.read('run_prms.rb')
 

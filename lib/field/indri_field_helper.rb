@@ -25,6 +25,7 @@ module IndriFieldHelper
       puts "[parse_col_freq] reading #{filename} (#{o.inspect})..."
       #puts "[parse_col_freq] Fields read : #{cf_raw.keys.inspect}"
       $cf[o.to_s] = cf_raw
+      $cf[o.merge(:prob=>true).to_s] = cf_raw.map_hash{|k,v|[k,v.to_p]}
     end
   end
   

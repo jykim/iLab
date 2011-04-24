@@ -6,10 +6,10 @@ module CalcMapProb
     return query if query.scan(/\(/).size > 0
     mps = [] ; col_scores = {}
     fields = o[:prm_fields] || $fields
-    flm = o[:flm] || get_col_freq((o[:df]) ? {:df=>true} : {}).map_hash{|k,v|[k,v.to_p]}
+    flm = o[:flm] || get_col_freq((o[:df]) ? {:df=>true,:prob=>true} : {:prob=>true})
     #puts "[get_map_prob] flm = #{o[:flm]}" if o[:flm]
     query.split(" ").each_with_index do |qw,i|
-      puts "[get_map_prob] Working on #{qw}"
+      #puts "[get_map_prob] Working on #{qw}"
       #Read Collection Stat.
       qw_s = case (o[:stemmer] || $stemmer)
       when 'krovetz' : kstem(qw)
@@ -89,8 +89,8 @@ module CalcMapProb
   
   # Get MPs estimated from collection FLMs
   def get_mpset( queries, o = {} )
-    #debugger
-    queries.map{|q| puts "[get_mpset] #{q}" ;  marr2hash get_map_prob(q, o)}
+    #debugger #puts "[get_mpset] #{q}" ;  
+    queries.map{|q| marr2hash get_map_prob(q, o)}
   end
   
   # Get MPs estimated from a set of FLMs
