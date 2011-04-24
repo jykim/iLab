@@ -12,10 +12,10 @@ if $o[:verbose]
   #$i.calc_length_stat
   #debugger
   #Perform. Stat
-  $i.fetch_data if $i.rl
+  #$i.fetch_data if $i.rl
 
   #Stat (e.g. MAP)
-  $i.calc_stat
+  #$i.calc_stat
 
   #$tbl_qry[0] << topic_types if $o[:gen_prob]
   #doc_no = $engine.get_col_stat()[:doc_no] if $o[:gen_prob]
