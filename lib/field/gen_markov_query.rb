@@ -49,7 +49,7 @@ module GenMarkovQuery
           fields[i] = $trans[fields[i-1]].to_p.sample_pdist_except(fields.uniq - fields[-1..-1])[0]
           #p fields if fields[i] == 'END'
           break if fields[i] == 'END'
-          mflm = get_mixture_flm(dflms, terms, fields[1..-1], [0.428, 0.142, 0.428].to_p)
+          mflm = get_mixture_flm(dflms, terms, fields[1..-1], (o[:mflm_weights] || [0.428, 0.142, 0.428]).to_p)
           terms << mflm.sample_pdist_except([terms,$stopwords.keys].flatten.uniq)[0]
         rescue Exception => e
           warn "[get_markov_query] Unable to generate a query!s (#{e})"

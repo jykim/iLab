@@ -40,7 +40,7 @@ $o = {:redo=>true, :verbose=>:mp, :topic_type=>'F_RN_RN', :topic_id=>'0404b', :t
 $o = {:topk=>5, :verbose=>:mp, :topic_type=>'F_RN_RN', :topic_id=>'0405', :topic_no=>100}; $method='prms_res'; $col='trec'; $exp='perf'; $remark='0405'; eval IO.read('run_prms.rb')
 
 # TREC col / test topic
-$o = {:topic_id=>'test'}; $method='prms_mix'; $col='trec'; $exp='perf'; $remark='0424_weightrain'; eval IO.read('run_prms.rb')
+$o = {:topic_id=>'test', :verbose=>:mp}; $method='prms_mix'; $col='trec'; $exp='perf'; $remark='0424_weightrain'; eval IO.read('run_prms.rb')
 
 $o = {:redo=>true, :verbose=>:mp, :topic_id=>'test'}; $method='prms'; $col='trec'; $exp='perf'; $remark='0424'; eval IO.read('run_prms.rb')
 
@@ -57,17 +57,28 @@ end
 
 #== Query Generation
 
-$o = {:verbose=>true, :topic_id=>'test', :new_topic_id=>'MKV', :no_cand=>10}; $method=nil; $col='trec'; $exp='gen_query'; $remark='0413_nostopwords'; eval IO.read('run_prms.rb')
-
 $o = {:verbose=>nil, :topic_id=>'test', :new_topic_id=>'MKV0415', :no_cand=>3, :max_length=>2}; $method=nil; $col='trec'; $exp='gen_query'; $remark='0415'; eval IO.read('run_prms.rb')
 
 $o = {:redo=>true, :verbose=>:mp, :topic_type=>'MKV', :topic_id=>'MKV0415'}; $method='prmsmix'; $col='trec'; $exp='perf'; $remark='0415'; eval IO.read('run_prms.rb')
 
 
-#== Optimal Parameter finding for HLM
-$o={:mode=>:hlm_weights,:topic_id=>'0404'}; $col='trec' ;$exp='optimize_prm'; $method='golden'; eval IO.read('run_prms.rb')
 
-#== Optimal Parameter finding for Mixture MP model
+#== Optimal Parameter finding for Mixture MP model (4/24)
+$o={:mode=>:hlm_weights,:topic_id=>'train'}; $col='trec' ;$exp='optimize_prm'; $method='golden'; eval IO.read('run_prms.rb')
+
 $o={:mode=>:mix_weights,:topic_id=>'train'}; $col='trec' ;$exp='optimize_rpm'; $method='golden'; eval IO.read('run_prms.rb')
 
 $o={:mode=>:mix_weights,:opt_for=>'dkl',:topic_id=>'train'}; $col='trec' ;$exp='optimize_rpm'; $method='golden'; eval IO.read('run_prms.rb')
+
+#== Retrieval Experiments using Generated Queries (4/25)
+
+$o = {:verbose=>true, :topic_id=>'test', :new_topic_id=>'MKV0425', :no_cand=>10}; $method=nil; $col='trec'; $exp='gen_query'; $remark='0425_nostopwords'; eval IO.read('run_prms.rb')
+
+$o = {:topic_id=>'MKV0425', :verbose=>:mp}; $method='prms_mix'; $col='trec'; $exp='perf'; $remark='0425_gen_train'; eval IO.read('run_prms.rb')
+
+
+#== Adding Features to Mixture MP Models (4/25)
+
+$o={:mode=>:mix_weights,:opt_for=>'map',:topic_id=>'train'}; $col='trec' ;$exp='optimize_rpm'; $method='golden'; eval IO.read('run_prms.rb')
+
+$o = {:redo=>true, :topic_id=>'test', :verbose=>:mp}; $method='prms_mix'; $col='trec'; $exp='perf'; $remark='0425_weightrain'; eval IO.read('run_prms.rb')

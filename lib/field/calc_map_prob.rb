@@ -36,9 +36,14 @@ module CalcMapProb
     mps = [] ; prev_qw = nil
     query.split(" ").map_with_index do |qw,i|
       # Get MP estimate for each FLMs
-      mp_flms = flms[0..-2].map{|flm| get_map_prob(qw, :flm => flm)}
+      mp_flms = flms[0..-3].map{|flm| get_map_prob(qw, :flm => flm)}
+      # Second Last flm is based on Prior
+      if o[:prior]
+        mp_flms << [[qw, fields.map_with_index{|f,j|[ f, o[:prior][j] ]}]]
+      end
       # Last flm is based on Bigram 
-      if weights[-1] > 0 && prev_qw
+      if prev_qw
+        mp_flms << get_map_prob([prev_qw,qw].join("_"), :flm => flms[-2]) 
         mp_flms << get_map_prob([prev_qw,qw].join("_"), :flm => flms[-1]) 
       end
       prev_qw = qw
@@ -57,8 +62,8 @@ module CalcMapProb
   
   def get_mixture_mpset(queries, weights, o = {})
     queries.map_with_index do |q,i|
-      info ["QWord","Field","Col","TopK","Bgram","=== #{i}th : #{q} ==="].join("\t") if $o[:verbose]
-      get_mixture_map_prob(q, [get_col_freq(), $rsflms[i], get_col_freq(:bgram=>true)], weights )
+      info ["QWord","Field","cUg","rUg","Prior","cBg","rBg","=== #{i}th : #{q} ==="].join("\t") if $o[:verbose]
+      get_mixture_map_prob(q, [get_col_freq(), $rsflms[i][1], get_col_freq(:bgram=>true), $rsflms[i][2]], weights, o )
     end
   end
   

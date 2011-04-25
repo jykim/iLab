@@ -8,7 +8,7 @@ $mode = $o[:mode] || :smoothing
 $template_query = $o[:template] || :prm
 $ptn_qry = $ptn_qry_title
 
-$xvals = $rpm_features = [:cug, :rug, :cbg ] ; info "$xvals : #{$xvals.inspect}"
+$xvals = $rpm_features = [:cug, :rug, :prior, :cbg , :rbg ] ; info "$xvals : #{$xvals.inspect}"
 $yvals = []
 
 o_opt = $o.dup
@@ -31,7 +31,7 @@ end
 
 #Run retrieval at given point
 def evaluate_at(xvals , yvals , o={})
-  $mpmix = $engine.get_mixture_mpset($queries, yvals)
+  $mpmix = $engine.get_mixture_mpset($queries, yvals, :prior=>$hlm_weight)
   case $opt_for
   when 'map'
     qs = $i.create_query_set(get_opt_qry_name(xvals , yvals, o), o.merge(:template=>:tew, :mps=>$mpmix, :skip_result_set=>true ))

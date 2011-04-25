@@ -69,22 +69,22 @@ if $o[:verbose]
     err "R is not found!"
   end
 
-  $plots_bar = {}
-  $plots_point = {}
-  $i.qsa.map{|qs|qs.name}.to_comb.each do |qs|
-    #puts qs
-    data_bar = []
-    data_point = []
-    next if $i.qs[qs[0]].stat.size != $i.qs[qs[1]].stat.size
-    $i.qsa[0].qrys.each do |q|
-      #puts  q.qid
-      next if $i.qs[qs[0]].stat[q.qid.to_s] == nil
-      data_point << [$i.qs[qs[0]].stat[q.qid.to_s]['map'] , $i.qs[qs[1]].stat[q.qid.to_s]['map']]
-      data_bar << [q.qid , data_point.last[0] - data_point.last[1]]
-    end
-    $plots_bar[qs.join] = [{:label=>"MAP Difference (#{qs[0]}-#{qs[1]})" , :data=>data_bar.map{|e|e[1]}.sort.reverse , :with=>'impulses'}]
-    $plots_point[qs.join] = [{:label=>"MAP Distribution (#{qs[0]},#{qs[1]})" , :data=>data_point , :with=>'points'}]
-  end
+  #$plots_bar = {}
+  #$plots_point = {}
+  #$i.qsa.map{|qs|qs.name}.to_comb.each do |qs|
+  #  #puts qs
+  #  data_bar = []
+  #  data_point = []
+  #  next if $i.qs[qs[0]].stat.size != $i.qs[qs[1]].stat.size
+  #  $i.qsa[0].qrys.each do |q|
+  #    #puts  q.qid
+  #    next if $i.qs[qs[0]].stat[q.qid.to_s] == nil
+  #    data_point << [$i.qs[qs[0]].stat[q.qid.to_s]['map'] , $i.qs[qs[1]].stat[q.qid.to_s]['map']]
+  #    data_bar << [q.qid , data_point.last[0] - data_point.last[1]]
+  #  end
+  #  $plots_bar[qs.join] = [{:label=>"MAP Difference (#{qs[0]}-#{qs[1]})" , :data=>data_bar.map{|e|e[1]}.sort.reverse , :with=>'impulses'}]
+  #  $plots_point[qs.join] = [{:label=>"MAP Distribution (#{qs[0]},#{qs[1]})" , :data=>data_point , :with=>'points'}]
+  #end
 end
  
 if $o[:env]

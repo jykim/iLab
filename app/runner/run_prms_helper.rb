@@ -24,8 +24,10 @@ def init_env()
   $t_start = Time.now
   if $o[:col_type]
     $col_id = "#{$col}_#{$o[:pid]}_#{$o[:col_type]}"
-  else
+  elsif $o[:col_id]
     $col_id = [$col,$o[:col_id]].join("_")
+  else
+    $col_id = $col
   end
   $o[:topic_id] = $o[:topic_type] if !$o[:topic_id] && $o[:topic_type]
   $query_prefix = "#{$col_id}_#{$o[:topic_id]}"
@@ -116,6 +118,8 @@ def init_collection(col)
       when 'test'
         $offset, $count = 26, 125
         $file_topic ,$file_qrel = 'ent05.known-item-topics', 'ent05.known-item-qrels'
+      else
+        $offset = 1
       #when 'MKV'
       #  $offset, $count = 26, 125
       #  $file_topic ,$file_qrel = 'topic_trec__MKV', 'qrel_trec__MKV'
@@ -132,8 +136,8 @@ end
 def set_collection_param(col_id)
   case col_id
   when 'trec'
-    #['subject','text','to','sent','name','email']
-    $hlm_weight = [2.0, 0.652, 0.0, 0.0, 0.0, 0.0]#[0.1,0.1,0.5,0.1,0.3];
+    #['sent','name','email','subject','to','text'] <= ['subject','text','to','sent','name','email']
+    $hlm_weight = [0.0,0.0,0.0,2.0,0.0,0.652].to_p #[2.0, 0.652, 0.0, 0.0, 0.0, 0.0]#[0.1,0.1,0.5,0.1,0.3];
     $mflmf_weight = [1.0, 0.292, 1.0, 0.472, 0.0, 0.382]
     $mus = [2.631, 6.386, 18.034, 1.626, 3.947, 6.386]#[3.44418499304202, 4.25724680243181, 13.2742407237162, 20.1626111634632, 3.44418499304202, 0.0]
     $prmd_lambda = 0.7

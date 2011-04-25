@@ -11,9 +11,11 @@
 <% $i.qsa.map{|qs|qs.name}.to_comb.each_with_index do |qs,i| %>
 	<% next if $i.qs[qs[0]].stat.size != $i.qs[qs[1]].stat.size %>
 	=== For <%=qs[0]%>,<%=qs[1]%>
+/*
 	<% data = $plots_bar[qs.join][0][:data] %>
 	 * Queries improved in <%=qs[0]%> : <%= data.find_all{|e|e>0}.size%>
 	 * Average/Stdev in difference : <%= [data.mean.r3 , data.stdev.r3].join(',') %>
+*/
 	<% if $sig_test.size > 0 %>
 	 * "significance test":../../log/<%=$sig_test[qs.join][0]%> 
 	<% end %>
