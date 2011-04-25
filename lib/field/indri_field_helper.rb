@@ -120,15 +120,16 @@ module IndriFieldHelper
   end
   
   # Get FLM from top K result documents
-  def get_res_flm( res_docs )
+  def get_res_flm( res_docs, n = 2)
     max_score = res_docs[0].score
     result = {1=>nil, 2=>nil}
     nscores = res_docs.map{|e|e.score - max_score}.map{|e|Math.exp(e)}
-    result.map_hash do |n,v| #iterate through all n-grams
+    
+    result.map_hash do |ng,v| #iterate through all n-grams
       result_n = v
       
       res_docs.each_with_index do |d,i|
-        dflm = get_doc_field_lm(d.did)[n]
+        dflm = get_doc_field_lm(d.did, n)[ng]
         if !result_n
           result_n = dflm
         else
@@ -137,8 +138,7 @@ module IndriFieldHelper
             [k,v.sum_prob(dflm[k].map_hash{|k2,v2|[k2, v2*nscores[i]]})]}
         end
       end
-      
-      [n, result_n]
+      [ng, result_n]
     end
   end
   

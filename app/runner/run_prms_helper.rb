@@ -77,7 +77,7 @@ def init_collection(col)
     puts "work_path : #$work_path"
     $ptn_qry_title = /\<title\> (.*) \<\/title\>/
     $offset = 201
-    $fields =  ['subject','body','to','from','date']
+    $fields =  ['subject','from','to','date','body']
     if !File.exist?($index_path)
       $engine.build_index($col_id , "#$exp_root/enron/raw_doc" , $index_path , :fields=>$fields, :stemmer=>:krovetz, :stopword=>false)
     end
@@ -85,6 +85,12 @@ def init_collection(col)
     when 'all'
       $offset, $count = 1, 214
       $file_topic ,$file_qrel = 'queries.all' , 'qrels.all'
+    when 'test'
+      $offset, $count = 1, 150
+      $file_topic ,$file_qrel = 'queries.test' , 'qrels.test'
+    when 'train'
+      $offset, $count = 151, 64
+      $file_topic ,$file_qrel = 'queries.train' , 'qrels.train'
     end
     $sparam = get_sparam('jm',0.1)
     $title_field = "SUBJECT"

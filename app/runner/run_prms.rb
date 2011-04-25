@@ -26,7 +26,7 @@ begin
     $rsflms = qs.qrys.map_with_index{|q,i|
       puts "[get_res_flm] #{i}th query processed" if i % 20 == 1      
       $engine.get_res_flm q.rs.docs[0..topk]} if $o[:redo] || !$rsflms
-    $i.crt_add_query_set("#{$query_prefix}_PRMSrs#{topk}", o.merge(:flms=>$rsflms))
+    $i.crt_add_query_set("#{$query_prefix}_PRMSrs#{topk}", o.merge(:flms=>$rsflms.map{|e|e[1]}))
     $mix_weights = [1.0, 0.388, 0.388, 0.388, 0.388]#[0.299, 0.299, 0.065, 0.154]
     #Real : [0.0, 0.382, 0.472] #[0.099, 1.0, 0.244]	# [0.382, 0.382, 0.146] #[0.4, 0.6, 0.25]
     $mpmix = $engine.get_mixture_mpset($queries, $mix_weights, :prior=>$hlm_weight)
