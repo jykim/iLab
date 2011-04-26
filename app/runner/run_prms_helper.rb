@@ -113,7 +113,7 @@ def init_collection(col)
     $index_path = "#$exp_root/enron/index_enron"
     $i.config_path( :work_path=>File.join($exp_root,col) ,:index_path=>$index_path )
     puts "work_path : #$work_path"
-    $ptn_qry_title = /\<title\> (.*) \<\/title\>/
+    $ptn_qry_title = /\<title\>\s(.*)\s\<\/title\>/
     $offset = 201
     $fields =  ['subject','from','to','date','body']
     if !File.exist?($index_path)
