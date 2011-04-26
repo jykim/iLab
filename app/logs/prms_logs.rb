@@ -68,7 +68,7 @@ $o={:mode=>:hlm_weights,:topic_id=>'train'}; $col='trec' ;$exp='optimize_prm'; $
 
 $o={:mode=>:mix_weights,:topic_id=>'train'}; $col='trec' ;$exp='optimize_rpm'; $method='golden'; eval IO.read('run_prms.rb')
 
-$o={:mode=>:mix_weights,:opt_for=>'dkl',:topic_id=>'train'}; $col='trec' ;$exp='optimize_rpm'; $method='golden'; eval IO.read('run_prms.rb')
+$o={:verbose=>true,:mode=>:mix_weights,:opt_for=>'kld',:topic_id=>'train'}; $col='trec' ;$exp='optimize_rpm'; $method='golden'; eval IO.read('run_prms.rb')
 
 #== Retrieval Experiments using Generated Queries (4/25)
 
@@ -83,8 +83,9 @@ $o={:mode=>:mix_weights,:opt_for=>'map',:topic_id=>'train'}; $col='trec' ;$exp='
 
 $o = {:topic_id=>'test', :verbose=>:mp}; $method='prms_mix'; $col='trec'; $exp='perf'; $remark='0425_weightrain'; eval IO.read('run_prms.rb')
 
-#== Getting Baseline Results for Enron & IMDB
+#== Getting Baseline Results for Enron & IMDB (4/26)
 
 $o = {:topic_id=>'train', :verbose=>true}; $method='param_jm'; $col='enron'; $exp='perf'; $remark='0426_param'; eval IO.read('run_prms.rb')
 
-$o = {:topic_id=>'train', :verbose=>true}; $method='param_jm'; $col='imdb'; $exp='perf'; $remark='0426_param'; eval IO.read('run_prms.rb')
+$o = {:topic_id=>'train', :verbose=>true}; $method='param_dir'; $col='imdb'; $exp='perf'; $remark='0426_param'; eval IO.read('run_prms.rb')
+

@@ -49,13 +49,13 @@ begin
   #  end
     
   # Getting Baseline Results
-  # - methods that doesn't require parameter tuning
   when 'simple' 
     $i.crt_add_query_set("#{$query_prefix}_DQL" , :smoothing=>$sparam)
-    $i.crt_add_query_set("#{$query_prefix}_MFLM" ,:template=>:hlm, :smoothing=>get_sparam('jm',0.5), :hlm_weights=>($hlm_weight || [0.1]*($fields.size)))
-    $i.crt_add_query_set("#{$query_prefix}_PRM-S", :template=>:prm, :smoothing=>$sparam)
-    $i.crt_add_query_set("#{$query_prefix}_PRM-D", :template=>:prm_ql ,:smoothing=>$sparam, :lambda=>$prmd_lambda)
-    
+    $i.crt_add_query_set("#{$query_prefix}_MFLM" ,:template=>:hlm, :smoothing=>$sparam_prm, :hlm_weights=>($hlm_weight || [0.1]*($fields.size)))
+    $i.crt_add_query_set("#{$query_prefix}_PRM-S", :template=>:prm, :smoothing=>$sparam_prm)
+    $i.crt_add_query_set("#{$query_prefix}_PRM-D", :template=>:prm_ql ,:smoothing=>$sparam_prm, :lambda=>$prmd_lambda)
+  
+  # Smoothing parameter sweep
   when 'param_jm'
     [0,0.1, 0.3, 0.5, 0.7, 0.8, 0.9].each do |lambda|
       $i.crt_add_query_set("#{$query_prefix}_DQL_l#{lambda}" ,:smoothing=>get_sparam('jm',lambda))

@@ -20,8 +20,8 @@ def do_retrieval_at(xvals , yvals , o={})
     o.merge!(:smoothing=>IndriInterface.get_field_sparam(xvals , yvals, $lambda, 'jm'),
              :hlm_weights=>([0.1]*$fields.size))
   when :hlm_weights
-    $template_query = :hlm
-    o.merge!(:smoothing=>(($mus)? IndriInterface.get_field_sparam(xvals , $mus, $mu) : ['method:jm,lambda:0.1']), :hlm_weights=>yvals)
+    $template_query = :hlm #(($mus)? IndriInterface.get_field_sparam(xvals , $mus, $mu) : ['method:jm,lambda:0.1'])
+    o.merge!(:smoothing=>$sparam_prm, :hlm_weights=>yvals)
   when :bm25f_bf
     $template_query = :hlm
     o.merge!(:smoothing=>IndriInterface.get_field_bparam(xvals , yvals, $k1),  :hlm_weights=>([0.1]*$fields.size), :param_query=>"-msg_path='#{$bm25f_path}'", :indri_path=>$indri_path_dih)
