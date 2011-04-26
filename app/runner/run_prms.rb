@@ -38,15 +38,15 @@ begin
     $i.crt_add_query_set("#{$query_prefix}_PRMSo1", o.merge(:flms=>$rlflms1, :topk_field=>1))
     $i.crt_add_query_set("#{$query_prefix}_PRMSo2", o.merge(:flms=>$rlflms1, :topk_field=>2))
     $i.crt_add_query_set("#{$query_prefix}_PRMSo3", o.merge(:flms=>$rlflms1, :topk_field=>3))
-  when 'mp_noise'
-    [0.0,0.5,1.0,2.0,5.0].each do |mp_noise|
-      $i.crt_add_query_set("#{$query_prefix}_PRM-S_n#{mp_noise}", :template=>:prm, :smoothing=>$sparam, :mp_noise=>mp_noise)
-    end
-  when 'mp_smooth'
-    [0.0,0.1,0.25,0.5,0.75,1.0].each do |mp_smooth|
-      o = $o.dup.merge(:template=>:prm, :smoothing=>$sparam, :mp_smooth=>mp_smooth)
-      $i.crt_add_query_set("#{$query_prefix}_PRM-S_s#{mp_smooth}", o)
-    end
+  #when 'mp_noise'
+  #  [0.0,0.5,1.0,2.0,5.0].each do |mp_noise|
+  #    $i.crt_add_query_set("#{$query_prefix}_PRM-S_n#{mp_noise}", :template=>:prm, :smoothing=>$sparam, :mp_noise=>mp_noise)
+  #  end
+  #when 'mp_smooth'
+  #  [0.0,0.1,0.25,0.5,0.75,1.0].each do |mp_smooth|
+  #    o = $o.dup.merge(:template=>:prm, :smoothing=>$sparam, :mp_smooth=>mp_smooth)
+  #    $i.crt_add_query_set("#{$query_prefix}_PRM-S_s#{mp_smooth}", o)
+  #  end
     
   # Getting Baseline Results
   # - methods that doesn't require parameter tuning
@@ -55,7 +55,18 @@ begin
     $i.crt_add_query_set("#{$query_prefix}_MFLM" ,:template=>:hlm, :smoothing=>get_sparam('jm',0.5), :hlm_weights=>($hlm_weight || [0.1]*($fields.size)))
     $i.crt_add_query_set("#{$query_prefix}_PRM-S", :template=>:prm, :smoothing=>$sparam)
     $i.crt_add_query_set("#{$query_prefix}_PRM-D", :template=>:prm_ql ,:smoothing=>$sparam, :lambda=>$prmd_lambda)
-
+    
+  when 'param_jm'
+    [0,0.1, 0.3, 0.5, 0.7, 0.8, 0.9].each do |lambda|
+      $i.crt_add_query_set("#{$query_prefix}_DQL_l#{lambda}" ,:smoothing=>get_sparam('jm',lambda))
+      $i.crt_add_query_set("#{$query_prefix}_PRM_l#{lambda}", :template=>:prm, :smoothing=>get_sparam('jm',lambda))    
+    end
+  when 'param_dir'
+    [5,10,50,100,250,500,1500,2500].each do |mu|
+      $i.crt_add_query_set("#{$query_prefix}_DQL_mu#{mu}" ,:smoothing=>get_sparam('dirichlet',mu))
+      $i.crt_add_query_set("#{$query_prefix}_PRM_mu#{mu}", :template=>:prm, :smoothing=>get_sparam('dirichlet',mu))
+    end
+    
   # Indri vs. Galago comparison
   when 'engines_dql'
     $o[:lambda] ||= 0.1
