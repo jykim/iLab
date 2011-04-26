@@ -146,7 +146,8 @@ def init_collection(col)
       $offset, $count = 1, 200
       $file_topic ,$file_qrel = 'queries.train' , 'qrels.train'
     end
-    $sparam = get_sparam('jm',0.1)
+    $sparam = get_sparam('dirichlet',1500)
+    $sparam_prm = get_sparam('jm',0.7)
     #$hlm_weight =  [1.9, 0.3, 0.2, 0.3, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1]
     $title_field = 'title'
   end#case

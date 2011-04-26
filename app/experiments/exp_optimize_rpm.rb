@@ -32,15 +32,16 @@ end
 #Run retrieval at given point
 def evaluate_at(xvals , yvals , o={})
   $mpmix = $engine.get_mixture_mpset($queries, yvals, :prior=>$hlm_weight)
+  $mpmix_h = $mpmix.map{|e|$engine.marr2hash e}
+  klds = $engine.get_mpset_klds( $mprel, $mpmix_h )
   case $opt_for
+  when 'kld'
+    {'kld'=>(-klds.avg)}    
   when 'map'
-    qs = $i.create_query_set(get_opt_qry_name(xvals , yvals, o), o.merge(:template=>:tew, :mps=>$mpmix, :skip_result_set=>true ))
-    qs.calc_stat($file_qrel)['all']
-  when 'dkl'
-    $mpmix_h = $mpmix.map{|e|$engine.marr2hash e}
-    dkls = $engine.get_mpset_klds( $mprel, $mpmix_h )
-    #p dkls
-    {'dkl'=>(-dkls.avg)}
+    qs = $i.create_query_set(get_opt_qry_name(xvals , yvals, o), o.merge(:template=>:tew, :mps=>$mpmix, :skip_result_set=>true, :smoothing=>$sparam_prm ))
+    stats = qs.calc_stat($file_qrel)
+    info ["MAP-KLD", yvals, -klds.avg, stats['all']['map']].flatten.inspect if $o[:verbose]
+    stats['all']
   end
 end
 

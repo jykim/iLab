@@ -53,7 +53,7 @@ module CalcMapProb
       else
         mp_flms = mp_flms.map{|e|e[0] ? e[0][1].to_h : {}}
       end
-      fields.map_hash{|f| info [qw, f, mp_flms.map_with_index{|mp,j|(mp[f] || 0.0).r3 } ].flatten.join("\t") } if $o[:verbose]
+      #fields.map_hash{|f| info [qw, f, mp_flms.map_with_index{|mp,j|(mp[f] || 0.0).r3 } ].flatten.join("\t") } if $o[:verbose]
       #File.open("MP_#{}.log",'a'){|f|f.puts }
       mps << [qw, fields.map_hash{|f| [f, mp_flms.map_with_index{|mp,j|(mp[f] || 0) * weights[j]}.sum ]}]
     end
@@ -62,7 +62,7 @@ module CalcMapProb
   
   def get_mixture_mpset(queries, weights, o = {})
     queries.map_with_index do |q,i|
-      info ["QWord","Field","cUg","rUg","Prior","cBg","rBg","=== #{i}th : #{q} ==="].join("\t") if $o[:verbose]
+      #info ["QWord","Field","cUg","rUg","Prior","cBg","rBg","=== #{i}th : #{q} ==="].join("\t") if $o[:verbose]
       get_mixture_map_prob(q, [get_col_freq(), $rsflms[i][1], get_col_freq(:bgram=>true), $rsflms[i][2]], weights, o )
     end
   end
