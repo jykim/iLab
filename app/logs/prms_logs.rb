@@ -86,3 +86,5 @@ $o = {:topic_id=>'test', :verbose=>:mp}; $method='prms_mix'; $col='trec'; $exp='
 #== Getting Baseline Results for Enron & IMDB
 
 $o = {:topic_id=>'train', :verbose=>true}; $method='param_jm'; $col='enron'; $exp='perf'; $remark='0426_param'; eval IO.read('run_prms.rb')
+
+$o = {:topic_id=>'train', :verbose=>true}; $method='param_jm'; $col='imdb'; $exp='perf'; $remark='0426_param'; eval IO.read('run_prms.rb')
