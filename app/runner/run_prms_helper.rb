@@ -138,11 +138,14 @@ def init_collection(col)
     #$engine.build_knownitem_topics($file_topic, $file_qrel, $o.dup) if $o[:topic_type] && !File.exist?(to_path($file_topic))
     $ptn_qry_title = ($o[:topic_id] =~ /dbir/)? /\<title\> (.*)/ : /\<title\> (.*) \<\/title\>/
     $fields = ['title','year','releasedate','language','genre', 'country','location','colorinfo','actors','team','plot']
-    $offset = case $o[:topic_id]
-      when /dbir_train/ : 41
-      when /qlm_test/ : 1001
-      else 1
-      end
+    case $o[:topic_id]
+    when 'test'
+      $offset, $count = 1, 1000
+      $file_topic ,$file_qrel = 'queries.test' , 'qrels.test'
+    when 'train'
+      $offset, $count = 1, 200
+      $file_topic ,$file_qrel = 'queries.train' , 'qrels.train'
+    end
     $sparam = get_sparam('jm',0.1)
     #$hlm_weight =  [1.9, 0.3, 0.2, 0.3, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1]
     $title_field = 'title'
