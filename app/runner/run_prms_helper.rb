@@ -146,8 +146,6 @@ def init_collection(col)
       $offset, $count = 1, 200
       $file_topic ,$file_qrel = 'queries.train' , 'qrels.train'
     end
-    $sparam = get_sparam('dirichlet',1500)
-    $sparam_prm = get_sparam('jm',0.7)
     #$hlm_weight =  [1.9, 0.3, 0.2, 0.3, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1]
     $title_field = 'title'
   end#case
@@ -160,6 +158,9 @@ end
 def set_collection_param(col_id)
   case col_id
   when 'trec'
+    $sparam = get_sparam('jm',0.1)
+    $sparam_prm = get_sparam('jm',0.1)
+    
     #['sent','name','email','subject','to','text'] <= ['subject','text','to','sent','name','email']
     $hlm_weight = [0.0,0.0,0.0,2.0,0.0,0.652].to_p #[2.0, 0.652, 0.0, 0.0, 0.0, 0.0]#[0.1,0.1,0.5,0.1,0.3];
     $mflmf_weight = [1.0, 0.292, 1.0, 0.472, 0.0, 0.382]
@@ -170,6 +171,9 @@ def set_collection_param(col_id)
     $bs = [0.0, 0.138, 0.382, 0.0, 0.382, 0.0]
     $bm25_weight = [0.382, 0.382, 0.0, 0.382, 0.382, 0.0]
   when 'enron'
+    $sparam = get_sparam('dirichlet',250)
+    $sparam_prm = get_sparam('dirichlet',50)
+    
     $hlm_weight = [2.0, 0.652, 0.0, 0.0, 0.0]
     $mflmf_weight = [1.0, 0.292, 1.0, 0.472, 0.0]
     $mus = [2.631, 6.386, 18.034, 1.626, 3.947]
@@ -178,5 +182,8 @@ def set_collection_param(col_id)
     $bm25f_weight = [1.0, 0.292, 0.18, 0.18, 1.0]
     $bs = [0.0, 0.138, 0.382, 0.0, 0.382]
     $bm25_weight = [0.382, 0.382, 0.0, 0.382, 0.382]
+  when 'imdb'
+    $sparam = get_sparam('dirichlet',1500)
+    $sparam_prm = get_sparam('jm',0.7)
   end
 end
