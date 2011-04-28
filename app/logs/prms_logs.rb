@@ -80,6 +80,8 @@ $o = {:redo=>true, :topic_id=>'MKV0427', :verbose=>:mp}; $method='prms_mix'; $co
 
 $o={:mode=>:mix_weights,:opt_for=>'map',:topic_id=>'train'}; $col='trec' ;$exp='optimize_rpm'; $method='golden'; eval IO.read('run_prms.rb')
 
+$o = {:topic_id=>'train', :verbose=>:mp}; $method='prms_mix'; $col='trec'; $exp='perf'; $remark='0428'; eval IO.read('run_prms.rb')
+
 $o = {:topic_id=>'test', :verbose=>:mp}; $method='prms_mix'; $col='trec'; $exp='perf'; $remark='0425_weightrain'; eval IO.read('run_prms.rb')
 
 #== Getting Baseline Results  (4/26)
@@ -92,8 +94,12 @@ $o = {:topic_id=>'train', :verbose=>true}; $method='param_dir'; $col='imdb'; $ex
 
 $o={:mode=>:hlm_weights,:topic_id=>'train'}; $col='trec' ;$exp='optimize_prm'; $method='golden'; eval IO.read('run_prms.rb')
 
-#== Optimal Field Weighting Experiment
+#== Optimal Field Weighting Experiment (4/28)
 
 $o = {:redo=>true, :verbose=>:mp, :topic_id=>'test'}; $method='prms_ora'; $col='trec'; $exp='perf'; $remark='0428'; eval IO.read('run_prms.rb')
 
-$o = {:redo=>true, :verbose=>:mp, :topic_id=>'test'}; $method='mp_smooth'; $col='trec'; $exp='perf'; $remark='0428'; eval IO.read('run_prms.rb')
+$o = {:redo=>true, :verbose=>:mp, :topic_id=>'test'}; $method='mp_unsmooth'; $col='trec'; $exp='perf'; $remark='0428'; eval IO.read('run_prms.rb')
+
+#== Bigram PRM-S
+
+$o = {:verbose=>:mp, :topic_id=>'train'}; $method='prms_bgram'; $col='trec'; $exp='perf'; $remark='0428'; eval IO.read('run_prms.rb')

@@ -33,7 +33,7 @@ end
 
 #Run retrieval at given point
 def evaluate_at(xvals , yvals , o={})
-  $mpmix = $engine.get_mixture_mpset($queries, yvals, :prior=>$hlm_weight)
+  $mpmix = $engine.get_mixture_mpset($queries, yvals, :prior=>$hlm_weight, :cbg=>true, :rug=>true, :rbg=>true)
   $mpmix_h = $mpmix.map{|e|$engine.marr2hash e}
   klds = $engine.get_mpset_klds( $mprel, $mpmix_h )
   case $opt_for

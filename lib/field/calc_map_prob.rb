@@ -5,22 +5,32 @@ module CalcMapProb
   def get_map_prob(query, o={})
     return query if query.scan(/\(/).size > 0
     mps = [] ; col_scores = {}
+    qw_prev = []
     fields = o[:prm_fields] || $fields
     flm = o[:flm] || get_col_freq((o[:df]) ? {:df=>true,:prob=>true} : {:prob=>true})
     #puts "[get_map_prob] flm = #{o[:flm]}" if o[:flm]
     query.split(" ").each_with_index do |qw,i|
       #puts "[get_map_prob] Working on #{qw}"
       #Read Collection Stat.
-      qw_s = case (o[:stemmer] || $stemmer)
+      qw_prev << qw_s = case (o[:stemmer] || $stemmer)
       when 'krovetz' : kstem(qw)
       when 'porter' : pstem(qw)
       else
         qw.downcase
       end
+      if o[:bgram]
+        if qw_prev.size > 1
+          qw = query.split(" ")[(i-1)..i].join(" ")
+          qw_s = [qw_prev[-2], qw_s].join("_")
+          #puts "[get_map_prob] bgram: #{qw_s}"
+        else
+          next
+        end
+      end
       weights = flm.map_hash{|k,v|[k,v[qw_s]] if v[qw_s] && fields.include?(k)}
       mp = weights.map_hash{|e|v=e[1]/weights.values.sum ; [e[0],((v >= MP_MIN)? v : MP_MIN)]}
       if mp.size == 0
-        error "[get_map_prob] Query-term [#{qw}->#{qw_s}] not found!"
+        #error "[get_map_prob] Query-term [#{qw}->#{qw_s}] not found!"
       elsif o[:mp_all_fields]
         mp = fields.map_hash{|f|[f, ((mp[f])? mp[f] : MP_MIN )]}
       end
@@ -30,20 +40,18 @@ module CalcMapProb
   end
   
   # Estimate MP based on the mixture of prob. distributions
-  def get_mixture_map_prob(query, flms, weights, o = {})
+  def get_mixture_map_prob(query, flms, types, weights, o = {})
     fields = o[:prm_fields] || $fields
     mps = [] ; prev_qw = nil
     query.split(" ").map_with_index do |qw,i|
-      # Get MP estimate for each FLMs
-      mp_flms = flms[0..-3].map{|flm| get_map_prob(qw, :flm => flm)}
-      # Second Last flm is based on Prior
-      if o[:prior]
-        mp_flms << [[qw, fields.map_with_index{|f,j|[ f, o[:prior][j] ]}]]
-      end
-      # Last flm is based on Bigram 
-      if prev_qw
-        mp_flms << get_map_prob([prev_qw,qw].join("_"), :flm => flms[-2]) 
-        mp_flms << get_map_prob([prev_qw,qw].join("_"), :flm => flms[-1]) 
+      mp_flms = []
+      flms.each_with_index do |flm, j|
+        case types[j]
+        when :prior : mp_flms << [[qw, fields.map_with_index{|f,j|[ f, o[:prior][j] ]}]]
+        when :ugram : mp_flms << get_map_prob(qw, :flm => flm)
+        when :bgram
+          mp_flms << get_map_prob([prev_qw,qw].join(" "), :flm => flm, :bgram=>true) if prev_qw
+        end
       end
       prev_qw = qw
       if mp_flms.flatten.uniq.size == 0
@@ -52,7 +60,7 @@ module CalcMapProb
       else
         mp_flms = mp_flms.map{|e|e[0] ? e[0][1].to_h : {}}
       end
-      #fields.map_hash{|f| info [qw, f, mp_flms.map_with_index{|mp,j|(mp[f] || 0.0).r3 } ].flatten.join("\t") } if $o[:verbose]
+      fields.map_hash{|f| info [qw, f, mp_flms.map_with_index{|mp,j|(mp[f] || 0.0).r3 } ].flatten.join("\t") } if $o[:verbose]
       #File.open("MP_#{}.log",'a'){|f|f.puts }
       mps << [qw, fields.map_hash{|f| [f, mp_flms.map_with_index{|mp,j|(mp[f] || 0) * weights[j]}.sum ]}]
     end
@@ -62,7 +70,20 @@ module CalcMapProb
   def get_mixture_mpset(queries, weights, o = {})
     queries.map_with_index do |q,i|
       #info ["QWord","Field","cUg","rUg","Prior","cBg","rBg","=== #{i}th : #{q} ==="].join("\t") if $o[:verbose]
-      get_mixture_map_prob(q, [get_col_freq(), $rsflms[i][1], get_col_freq(:bgram=>true), $rsflms[i][2]], weights, o )
+      flms = [get_col_freq()] ; types = [:ugram]
+      if o[:prior]
+        flms.concat [nil] ; types.concat [:prior]        
+      end
+      if o[:cbg]
+        flms.concat [get_col_freq(:bgram=>true)] ; types.concat [:bgram]
+      end
+      if o[:rug]
+        flms.concat [$rsflms[i][1]]  ; types.concat [:ugram]
+      end
+      if o[:rbg]
+        flms.concat [$rsflms[i][2]]  ; types.concat [:bgram]
+      end
+      get_mixture_map_prob(q, flms, types , weights, o )
     end
   end
   
