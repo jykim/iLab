@@ -101,5 +101,6 @@ $o = {:redo=>true, :verbose=>:mp, :topic_id=>'test'}; $method='prms_ora'; $col='
 $o = {:redo=>true, :verbose=>:mp, :topic_id=>'test'}; $method='mp_unsmooth'; $col='trec'; $exp='perf'; $remark='0428'; eval IO.read('run_prms.rb')
 
 #== Bigram PRM-S
+$o = {:verbose=>:mp, :topic_id=>'train'}; $method='prms_plus1'; $col='trec'; $exp='perf'; $remark='0428'; eval IO.read('run_prms.rb')
 
 $o = {:verbose=>:mp, :topic_id=>'train'}; $method='prms_bgram'; $col='trec'; $exp='perf'; $remark='0428'; eval IO.read('run_prms.rb')
