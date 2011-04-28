@@ -1,3 +1,5 @@
+### Find the best mixture weights for PRM-S
+# 
 load 'app/experiments/exp_optimize_method.rb'
 
 $iter_count = $o[:iter_count] || 3
@@ -79,7 +81,7 @@ else
     result = evaluate_at($xvals, $yvals[i] )#, :ex_range=> [$range_tune,$range_test]
     best_results << [ i , result[$opt_for] ,  $yvals[i].map{|e|e.to_f.r3}.inspect ]
   end
-
+=begin
   if ['gradient'].include?($method)
     plot_lambda_perf =[]
     $xvals.each_with_index do |len , j|
@@ -102,7 +104,7 @@ else
     length_lambda = $yvals[i].map_with_index{|e,j| [$xvals[j] , e]}
     plot_length_lambda << {:label=>((i==0)? "initial value" : "#{i}th iteration") , :data=>length_lambda}
   end
-
+=end
   $i.create_report(binding)
   #if $o[:env] == 'cval'
   #  $r[:map_start] , $r[:map_end] = best_results.first[1] , best_results.last[1]

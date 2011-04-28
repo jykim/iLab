@@ -10,6 +10,7 @@ module PRMHelper
     mps = mps.map{|e|[e[0], e[1].find_all{|e2|e2[1] > o[:mp_thr]}]} if o[:mp_thr]    
     mps = mps.map{|e|[e[0], e[1].to_h.add_noise(o[:mp_noise]).to_a]} if o[:mp_noise]
     mps = mps.map{|e|[e[0], e[1].to_h.smooth(o[:mp_smooth]).to_a]} if o[:mp_smooth]
+    mps = mps.map{|e|[e[0], e[1].to_h.unsmooth(o[:mp_unsmooth]).to_a]} if o[:mp_unsmooth]
     #mps.each{|e| info "[get_prm_query] #{e[0]} -> #{e[1].map{|f|[f[0],f[1].r3].join(':')}.join(' ')}"} if o[:verbose]
     return get_tew_query(mps, o)
   end
@@ -24,7 +25,7 @@ module PRMHelper
       if o[:topk_field]
         mp_topk = mp[1].sort_by{|e|e[1]}.reverse[0..(o[:topk_field]-1)]
         norm = mp_topk.map{|e|e[1]}.sum
-        [mp[0], mp_topk]
+        [mp[0], mp_topk.map{|e|[e[0], e[1] / norm]}]
       elsif o[:prior_weight]
         [mp[0], mp[1].map{|e|[ e[0], e[1]*(o[:prior_weight][e[0]] || 1.0) ]}]
       else

@@ -109,6 +109,7 @@ def init_collection(col)
       end
     end
     # Get Rdoc list (needed for oracle MP calculation)
+    
   when 'enron'
     $index_path = "#$exp_root/enron/index_enron"
     $i.config_path( :work_path=>File.join($exp_root,col) ,:index_path=>$index_path )
@@ -132,6 +133,7 @@ def init_collection(col)
     end
     $sparam = get_sparam('jm',0.1)
     $title_field = "SUBJECT"
+    
   when 'imdb'
     $index_path = "#$exp_root/imdb/#{$o[:index_path] || 'index_plot'}"
     $i.config_path( :work_path=>$exp_root+'/imdb' ,:index_path=>$index_path )
