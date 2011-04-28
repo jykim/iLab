@@ -10,8 +10,8 @@ set_collection_param($col_id)
 #def ILabLoader.build(ilab)
 begin
   puts "METHOD : #$method"
-  o = $o.dup.merge(:template=>:prm, :smoothing=>$sparam)
-  case $method    
+  o = $o.dup.merge(:template=>:prm, :smoothing=>$sparam_prm)
+  case $method
   # Getting Optimal MP results
   when 'prms'
     $i.crt_add_query_set("#{$query_prefix}_DQL" , :smoothing=>$sparam)
@@ -27,7 +27,8 @@ begin
       puts "[get_res_flm] #{i}th query processed" if i % 20 == 1      
       $engine.get_res_flm q.rs.docs[0..topk]} if $o[:redo] || !$rsflms
     $i.crt_add_query_set("#{$query_prefix}_PRMSrs#{topk}", o.merge(:flms=>$rsflms.map{|e|e[1]}))
-    $mix_weights = [1.0, 0.388, 0.388, 0.388, 0.388]#[0.299, 0.299, 0.065, 0.154]
+    $mix_weights = [0.154, 0.154, 0.01, 0.299, 0.154]	
+    #[1.0, 0.388, 0.388, 0.388, 0.388]#[0.299, 0.299, 0.065, 0.154]
     #Real : [0.0, 0.382, 0.472] #[0.099, 1.0, 0.244]	# [0.382, 0.382, 0.146] #[0.4, 0.6, 0.25]
     $mpmix = $engine.get_mixture_mpset($queries, $mix_weights, :prior=>$hlm_weight)
     $i.crt_add_query_set("#{$query_prefix}_PRMSmx#{topk}_bgram", o.merge(:template=>:tew, :mps=>$mpmix ))
@@ -38,15 +39,23 @@ begin
     $i.crt_add_query_set("#{$query_prefix}_PRMSo1", o.merge(:flms=>$rlflms1, :topk_field=>1))
     $i.crt_add_query_set("#{$query_prefix}_PRMSo2", o.merge(:flms=>$rlflms1, :topk_field=>2))
     $i.crt_add_query_set("#{$query_prefix}_PRMSo3", o.merge(:flms=>$rlflms1, :topk_field=>3))
-  #when 'mp_noise'
-  #  [0.0,0.5,1.0,2.0,5.0].each do |mp_noise|
-  #    $i.crt_add_query_set("#{$query_prefix}_PRM-S_n#{mp_noise}", :template=>:prm, :smoothing=>$sparam, :mp_noise=>mp_noise)
-  #  end
-  #when 'mp_smooth'
-  #  [0.0,0.1,0.25,0.5,0.75,1.0].each do |mp_smooth|
-  #    o = $o.dup.merge(:template=>:prm, :smoothing=>$sparam, :mp_smooth=>mp_smooth)
-  #    $i.crt_add_query_set("#{$query_prefix}_PRM-S_s#{mp_smooth}", o)
-  #  end
+  
+  # Vary Mapping Probabilities
+  when 'mp_noise'
+    [0.0,0.5,1.0,2.0,5.0].each do |mp_noise|
+      o = o.dup.merge(:flms=>$rlflms1, :mp_noise=>mp_noise, :mp_all_fields=>true)
+      $i.crt_add_query_set("#{$query_prefix}_PRM-S_n#{mp_noise}", o)
+    end
+  when 'mp_smooth'
+    [0.0,0.1,0.25,0.5,0.75,1.0].each do |mp_smooth|
+      o = o.dup.merge(:flms=>$rlflms1, :mp_smooth=>mp_smooth, :mp_all_fields=>true)
+      $i.crt_add_query_set("#{$query_prefix}_oPRM-S_s#{mp_smooth}", o)
+    end
+  when 'mp_unsmooth'
+    [0.0,0.1,0.25,0.5,0.75,1.0].each do |mp_unsmooth|
+      o = o.dup.merge(:flms=>$rlflms1, :mp_unsmooth=>mp_unsmooth, :mp_all_fields=>true)
+      $i.crt_add_query_set("#{$query_prefix}_oPRM-S_u#{mp_unsmooth}", o)
+    end
     
   # Getting Baseline Results
   when 'simple' 

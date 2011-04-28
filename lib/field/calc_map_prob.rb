@@ -19,12 +19,11 @@ module CalcMapProb
       end
       weights = flm.map_hash{|k,v|[k,v[qw_s]] if v[qw_s] && fields.include?(k)}
       mp = weights.map_hash{|e|v=e[1]/weights.values.sum ; [e[0],((v >= MP_MIN)? v : MP_MIN)]}
-      #if mp.size == 0
-      #  error "[get_map_prob] Query-term [#{qw}->#{qw_s}] not found!"
-      #elsif o[:mp_all_fields]
-      #  mp = fields.map_hash{|f|[f, ((mp[f])? mp[f] : MP_MIN )]}
-      #end
-      #o[:fix_mp_for].map{|k,v|mp[k] = v} if o[:fix_mp_for]
+      if mp.size == 0
+        error "[get_map_prob] Query-term [#{qw}->#{qw_s}] not found!"
+      elsif o[:mp_all_fields]
+        mp = fields.map_hash{|f|[f, ((mp[f])? mp[f] : MP_MIN )]}
+      end
       mps << [qw , mp]
     end
     mhash2arr mps
