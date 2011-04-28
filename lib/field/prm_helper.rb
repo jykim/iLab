@@ -6,13 +6,28 @@ module PRMHelper
   # - transform it appropriately
   def get_prm_query(query, o={})
     #p query
-    mps = get_map_prob(query, o)
+    mps = get_map_prob(query, o.merge(:bgram=>false))
     mps = mps.map{|e|[e[0], e[1].find_all{|e2|e2[1] > o[:mp_thr]}]} if o[:mp_thr]    
     mps = mps.map{|e|[e[0], e[1].to_h.add_noise(o[:mp_noise]).to_a]} if o[:mp_noise]
     mps = mps.map{|e|[e[0], e[1].to_h.smooth(o[:mp_smooth]).to_a]} if o[:mp_smooth]
     mps = mps.map{|e|[e[0], e[1].to_h.unsmooth(o[:mp_unsmooth]).to_a]} if o[:mp_unsmooth]
     #mps.each{|e| info "[get_prm_query] #{e[0]} -> #{e[1].map{|f|[f[0],f[1].r3].join(':')}.join(' ')}"} if o[:verbose]
-    return get_tew_query(mps, o)
+    if o[:bgram]
+      prefix = o[:bg_prefix] || "1"
+      bg_weight = o[:bg_weight] || 0.8
+      mps_b = get_map_prob(query, o.merge(:flm=>get_col_freq(:bgram=>true)))
+      #p mps_b
+      result = "#weight(#{1- bg_weight} #combine(\n#{get_tew_query(mps, o)})\n"
+      if o[:bgram] == :prm
+        qry_bg = get_tew_query(mps_b.map{|e|["##{prefix}(#{e[0]})", e[1]]}, o)
+        result += " #{bg_weight} #combine(\n#{qry_bg}) )" if qry_bg.size > 0
+      else
+        result += " #{bg_weight} #combine(\n#{get_combination(query , prefix)}) )"
+      end
+      result
+    else
+      get_tew_query(mps, o)
+    end
   end
 
   #Get Term-wise Element Weighting Query given Mapping Prob.
@@ -32,8 +47,9 @@ module PRMHelper
         mp
       end
     end#.sort_by{|e|e[1]}.reverse
-    mps_new.map{|mp| " #wsum(#{mp[1].map{|e|"#{e[1].r3} #{mp[0]}"+((e[0]!="BoW")? ".(#{e[0]})":"")}.join(' ')})" }.join("\n")
-    #mps_new.map{|mp| " #wsum(#{mp[1].sort_by{|e|e[1]}.reverse.map{|e|"#{e[1].r3} #{mp[0]}.(#{e[0]})"}.join(' ')})" }.join("\n")
+    mps_new.map{|mp| 
+      mp_str = mp[1].map{|e|"#{e[1].r3} #{mp[0]}"+((e[0]!="BoW")? ".(#{e[0]})":"")}.join(' ')
+      " #wsum(#{mp_str})" }.join("\n")
   end
   
   def get_hlm_query(query, weights, fields = nil)
@@ -62,54 +78,19 @@ module PRMHelper
 
   #Get query expression for single query-term
   #mp = [query_term, [[field_1,weight_1], ...]]
-  def get_query_from_mp(mp)
-    "#wsum(#{mp[1].map{|e|"#{e[1]} #{mp[0]}.(#{e[0]})"}.join(" ")}) "
-  end
-  
-  def get_phrase_field_weight(query, phrase_flag = 0)
-    index_path = case $col
-                 when 'imdb' : '/work1/xuexb/DBProject/index_plot'
-                 when 'monster' : '/work1/xuexb/DBProject/index_monster'
-                 end
-    out_filepath = to_path("phrase_#{phrase_flag}_p#{File.basename(index_path)}_#{query.gsub(/ /,"-")}.tmp")
-    if !fcheck(out_filepath) || $o[:redo]
-      cmd = fwrite('cmd_get_phrase_field_weight.log' , " /work1/xuexb/DBProject/app/PhraseMappingProb #{index_path} #{out_filepath} #{phrase_flag} 10 #{query}" , :mode=>'a') ; `#{cmd}`
-    end
-    result = IO.read(out_filepath)
-    info "[get_phrase_field_query] error for #{query}" if result.scan(/\|/).size == 0
-    result.split("\n").map do |e| 
-      mp_word = e.split("|")[0]
-      mp_vector = e.split("|")[1].split(" ").map_hash{|e|e.split(":")}.map{|k,v|[k,(v.scan(/e/i).size>0)? 0.0001 : v.to_f]}.find_all{|e|e[1] > 0}.sort_by{|e|e[1]}.reverse
-      [mp_word, mp_vector]
-    end
-  end
-  
-  # Phrase-level MP app.
-  # result = [[field1_name,map_prob],[...]]
-  def get_phrase_field_query(query, o={})
-    o[:phrase_weight] ||= 0.2 
-    qry_term = get_phrase_field_weight(query , 0).map{|mp| get_query_from_mp(mp)}.join(" ")
-    qry_phrase = get_phrase_field_weight(query , 1).find_all{|mp|mp[0].scan(/\#/).size>0}.map{|mp| get_query_from_mp(mp)}.join(" ")
-    s = "#{1-o[:phrase_weight]} #combine(#{qry_term})"
-    s += "\n#{o[:phrase_weight]} #combine(#{qry_phrase})" if qry_phrase.size > 0
-    s
-  end
-  
-  #recover stemmed 'word' from 'source'
-  #def unstem(word, source)
-  #  source.scan(/\b#{word}/i).each do |w|
-  #    return w if kstem(w) == word
-  #  end
+  #def get_query_from_mp(mp)
+  #  "#wsum(#{mp[1].map{|e|"#{e[1]} #{mp[0]}.(#{e[0]})"}.join(" ")}) "
   #end
-  
-  #PRM with DQL
-  #def get_prm_ql2_query(query, o={})
-  #  mps = get_map_prob(query, o)
-  #  lambdas = [o[:lambda]] * mps.size
-  #  mps.map_with_index do |mp,i|
-  #    "#wsum(#{1-lambdas[i]} #{get_tew_query([mp], o)} #{lambdas[i]} #{mp[0]})"
-  #  end
+  #
+  ## Phrase-level MP app.
+  ## result = [[field1_name,map_prob],[...]]
+  #def get_phrase_field_query(query, o={})
+  #  o[:phrase_weight] ||= 0.2 
+  #  qry_term = get_phrase_field_weight(query , 0).map{|mp| get_query_from_mp(mp)}.join(" ")
+  #  qry_phrase = get_phrase_field_weight(query , 1).find_all{|mp|mp[0].scan(/\#/).size>0}.map{|mp| get_query_from_mp(mp)}.join(" ")
+  #  s = "#{1-o[:phrase_weight]} #combine(#{qry_term})"
+  #  s += "\n#{o[:phrase_weight]} #combine(#{qry_phrase})" if qry_phrase.size > 0
+  #  s
   #end
-  
   
 end
