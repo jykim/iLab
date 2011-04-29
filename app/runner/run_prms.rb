@@ -35,6 +35,7 @@ begin
     $i.crt_add_query_set("#{$query_prefix}_PRMSrl", o.merge(:flms=>$rlflms1))
   when 'prms_plus1'
     qs = $i.crt_add_query_set("#{$query_prefix}_DQL" , :smoothing=>$sparam)
+    topk = $o[:topk] || 5
     $i.crt_add_query_set("#{$query_prefix}_PRMS", o)
     $rsflms = qs.qrys.map_with_index{|q,i|
       puts "[get_res_flm] #{i}th query processed" if i % 20 == 1      
