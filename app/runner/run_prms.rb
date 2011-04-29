@@ -18,6 +18,7 @@ begin
     $i.crt_add_query_set("#{$query_prefix}_PRMS", o)
     #$i.crt_add_query_set("#{$query_prefix}_PRMSdf", o.merge(:df=>true))
     $i.crt_add_query_set("#{$query_prefix}_PRMSo", o.merge(:flms=>$rlflms1))
+    
   when 'prms_mix'
     qs = $i.crt_add_query_set("#{$query_prefix}_DQL" , :smoothing=>$sparam)
     topk = $o[:topk] || 5
@@ -26,13 +27,28 @@ begin
     $rsflms = qs.qrys.map_with_index{|q,i|
       puts "[get_res_flm] #{i}th query processed" if i % 20 == 1      
       $engine.get_res_flm q.rs.docs[0..topk]} if $o[:redo] || !$rsflms
-    $i.crt_add_query_set("#{$query_prefix}_PRMSrs#{topk}", o.merge(:flms=>$rsflms.map{|e|e[1]}))
-    $mix_weights = [0.154, 0.154, 0.01, 0.299, 0.154]	
-    #[1.0, 0.388, 0.388, 0.388, 0.388]#[0.299, 0.299, 0.065, 0.154]
-    #Real : [0.0, 0.382, 0.472] #[0.099, 1.0, 0.244]	# [0.382, 0.382, 0.146] #[0.4, 0.6, 0.25]
-    $mpmix = $engine.get_mixture_mpset($queries, $mix_weights, :prior=>$hlm_weight)
-    $i.crt_add_query_set("#{$query_prefix}_PRMSmx#{topk}_bgram", o.merge(:template=>:tew, :mps=>$mpmix ))
+    $i.crt_add_query_set("#{$query_prefix}_PRMSrs", o.merge(:flms=>$rsflms.map{|e|e[1]}))
+
+    $types, $weights = [:cug, :rug], [0.5, 0.4]	
+    $mpmix = $engine.get_mixture_mpset($queries, $types, $weights)
+    $i.crt_add_query_set("#{$query_prefix}_PRMSmx", o.merge(:template=>:tew, :mps=>$mpmix ))
     $i.crt_add_query_set("#{$query_prefix}_PRMSrl", o.merge(:flms=>$rlflms1))
+  
+  # Feature Evaluation
+  when 'prms_plus2'
+    qs = $i.crt_add_query_set("#{$query_prefix}_DQL" , :smoothing=>$sparam)
+    topk = $o[:topk] || 5
+    $i.crt_add_query_set("#{$query_prefix}_PRMS", o)
+    $rsflms = qs.qrys.map_with_index{|q,i|
+      puts "[get_res_flm] #{i}th query processed" if i % 20 == 1      
+      $engine.get_res_flm q.rs.docs[0..topk]} if $o[:redo] || !$rsflms
+    [0.1,0.2,0.4,0.5,0.6,0.8].each do |weight|
+      mpmix = $engine.get_mixture_mpset($queries, [:cug, :rug, :cbg], [0.5,0.4,weight])
+      $i.crt_add_query_set("#{$query_prefix}_PRMS_rug04_cbg#{weight}", o.merge(:template=>:tew, :mps=>mpmix ))
+
+      mpmix = $engine.get_mixture_mpset($queries, [:cug, :rug, :prior], [0.5,0.4,weight])
+      $i.crt_add_query_set("#{$query_prefix}_PRMS_rug04_prior#{weight}", o.merge(:template=>:tew, :mps=>mpmix ))
+    end
   when 'prms_plus1'
     qs = $i.crt_add_query_set("#{$query_prefix}_DQL" , :smoothing=>$sparam)
     topk = $o[:topk] || 5
@@ -41,27 +57,43 @@ begin
       puts "[get_res_flm] #{i}th query processed" if i % 20 == 1      
       $engine.get_res_flm q.rs.docs[0..topk]} if $o[:redo] || !$rsflms
     [0.2,0.4,0.5,0.6,0.8].each do |weight|
-      mpmix = $engine.get_mixture_mpset($queries, [0.5,weight], :prior=>$hlm_weight)
+      mpmix = $engine.get_mixture_mpset($queries, [:cug, :prior], [0.5,weight])
       $i.crt_add_query_set("#{$query_prefix}_PRMS_prior#{weight}", o.merge(:template=>:tew, :mps=>mpmix ))
-      mpmix = $engine.get_mixture_mpset($queries, [0.5,weight], :cbg=>true)
+      mpmix = $engine.get_mixture_mpset($queries, [:cug, :cbg], [0.5,weight])
       $i.crt_add_query_set("#{$query_prefix}_PRMS_cbg#{weight}", o.merge(:template=>:tew, :mps=>mpmix ))
-      mpmix = $engine.get_mixture_mpset($queries, [0.5,weight], :rug=>true)
+      mpmix = $engine.get_mixture_mpset($queries, [:cug, :rug], [0.5,weight])
       $i.crt_add_query_set("#{$query_prefix}_PRMS_rug#{weight}", o.merge(:template=>:tew, :mps=>mpmix ))
     end
+    
+  # PRF Parameter Sweep
+  when 'prms_prf'
+      qs = $i.crt_add_query_set("#{$query_prefix}_DQL" , :smoothing=>$sparam)
+      $i.crt_add_query_set("#{$query_prefix}_PRMS", o)
+      [3,5,7].each do |topk|
+        $rsflms = qs.qrys.map_with_index{|q,i|
+          puts "[get_res_flm] #{i}th query processed" if i % 20 == 1      
+          $engine.get_res_flm q.rs.docs[0..topk]} #if $o[:redo] || !$rsflms
+        [0.2,0.4,0.5,0.6,0.8].each do |weight|
+          mpmix = $engine.get_mixture_mpset($queries, [:cug, :rug], [0.5,weight])
+          $i.crt_add_query_set("#{$query_prefix}_PRMS_top#{topk}_rug#{weight}", o.merge(:template=>:tew, :mps=>mpmix ))
+        end
+      end
+      
+  # Adding Phrase (OW#1) to PRM-S
   when 'prms_bgram'
     $i.crt_add_query_set("#{$query_prefix}_PRMS", o)
     [0.05, 0.1, 0.15, 0.2].each do |bg_weight|
       $i.crt_add_query_set("#{$query_prefix}_PRMS_bgram_prm#{bg_weight}", o.merge(:template=>:prm, :bgram=>:prm, :bg_weight=>bg_weight ))
       $i.crt_add_query_set("#{$query_prefix}_PRMS_bgram_dm#{bg_weight}", o.merge(:template=>:prm, :bgram=>:dm, :bg_weight=>bg_weight))
     end
-  when 'prms_ora'
+    
+  # Vary Mapping Probabilities
+  when 'prmso_topk'
     $i.crt_add_query_set("#{$query_prefix}_PRMS", o)
     $i.crt_add_query_set("#{$query_prefix}_PRMSo", o.merge(:flms=>$rlflms1))
     $i.crt_add_query_set("#{$query_prefix}_PRMSo1", o.merge(:flms=>$rlflms1, :topk_field=>1))
     $i.crt_add_query_set("#{$query_prefix}_PRMSo2", o.merge(:flms=>$rlflms1, :topk_field=>2))
     $i.crt_add_query_set("#{$query_prefix}_PRMSo3", o.merge(:flms=>$rlflms1, :topk_field=>3))
-  
-  # Vary Mapping Probabilities
   when 'mp_noise'
     [0.0,0.5,1.0,2.0,5.0].each do |mp_noise|
       o = o.dup.merge(:flms=>$rlflms1, :mp_noise=>mp_noise, :mp_all_fields=>true)

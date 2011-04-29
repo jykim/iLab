@@ -8,28 +8,7 @@ $tbl_all = [['Measure','map','P5','P10','P20']]
 $tbl_all.concat $i.qsa.map{|qs|["\"#{qs.short_name}\":#{'qry_'+qs.name+'.txt'}"].concat($tbl_all[0][1..-1].map{|e|qs.stat['all'][e]})}
 #debugger
 if $o[:verbose]
-  #Length Stat
-  #$i.calc_length_stat
-  #debugger
-  #Perform. Stat
-  #$i.fetch_data if $i.rl
-
-  #Stat (e.g. MAP)
-  #$i.calc_stat
-
-  #$tbl_qry[0] << topic_types if $o[:gen_prob]
-  #doc_no = $engine.get_col_stat()[:doc_no] if $o[:gen_prob]
-  #gen_probs = topic_types.map{|topic_type| $engine.get_gen_prob(q.text, dno_rl , topic_type, :doc_no=>doc_no) }
   
-  #$did_rl = $qrys.map_hash{|q|[q.qid, q.rl.docs[0].did]}
-  #$col_rl = $qrys.map_hash{|q|[q.qid, did_to_col_type($did_rl[q.qid])]}
-  #
-  #$tbl_qry.add_cols CSEL_TYPES.map{|e|"r#{e}"}, 
-  #  $qrys.map{|q|CSEL_TYPES.map{|e|$did_rl[q.qid].scan(to_ext($csel_scores[q.qid][e].r3.to_a.sort_val[0][0])).size}}
-  #
-  #$tbl_qry.add_cols CSEL_TYPES.map{|e|"s#{e}"}, 
-  #$qrys.map{|q|CSEL_TYPES.map{|e|$csel_scores[q.qid][e][$col_rl[q.qid]].r3}}
-  #  
   $tbl_qry.add_cols $i.qsa.map{|e|e.short_name = e.name.gsub($query_prefix+'_',"")}, 
     $qrys.map{|q|$i.qsa.map{|e|(e.stat[q.qid.to_s])? e.stat[q.qid.to_s]['map'] : 0.0}}
   if $o[:verbose] == :mp
@@ -39,26 +18,26 @@ if $o[:verbose]
     $mpcol = $engine.get_mpset($queries)
     #$mpcol_df = $engine.get_mpset(queries, :df=>true)
     puts "[exp_perf] MPs calculated from Collection..."
-
-    #$tbl_qry.add_cols "MPrel", $mprel.map{|e|e.map{|k,v|"[#{k}] "+v.print}.join("<br>")}, :summary=>:none
-    #$tbl_qry.add_cols "MPcol", $mpcol.map{|e|e.map{|k,v|"[#{k}] "+v.print}.join("<br>")}, :summary=>:none
+    
+    $tbl_qry.add_diff_col(6, 3, :title=>"Ora-PRMS")
 
     # Aggregate KL-divergence (sum term-wise scores)
-    $tbl_qry.add_cols "D_KL", $engine.get_mpset_klds( $mprel, $mpcol )
+    $tbl_qry.add_cols "D_KL", $engine.get_mpset_klds( $mprel, $mpcol ), :round_at=>3
+
+    # Aggregate KL-divergence (sum term-wise scores)
+    $tbl_qry.add_cols "Prec@1", $engine.get_mpset_prec( $mprel, $mpcol ), :round_at=>3
+
 
     if $mpmix
+      $tbl_qry.add_diff_col(5, 3, :title=>"Mix-PRMS")
+      $tbl_qry.add_diff_col(6, 5, :title=>"Ora-Mix")
       $mpmix_h = $mpmix.map{|e|$engine.marr2hash e}
-      $tbl_qry.add_cols "D_KL(mix)", $engine.get_mpset_klds( $mprel, $mpmix_h )
+      $tbl_qry.add_cols "D_KL(mix)", $engine.get_mpset_klds( $mprel, $mpmix_h ), :round_at=>3
+      $tbl_qry.add_cols "Prec@1(mix)", $engine.get_mpset_prec( $mprel, $mpmix_h ), :round_at=>3
     end
-    puts "[exp_perf] D_KL calculated..."
-    #$tbl_qry.add_cols "D_KL(rs)", $engine.get_mpset_klds( $mprel, $mpres )
-    #$tbl_qry.add_cols "D_KL(rs_col)", $engine.get_mpset_klds( $mprel, $mpres )
-    #$tbl_qry.add_cols "D_KL(df)", $engine.get_mpset_klds( $mprel, $mpcol_df )
+    puts "[exp_perf] table values calculated..."
   end
 
-  #$tbl_qry.add_cols $ret_models, $ret_models.map{|e|$avg_doc_scores[q.qid][e].to_p[$col_rl[q.qid]].r3}
-  
-  #$tbl_qry << ["AVG" , "PERF" , (2..9).to_a.map{|i|$tbl_qry[1..-1].avg_col(i).r3}].flatten
   $sig_test, $log_reg = {}, {}
   if $i.check_R()
     $i.qsa.map{|qs|qs.name}.to_comb.each_with_index do |qs,i|
