@@ -52,6 +52,7 @@ module IndriFieldHelper
   end
   
   def get_doc_field_lm(dno, n = 1)
+    #return $dflm[dno] if $dflm[dno]
     results = {}
     field_terms = get_doc_field_vector(dno)
     1.upto(n) do |i|
@@ -62,6 +63,7 @@ module IndriFieldHelper
       end
     end
     results
+    #$dflm[dno] = results
   end
   
   def get_unigram_lm(words)
@@ -130,12 +132,13 @@ module IndriFieldHelper
       
       res_docs.each_with_index do |d,i|
         dflm = get_doc_field_lm(d.did, n)[ng]
+        #p dflm.keys
         if !result_n
           result_n = dflm
         else
           result_n = result_n.map_hash{|k,v|
             dflm[k] = {} if !dflm[k]
-            [k,v.sum_prob(dflm[k].map_hash{|k2,v2|[k2, v2*nscores[i]]})]}
+            [k,v.sum_prob(dflm[k].map_hash{|k2,v2|[k2, v2 * nscores[i]]})]}
         end
       end
       [ng, result_n]
