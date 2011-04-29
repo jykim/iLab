@@ -55,7 +55,7 @@ begin
     $i.crt_add_query_set("#{$query_prefix}_PRMS", o)
     $rsflms = qs.qrys.map_with_index{|q,i|
       puts "[get_res_flm] #{i}th query processed" if i % 20 == 1      
-      $engine.get_res_flm q.rs.docs[0..topk]} if $o[:redo] || !$rsflms
+      (q.rs.docs)? $engine.get_res_flm(q.rs.docs[0..topk]) : [] } if $o[:redo] || !$rsflms
     [0.2,0.4,0.5,0.6,0.8].each do |weight|
       mpmix = $engine.get_mixture_mpset($queries, [:cug, :prior], [0.5,weight])
       $i.crt_add_query_set("#{$query_prefix}_PRMS_prior#{weight}", o.merge(:template=>:tew, :mps=>mpmix ))

@@ -84,16 +84,6 @@ $o = {:topic_id=>'train', :verbose=>:mp}; $method='prms_mix'; $col='trec'; $exp=
 
 $o = {:topic_id=>'test', :verbose=>:mp}; $method='prms_mix'; $col='trec'; $exp='perf'; $remark='0425_weightrain'; eval IO.read('run_prms.rb')
 
-#== Getting Baseline Results  (4/26)
-
-$o = {:topic_id=>'train', :verbose=>true}; $method='param_dir'; $col='trec'; $exp='perf'; $remark='0426_param'; eval IO.read('run_prms.rb')
-
-$o = {:topic_id=>'train', :verbose=>true}; $method='param_jm'; $col='enron'; $exp='perf'; $remark='0426_param'; eval IO.read('run_prms.rb')
-
-$o = {:topic_id=>'train', :verbose=>true}; $method='param_dir'; $col='imdb'; $exp='perf'; $remark='0426_param'; eval IO.read('run_prms.rb')
-
-$o={:mode=>:hlm_weights,:topic_id=>'train'}; $col='trec' ;$exp='optimize_prm'; $method='golden'; eval IO.read('run_prms.rb')
-
 #== Optimal Field Weighting Experiment (4/28)
 
 $o = {:redo=>true, :verbose=>:mp, :topic_id=>'test'}; $method='prms_ora'; $col='trec'; $exp='perf'; $remark='0428'; eval IO.read('run_prms.rb')
@@ -107,4 +97,28 @@ $o = {:verbose=>:mp, :topic_id=>'train'}; $method='prms_bgram'; $col='trec'; $ex
 
 $o = {:verbose=>:mp, :topic_id=>'train'}; $method='prms_prf'; $col='trec'; $exp='perf'; $remark='0428'; eval IO.read('run_prms.rb')
 
-$o = {:topic_id=>'train', :verbose=>:mp}; $method='prms_mix'; $col='trec'; $exp='perf'; $remark='0429'; eval IO.read('run_prms.rb')
+$o = {:topic_id=>'test', :verbose=>:mp}; $method='prms_mix'; $col='trec'; $exp='perf'; $remark='0429'; eval IO.read('run_prms.rb')
+
+
+#== Getting Baseline Results  (4/26)
+
+$o = {:topic_id=>'train', :verbose=>true}; $method='param_dir'; $col='trec'; $exp='perf'; $remark='0426_param'; eval IO.read('run_prms.rb')
+
+$o = {:topic_id=>'train', :verbose=>true}; $method='param_jm'; $col='enron'; $exp='perf'; $remark='0426_param'; eval IO.read('run_prms.rb')
+
+$o={:mode=>:hlm_weights,:topic_id=>'train'}; $col='trec' ;$exp='optimize_prm'; $method='golden'; eval IO.read('run_prms.rb')
+
+$o = {:verbose=>:mp, :topic_id=>'train'}; $method='prms_plus1'; $col='imdb'; $exp='perf'; $remark='0429'; eval IO.read('run_prms.rb')
+
+$o = {:verbose=>:mp, :topic_id=>'train'}; $method='prms_prf'; $col='enron'; $exp='perf'; $remark='0429'; eval IO.read('run_prms.rb')
+
+$o = {:topic_id=>'test', :redo=>true, :verbose=>:mp}; $method='prms_mix'; $col='trec'; $exp='perf'; $remark='0429'; eval IO.read('run_prms.rb')
+
+
+# Removing bad queries
+
+qs.qrys.find_all{|q| p [q.text,q.qid, (q.rs.docs)? q.rs.docs.size : q.rs.docs] }
+
+$ scp topic/topic_qlm_train $SYH/work/prj/dih/imdb/queries.train
+$ scp qrel/qrel_qlm_train $SYH/work/prj/dih/imdb/qrels.train
+
