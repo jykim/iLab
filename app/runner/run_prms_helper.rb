@@ -145,7 +145,7 @@ def init_collection(col)
       $offset, $count = 1, 1000
       $file_topic ,$file_qrel = 'queries.test' , 'qrels.test'
     when 'train'
-      $offset, $count = 1, 200
+      $offset, $count = 1, 100
       $file_topic ,$file_qrel = 'queries.train' , 'qrels.train'
     end
     #$hlm_weight =  [1.9, 0.3, 0.2, 0.3, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1]
