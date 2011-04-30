@@ -29,7 +29,7 @@ begin
       $engine.get_res_flm q.rs.docs[0..topk]} if $o[:redo] || !$rsflms
     $i.crt_add_query_set("#{$query_prefix}_PRMSrs", o.merge(:flms=>$rsflms.map{|e|e[1]}))
 
-    $types, $weights = [:cug, :rug], [0.5, 0.4]	
+    $types, $weights = [:cug, :rug], [1.0, 0.4]	
     $mpmix = $engine.get_mixture_mpset($queries, $types, $weights)
     $i.crt_add_query_set("#{$query_prefix}_PRMSmx", o.merge(:template=>:tew, :mps=>$mpmix ))
     $i.crt_add_query_set("#{$query_prefix}_PRMSrl", o.merge(:flms=>$rlflms1))
