@@ -114,8 +114,10 @@ $o = {:verbose=>:mp, :topic_id=>'train'}; $method='prms_prf'; $col='enron'; $exp
 
 $o = {:topic_id=>'test', :redo=>true, :verbose=>:mp}; $method='prms_mix'; $col='trec'; $exp='perf'; $remark='0429'; eval IO.read('run_prms.rb')
 
+$o = {:topic_id=>'test', :redo=>true, :verbose=>:mp}; $method='prms_plus1'; $col='trec'; $exp='perf'; $remark='0429'; eval IO.read('run_prms.rb')
 
-# Removing bad queries
+
+# Removing bad queries (4/29)
 
 qs.qrys.find_all{|q| p [q.text,q.qid, (q.rs.docs)? q.rs.docs.size : q.rs.docs] }
 
