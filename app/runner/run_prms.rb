@@ -43,11 +43,15 @@ begin
       puts "[get_res_flm] #{i}th query processed" if i % 20 == 1      
       $engine.get_res_flm q.rs.docs[0..topk]} if $o[:redo] || !$rsflms
     [0.1,0.2,0.4,0.5,0.6,0.8].each do |weight|
-      mpmix = $engine.get_mixture_mpset($queries, [:cug, :rug, :cbg], [0.5,0.8,weight])
-      $i.crt_add_query_set("#{$query_prefix}_PRMS_rug08_cbg#{weight}", o.merge(:template=>:tew, :mps=>mpmix ))
+    #  mpmix = $engine.get_mixture_mpset($queries, [:cug, :rug, :cbg], [0.5,0.8,weight])
+    #  $i.crt_add_query_set("#{$query_prefix}_PRMS_rug08_cbg#{weight}", o.merge(:template=>:tew, :mps=>mpmix ))
 
-      mpmix = $engine.get_mixture_mpset($queries, [:cug, :rug, :prior], [0.5,0.8,weight])
-      $i.crt_add_query_set("#{$query_prefix}_PRMS_rug08_prior#{weight}", o.merge(:template=>:tew, :mps=>mpmix ))
+      mpmix = $engine.get_mixture_mpset($queries, [:cug, :rug, :rbg], [0.5,0.8,weight])
+      $i.crt_add_query_set("#{$query_prefix}_PRMS_rug08_rbg#{weight}", o.merge(:template=>:tew, :mps=>mpmix ))
+
+
+    #  mpmix = $engine.get_mixture_mpset($queries, [:cug, :rug, :prior], [0.5,0.8,weight])
+    #  $i.crt_add_query_set("#{$query_prefix}_PRMS_rug08_prior#{weight}", o.merge(:template=>:tew, :mps=>mpmix ))
     end
   when 'prms_plus1'
     qs = $i.crt_add_query_set("#{$query_prefix}_DQL" , :smoothing=>$sparam)

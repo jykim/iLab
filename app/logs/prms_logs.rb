@@ -89,9 +89,8 @@ $o = {:redo=>true, :verbose=>:mp, :topic_id=>'test'}; $method='prms_ora'; $col='
 $o = {:redo=>true, :verbose=>:mp, :topic_id=>'test'}; $method='mp_unsmooth'; $col='trec'; $exp='perf'; $remark='0428'; eval IO.read('run_prms.rb')
 
 #== Bigram PRM-S
-$o = {:verbose=>:mp, :topic_id=>'train'}; $method='prms_plus1'; $col='trec'; $exp='perf'; $remark='0429'; eval IO.read('run_prms.rb')
 
-$o = {:verbose=>:mp, :topic_id=>'train'}; $method='prms_bgram'; $col='trec'; $exp='perf'; $remark='0428'; eval IO.read('run_prms.rb')
+$o = {:verbose=>:mp, :topic_id=>'train'}; $method='prms_plus1'; $col='trec'; $exp='perf'; $remark='0429'; eval IO.read('run_prms.rb')
 
 $o = {:verbose=>:mp, :topic_id=>'train'}; $method='prms_prf'; $col='trec'; $exp='perf'; $remark='0428'; eval IO.read('run_prms.rb')
 
@@ -117,11 +116,14 @@ $o = {:redo=>true,:topic_id=>'train', :verbose=>:mp}; $method='prms_mix'; $col='
 
 $o = {:redo=>true,:topic_id=>'test', :verbose=>:mp}; $method='prms_mix'; $col='trec'; $exp='perf'; $remark='0502'; eval IO.read('run_prms.rb')
 
-$o = {:topic_id=>'test', :redo=>true, :verbose=>:mp}; $method='prms_plus1'; $col='trec'; $exp='perf'; $remark='0502'; eval IO.read('run_prms.rb')
+$o = {:verbose=>:mp, :topic_id=>'test'}; $method='prms_bgram'; $col='trec'; $exp='perf'; $remark='0502'; eval IO.read('run_prms.rb')
 
 $o = {:verbose=>:mp, :topic_id=>'test', :redo=>true}; $method='prms_prf'; $col='trec'; $exp='perf'; $remark='0502'; eval IO.read('run_prms.rb')
 
 $o={:mode=>:mix_weights,:opt_for=>'map',:topic_id=>'train'}; $col='trec' ;$exp='optimize_rpm'; $method='golden'; $remark='0502'; eval IO.read('run_prms.rb')
+
+
+$o = {:topic_id=>'test', :redo=>true, :verbose=>:mp}; $method='prms_plus1'; $col='enron'; $exp='perf'; $remark='0502'; eval IO.read('run_prms.rb')
 
 
 # Removing bad queries (4/29)
