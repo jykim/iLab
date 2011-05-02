@@ -70,6 +70,8 @@ begin
       $i.crt_add_query_set("#{$query_prefix}_PRMS_cbg#{weight}", o.merge(:template=>:tew, :mps=>mpmix ))
       mpmix = $engine.get_mixture_mpset($queries, [:cug, :rug], [0.5,weight])
       $i.crt_add_query_set("#{$query_prefix}_PRMS_rug#{weight}", o.merge(:template=>:tew, :mps=>mpmix ))
+      mpmix = $engine.get_mixture_mpset($queries, [:cug, :rbg], [0.5,weight])
+      $i.crt_add_query_set("#{$query_prefix}_PRMS_rbg#{weight}", o.merge(:template=>:tew, :mps=>mpmix ))
     end
     
   # PRF Parameter Sweep
