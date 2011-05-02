@@ -78,8 +78,6 @@ $o = {:redo=>true, :topic_id=>'MKV0427', :verbose=>:mp}; $method='prms_mix'; $co
 
 #== Adding Features to Mixture MP Models (4/25)
 
-$o={:mode=>:mix_weights,:opt_for=>'map',:topic_id=>'train'}; $col='trec' ;$exp='optimize_rpm'; $method='golden'; eval IO.read('run_prms.rb')
-
 $o = {:topic_id=>'train', :verbose=>:mp}; $method='prms_mix'; $col='trec'; $exp='perf'; $remark='0428'; eval IO.read('run_prms.rb')
 
 $o = {:topic_id=>'test', :verbose=>:mp}; $method='prms_mix'; $col='trec'; $exp='perf'; $remark='0425_weightrain'; eval IO.read('run_prms.rb')
@@ -122,6 +120,9 @@ $o = {:redo=>true,:topic_id=>'test', :verbose=>:mp}; $method='prms_mix'; $col='t
 $o = {:topic_id=>'test', :redo=>true, :verbose=>:mp}; $method='prms_plus1'; $col='trec'; $exp='perf'; $remark='0502'; eval IO.read('run_prms.rb')
 
 $o = {:verbose=>:mp, :topic_id=>'test', :redo=>true}; $method='prms_prf'; $col='trec'; $exp='perf'; $remark='0502'; eval IO.read('run_prms.rb')
+
+$o={:mode=>:mix_weights,:opt_for=>'map',:topic_id=>'train'}; $col='trec' ;$exp='optimize_rpm'; $method='golden'; $remark='0502'; eval IO.read('run_prms.rb')
+
 
 # Removing bad queries (4/29)
 
