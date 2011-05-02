@@ -24,8 +24,9 @@ module IndriFieldHelper
         map_hash{|l|la = l.split("\t");[la[0], la[1..-1].map_hash{|e|a = e.split ; [a[0] , a[1].to_f]}]}
       puts "[parse_col_freq] reading #{filename} (#{o.inspect})..."
       #puts "[parse_col_freq] Fields read : #{cf_raw.keys.inspect}"
-      $cf[o.to_s] = cf_raw
+      $cf[o.merge(:whole_doc=>true).to_s] = cf_raw['document'] ; cf_raw.delete('document')
       $cf[o.merge(:prob=>true).to_s] = cf_raw.map_hash{|k,v|[k,v.to_p]}
+      $cf[o.to_s] = cf_raw
     end
   end
   

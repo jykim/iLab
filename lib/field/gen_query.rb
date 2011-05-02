@@ -39,7 +39,7 @@ module GenQuery
     info "[get_knownitem_query] #{dno} #{topic_type}"
     case topic_type
     when /^D_/
-      clm = get_col_freq()['document']
+      clm = get_col_freq(:whole_doc=>true)
       dlm = get_doc_lm(dno)
       dlm_s = case topic_type
               when "D_RN"   : dlm.map_hash{|k,v|[k,1.0/dlm.size]}

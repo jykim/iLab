@@ -15,7 +15,7 @@ module PRMHelper
     if o[:bgram]
       prefix = o[:bg_prefix] || "1"
       bg_weight = o[:bg_weight] || 0.8
-      mps_b = get_map_prob(query, o.merge(:flm=>get_col_freq(:bgram=>true)))
+      mps_b = get_map_prob(query, o.merge(:flm=>get_col_freq(:bgram=>true, :prob=>true)))
       #p mps_b
       result = "#weight(#{1- bg_weight} #combine(\n#{get_tew_query(mps, o)})\n"
       if o[:bgram] == :prm
