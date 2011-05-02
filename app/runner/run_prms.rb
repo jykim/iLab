@@ -45,6 +45,9 @@ begin
     [0.1,0.2,0.4,0.5,0.6,0.8].each do |weight|
     #  mpmix = $engine.get_mixture_mpset($queries, [:cug, :rug, :cbg], [0.5,0.8,weight])
     #  $i.crt_add_query_set("#{$query_prefix}_PRMS_rug08_cbg#{weight}", o.merge(:template=>:tew, :mps=>mpmix ))
+    
+    mpmix = $engine.get_mixture_mpset($queries, [:cug, :rbg], [0.5,weight])
+    $i.crt_add_query_set("#{$query_prefix}_PRMS_rbg#{weight}", o.merge(:template=>:tew, :mps=>mpmix ))
 
       mpmix = $engine.get_mixture_mpset($queries, [:cug, :rug, :rbg], [0.5,0.8,weight])
       $i.crt_add_query_set("#{$query_prefix}_PRMS_rug08_rbg#{weight}", o.merge(:template=>:tew, :mps=>mpmix ))
