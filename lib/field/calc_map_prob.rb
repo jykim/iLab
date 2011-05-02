@@ -47,6 +47,7 @@ module CalcMapProb
     query.split(" ").map_with_index do |qw,i|
       mp_flms = []
       flms.each_with_index do |flm, j|
+        #debugger
         if types[j] == :prior
           mp_flms << [[qw, fields.map_with_index{|f,k|[ f, flm[k] ]}]]
         elsif types[j] == :cug || types[j] == :rug
@@ -76,10 +77,10 @@ module CalcMapProb
       types.each_with_index do |type, j|
         case type
         when :prior : flms << $hlm_weight
-        when :cug   : flms << get_col_freq()
+        when :cug   : flms << get_col_freq(:prob=>true)
         when :cbg   : flms << get_col_freq(:bgram=>true)
-        when :rug   : flms << $rsflms[i][1]
-        when :rbg   : flms << $rsflms[i][2]
+        when :rug   : flms << $rsflms[i][1].map_hash{|k,v|[k,v.to_p]}
+        when :rbg   : flms << $rsflms[i][2].map_hash{|k,v|[k,v.to_p]}
         end
       end
       get_mixture_map_prob(q, flms, types , weights, o )

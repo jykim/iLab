@@ -116,6 +116,10 @@ $o = {:topic_id=>'test', :redo=>true, :verbose=>:mp}; $method='prms_mix'; $col='
 
 $o = {:topic_id=>'test', :redo=>true, :verbose=>:mp}; $method='prms_plus1'; $col='trec'; $exp='perf'; $remark='0429'; eval IO.read('run_prms.rb')
 
+# Mixture MP Debugging (5/2)
+
+$o = {:redo=>true,:topic_id=>'train', :verbose=>:mp}; $method='prms_mix'; $col='trec'; $exp='perf'; $remark='0502'; eval IO.read('run_prms.rb')
+
 
 # Removing bad queries (4/29)
 
