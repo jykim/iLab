@@ -162,7 +162,7 @@ def set_collection_param(col_id)
   when 'trec'
     $sparam = get_sparam('jm',0.1)#get_sparam('dirichlet',500)
     $sparam_prm = get_sparam('jm',0.1)# get_sparam('dirichlet',10)
-    $mix_weights = [0.01, 0.065, 1.0, 0.244, 1.0]
+    $mix_weights = [0.677, 1.0, 0.01, 0.065, 1.0]	#[0.01, 0.065, 1.0, 0.244, 1.0]
     
     #['sent','name','email','subject','to','text'] <= ['subject','text','to','sent','name','email']
     $hlm_weight = [0.0,0.0,0.0,2.0,0.0,0.652].to_p #[2.0, 0.652, 0.0, 0.0, 0.0, 0.0]#[0.1,0.1,0.5,0.1,0.3];
