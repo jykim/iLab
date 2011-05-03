@@ -11,6 +11,7 @@ set_collection_param($col_id)
 begin
   puts "METHOD : #$method"
   o = $o.dup.merge(:template=>:prm, :smoothing=>$sparam_prm)
+  $mp_types = [:cug, :rug, :cbg, :prior, :rbg ]
   case $method
   # Getting Optimal MP results
   when 'prms'
@@ -27,11 +28,12 @@ begin
     $rsflms = qs.qrys.map_with_index{|q,i|
       puts "[get_res_flm] #{i}th query processed" if i % 20 == 1      
       $engine.get_res_flm q.rs.docs[0..topk]} if $o[:redo] || !$rsflms
-    $i.crt_add_query_set("#{$query_prefix}_PRMSrs", o.merge(:flms=>$rsflms.map{|e|e[1]}))
+    #$i.crt_add_query_set("#{$query_prefix}_PRMSrs", o.merge(:flms=>$rsflms.map{|e|e[1]}))
 
-    $types, $weights = [:cug, :rug], [1.0, 0.4]	
-    $mpmix = $engine.get_mixture_mpset($queries, $types, $weights)
-    $i.crt_add_query_set("#{$query_prefix}_PRMSmx", o.merge(:template=>:tew, :mps=>$mpmix ))
+    #$types, $weights = [:cug, :rug], [1.0, 0.4]	
+    #$types, $weights = [:cug, :rug, :cbg, :prior, :rbg ], $mix_weights
+    $mpmix = $engine.get_mixture_mpset($queries, $mp_types, $mix_weights)
+    $i.crt_add_query_set("#{$query_prefix}_PRMSmx5", o.merge(:template=>:tew, :mps=>$mpmix ))
     $i.crt_add_query_set("#{$query_prefix}_PRMSrl", o.merge(:flms=>$rlflms1))
   
   # Feature Evaluation
