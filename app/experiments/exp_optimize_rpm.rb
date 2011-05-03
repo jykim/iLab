@@ -10,7 +10,7 @@ $mode = $o[:mode] || :smoothing
 $template_query = $o[:template] || :prm
 $ptn_qry = $ptn_qry_title
 
-$xvals = $rpm_features = [:cug, :rug, :cbg, :prior, :rbg ] ; info "$xvals : #{$xvals.inspect}"
+$xvals = $mp_types #= [:cug, :rug, :cbg, :prior, :rbg ] ; info "$xvals : #{$xvals.inspect}"
 $yvals = []
 
 o_opt = $o.dup
