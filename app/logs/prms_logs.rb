@@ -114,13 +114,13 @@ $o = {:topic_id=>'test', :redo=>true, :verbose=>:mp}; $method='prms_plus1'; $col
 
 $o = {:redo=>true,:topic_id=>'train', :verbose=>:mp}; $method='prms_mix'; $col='trec'; $exp='perf'; $remark='0502'; eval IO.read('run_prms.rb')
 
-$o = {:redo=>true,:topic_id=>'test', :verbose=>:mp}; $method='prms_mix'; $col='trec'; $exp='perf'; $remark='0502'; eval IO.read('run_prms.rb')
+$o = {:topic_id=>'test', :verbose=>:mp}; $method='prms_mix'; $col='trec'; $exp='perf'; $remark='0502f'; eval IO.read('run_prms.rb')
 
 $o = {:verbose=>:mp, :topic_id=>'test'}; $method='prms_bgram'; $col='trec'; $exp='perf'; $remark='0502'; eval IO.read('run_prms.rb')
 
 $o = {:verbose=>:mp, :topic_id=>'test', :redo=>true}; $method='prms_prf'; $col='trec'; $exp='perf'; $remark='0502'; eval IO.read('run_prms.rb')
 
-$o={:mode=>:mix_weights,:opt_for=>'map',:topic_id=>'test'}; $col='trec' ;$exp='optimize_rpm'; $method='golden'; $remark='0502'; eval IO.read('run_prms.rb')
+$o={:redo=>true,:mode=>:mix_weights,:opt_for=>'map',:topic_id=>'train'}; $col='enron' ;$exp='optimize_rpm'; $method='golden'; $remark='0502'; eval IO.read('run_prms.rb')
 
 
 $o = {:topic_id=>'train', :verbose=>:mp}; $method='prms_plus2'; $col='enron'; $exp='perf'; $remark='0502'; eval IO.read('run_prms.rb')
