@@ -128,7 +128,7 @@ $o = {:verbose=>:mp, :topic_id=>'test'}; $method='prms_bgram'; $col='trec'; $exp
 
 $o = {:verbose=>:mp, :topic_id=>'test', :redo=>true}; $method='prms_prf'; $col='trec'; $exp='perf'; $remark='0502'; eval IO.read('run_prms.rb')
 
-$o={:redo=>true,:mode=>:mix_weights,:opt_for=>'map',:topic_id=>'train'}; $col='trec' ;$exp='optimize_rpm'; $method='golden'; $remark='0502f'; eval IO.read('run_prms.rb')
+$o={:mode=>:mix_weights,:opt_for=>'map',:topic_id=>'train'}; $col='trec' ;$exp='optimize_rpm'; $method='golden'; $remark='0502f'; eval IO.read('run_prms.rb')
 
 
 $o = {:topic_id=>'train', :verbose=>:mp}; $method='prms_plus2'; $col='enron'; $exp='perf'; $remark='0502'; eval IO.read('run_prms.rb')

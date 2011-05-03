@@ -30,10 +30,10 @@ begin
       $engine.get_res_flm q.rs.docs[0..topk]} if $o[:redo] || !$rsflms
     #$i.crt_add_query_set("#{$query_prefix}_PRMSrs", o.merge(:flms=>$rsflms.map{|e|e[1]}))
 
-    $mp_types, $mix_weights = [:cug, :rug, :cbg], [0.5, 0.8, 0.1]	
+    #$mp_types, $mix_weights = [:cug, :rug, :cbg], [0.5, 0.8, 0.1]	
     #$types, $weights = [:cug, :rug, :cbg, :prior, :rbg ], $mix_weights
     $mpmix = $engine.get_mixture_mpset($queries, $mp_types, $mix_weights)
-    $i.crt_add_query_set("#{$query_prefix}_PRMSmx3", o.merge(:template=>:tew, :mps=>$mpmix ))
+    $i.crt_add_query_set("#{$query_prefix}_PRMSmx5", o.merge(:template=>:tew, :mps=>$mpmix ))
     $i.crt_add_query_set("#{$query_prefix}_PRMSrl", o.merge(:flms=>$rlflms1))
   
   # Feature Evaluation
