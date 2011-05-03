@@ -19,7 +19,7 @@ if $o[:verbose]
     #$mpcol_df = $engine.get_mpset(queries, :df=>true)
     puts "[exp_perf] MPs calculated from Collection..."
     
-    $tbl_qry.add_diff_col(6, 3, :title=>"Ora-PRMS")
+    #$tbl_qry.add_diff_col(6, 3, :title=>"Ora-PRMS")
 
     # Aggregate KL-divergence (sum term-wise scores)
     $tbl_qry.add_cols "D_KL", $engine.get_mpset_klds( $mprel, $mpcol ), :round_at=>3
@@ -29,8 +29,8 @@ if $o[:verbose]
 
 
     if $mpmix
-      $tbl_qry.add_diff_col(5, 3, :title=>"Mix-PRMS")
-      $tbl_qry.add_diff_col(6, 5, :title=>"Ora-Mix")
+      #$tbl_qry.add_diff_col(5, 3, :title=>"Mix-PRMS")
+      #$tbl_qry.add_diff_col(6, 5, :title=>"Ora-Mix")
       $mpmix_h = $mpmix.map{|e|$engine.marr2hash e}
       $tbl_qry.add_cols "D_KL(mix)", $engine.get_mpset_klds( $mprel, $mpmix_h ), :round_at=>3
       $tbl_qry.add_cols "Prec@1(mix)", $engine.get_mpset_prec( $mprel, $mpmix_h ), :round_at=>3
