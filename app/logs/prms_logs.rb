@@ -123,7 +123,7 @@ $o = {:verbose=>:mp, :topic_id=>'test', :redo=>true}; $method='prms_prf'; $col='
 $o={:mode=>:mix_weights,:opt_for=>'map',:topic_id=>'test'}; $col='trec' ;$exp='optimize_rpm'; $method='golden'; $remark='0502'; eval IO.read('run_prms.rb')
 
 
-$o = {:topic_id=>'train', :redo=>true, :verbose=>:mp}; $method='prms_plus1'; $col='enron'; $exp='perf'; $remark='0502'; eval IO.read('run_prms.rb')
+$o = {:topic_id=>'train', :verbose=>:mp}; $method='prms_plus2'; $col='enron'; $exp='perf'; $remark='0502'; eval IO.read('run_prms.rb')
 
 
 # Removing bad queries (4/29)
