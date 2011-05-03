@@ -53,7 +53,7 @@ module CalcMapProb
         elsif types[j] == :cug || types[j] == :rug
           mp_flms << get_map_prob(qw, :flm => flm)
         elsif types[j] == :cbg || types[j] == :rbg
-          mp_flms << get_map_prob([prev_qw,qw].join(" "), :flm => flm, :bgram=>true) if prev_qw
+          mp_flms << get_map_prob([(prev_qw || ""),qw].join(" "), :flm => flm, :bgram=>true) #if prev_qw
         end
       end
       prev_qw = qw
