@@ -35,8 +35,8 @@ end
 def evaluate_at(xvals , yvals , o={})
   $mpmix = $engine.get_mixture_mpset($queries, xvals ,yvals)
   $mpmix_h = $mpmix.map{|e|$engine.marr2hash e}
-  klds = $engine.get_mpset_klds( $mprel, $mpmix_h )
-  cosims = $engine.get_mpset_cosine( $mprel, $mpmix_h )
+  klds = $engine.mpset_calc( $mprel, $mpmix_h ){|mp1,mp2|mp1.kld_s(mp2.to_p)}
+  cosims = $engine.mpset_calc( $mprel, $mpmix_h ){|mp1,mp2|mp1.cosim(mp2.to_p)}
   case $opt_for
   when 'kld'
     {'kld'=>(-klds.avg)}    
