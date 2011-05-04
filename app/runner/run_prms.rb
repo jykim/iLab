@@ -147,7 +147,7 @@ begin
     $i.crt_add_query_set("#{$query_prefix}_PRM-S", o)
     $i.crt_add_query_set("#{$query_prefix}_gPRM-S" ,:template=>:prm, :smoothing=>'linear', :lambda=>0.5, :engine=>:galago ,:index_path=>$gindex_path)
   end#case
-  if $exp == 'perf'
+  if $exp == 'perf' || $exp == 'document'
     $i.add_relevant_set($file_qrel)
     $i.fetch_data
   end

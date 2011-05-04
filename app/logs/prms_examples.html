@@ -1,0 +1,51 @@
+
+     <query>
+     #combine (
+      #wsum(0.785 new.(subject) 0.198 new.(text) 0.008 new.(to) 0.006 new.(name) 0.002 new.(email))
+#wsum(0.324 e.(to) 0.261 e.(text) 0.255 e.(name) 0.106 e.(subject) 0.053 e.(email) 0.0 e.(sent))
+#wsum(0.447 mail.(to) 0.234 mail.(email) 0.127 mail.(text) 0.104 mail.(subject) 0.089 mail.(name))
+#wsum(0.463 address.(text) 0.419 address.(subject) 0.1 address.(name) 0.011 address.(to) 0.007 address.(email))
+#wsum(0.523 Flack.(name) 0.342 Flack.(email) 0.099 Flack.(to) 0.036 Flack.(text)))
+     </query>
+
+     <query>
+     #combine (
+      #wsum(0.922 new.(text) 0.077 new.(subject) 0.001 new.(to) 0.001 new.(name) 0.0 new.(email))
+#wsum(0.587 e.(subject) 0.372 e.(text) 0.021 e.(to) 0.016 e.(name) 0.003 e.(email) 0.0 e.(sent))
+#wsum(0.668 mail.(subject) 0.235 mail.(text) 0.056 mail.(email) 0.034 mail.(to) 0.006 mail.(name))
+#wsum(0.619 address.(text) 0.373 address.(subject) 0.006 address.(name) 0.001 address.(to) 0.0 address.(email))
+#wsum(0.649 Flack.(name) 0.283 Flack.(email) 0.04 Flack.(text) 0.021 Flack.(to) 0.007 Flack.(subject)))
+     </query>
+
+     <query>
+     #combine (
+      #wsum(1.0 new.(text))
+#wsum(0.938 e.(subject) 0.062 e.(text))
+#wsum(0.857 mail.(subject) 0.143 mail.(text))
+#wsum(1.0 address.(text))
+#wsum(0.682 Flack.(name) 0.273 Flack.(email) 0.045 Flack.(text)))
+     </query>
+
+     <query>
+     #combine (
+      #wsum(1.0 enriched.(text))
+#wsum(0.544 text.(subject) 0.44 text.(text) 0.008 text.(name) 0.007 text.(to) 0.001 text.(email))
+#wsum(0.5 format.(subject) 0.449 format.(text) 0.045 format.(name) 0.006 format.(to))
+#wsum(0.559 RFCs.(subject) 0.391 RFCs.(text) 0.033 RFCs.(to) 0.01 RFCs.(name) 0.007 RFCs.(email)))
+     </query>
+
+     <query>
+     #combine (
+      #wsum(0.881 enriched.(text) 0.119 enriched.(subject))
+#wsum(0.736 text.(text) 0.264 text.(subject) 0.0 text.(name) 0.0 text.(to) 0.0 text.(email))
+#wsum(0.896 format.(text) 0.104 format.(subject) 0.0 format.(name) 0.0 format.(to))
+#wsum(0.89 RFCs.(text) 0.109 RFCs.(subject) 0.0 RFCs.(to) 0.0 RFCs.(name) 0.0 RFCs.(email)))
+     </query>
+
+      <query>
+      #combine (
+       #wsum(1.0 enriched.(text))
+#wsum(1.0 text.(text))
+#wsum(1.0 format.(text))
+#wsum(1.0 RFCs.(text)))
+      </query>
