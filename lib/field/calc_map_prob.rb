@@ -102,7 +102,26 @@ module CalcMapProb
       }
   end
   
-  # Get the KL-divrgence between two MP sets
+  # Get Cosine similarity between two MP sets
+  # 
+  def get_mpset_cosine( mpset1, mpset2  )
+    return error "Length not equal!" if mpset1.size != mpset2.size
+    mpset1.map_with_index do |mps,i| 
+      begin
+        mp_terms = mps.map{|e|e[0]}
+        mps2 = mpset2[i].find_all{|e|mp_terms.include? e[0]}
+        error "[get_mpset_cosine] length not match! (#{mp_terms.size} != #{mps2.size})" if mp_terms.size != mps2.size
+        mps.map_with_index{|mp,j|
+          mp[1].cosim( mps2[j][1] )
+        }.sum
+      rescue Exception => e
+        error "[get_mpset_cosine] error in #{i}th query : #{$queries[i]} \n#{mpset1[i].inspect}-#{mps2[i].inspect} #{e.inspect}"
+        0
+      end      
+    end
+  end
+  
+  # Get the Precision between two MP sets
   # 
   def get_mpset_prec( mpset1, mpset2  )
     return error "Length not equal!" if mpset1.size != mpset2.size
