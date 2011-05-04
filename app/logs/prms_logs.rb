@@ -106,8 +106,6 @@ $o = {:topic_id=>'train', :verbose=>true}; $method='param_jm'; $col='enron'; $ex
 $o={:mode=>:hlm_weights,:topic_id=>'train'}; $col='trec' ;$exp='optimize_prm'; $method='golden'; eval IO.read('run_prms.rb')
 
 $o = {:verbose=>:mp, :topic_id=>'train'}; $method='prms_plus1'; $col='imdb'; $exp='perf'; $remark='0429'; eval IO.read('run_prms.rb')
-
-
  
 
 # Removing bad queries (4/29)
@@ -121,7 +119,7 @@ $ scp qrel/qrel_qlm_train $SYH/work/prj/dih/imdb/qrels.train
 
 # Mixture MP Debugging (5/2)
 
-$o = {:topic_id=>'train', :verbose=>:mp}; $method='prms_mix'; $col='trec'; $exp='perf'; $remark='0504'; eval IO.read('run_prms.rb')
+$o = {:topic_id=>'test', :verbose=>:mp}; $method='prms_mix'; $col='trec'; $exp='perf'; $remark='0504'; eval IO.read('run_prms.rb')
 
 $o={:mode=>:mix_weights,:opt_for=>'cosine',:topic_id=>'test'}; $col='trec' ;$exp='optimize_rpm'; $method='golden'; $remark='0504'; eval IO.read('run_prms.rb')
 
@@ -129,7 +127,6 @@ $o={:mode=>:mix_weights,:opt_for=>'cosine',:topic_id=>'test'}; $col='trec' ;$exp
 
 $o = {:verbose=>:mp, :topic_id=>'test', :redo=>true}; $method='prms_prf'; $col='trec'; $exp='perf'; $remark='0502'; eval IO.read('run_prms.rb')
 
-
-
 $o = {:topic_id=>'train', :verbose=>:mp}; $method='prms_plus2'; $col='enron'; $exp='perf'; $remark='0502'; eval IO.read('run_prms.rb')
 
+$o = {:topic_id=>'test', :verbose=>:mp, :range=>[131,27,129,61,72,115,84,83,93,74]}; $method='prms_mix'; $col='trec'; $exp='document'; $remark='0504'; eval IO.read('run_prms.rb')

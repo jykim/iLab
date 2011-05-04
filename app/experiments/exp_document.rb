@@ -2,7 +2,7 @@
 if $method=='test'
   test_qids = [702]
 else
-  test_qids = $i.qsa[0].qrys.find_all{|q| !$o[:range] || $o[:range] === q.qid}.map{|q|q.qid}
+  test_qids = $i.qsa[0].qrys.find_all{|q| !$o[:range] || $o[:range].include?(q.qid)}.map{|q|q.qid}
 end
 
 =begin
