@@ -29,17 +29,14 @@ if $o[:verbose]
     # Aggregate KL-divergence (sum term-wise scores)
     $tbl_qry.add_cols "D_KL", $engine.get_mpset_klds( $mprel, $mpcol ), :round_at=>3
     $tbl_qry.add_cols "Cosine", $engine.get_mpset_cosine( $mprel, $mpcol ), :round_at=>3
-
-    # Aggregate KL-divergence (sum term-wise scores)
     $tbl_qry.add_cols "Prec@1", $engine.get_mpset_prec( $mprel, $mpcol ), :round_at=>3
 
 
     if $mpmix
       $mpmix_h = $mpmix.map{|e|$engine.marr2hash e}
       $tbl_qry.add_cols "D_KL(mix)", $engine.get_mpset_klds( $mprel, $mpmix_h ), :round_at=>3
-      mps_prec = $engine.get_mpset_prec( $mprel, $mpmix_h )
-      $tbl_qry.add_cols "Prec@1(mix)", mps_prec, :round_at=>3
       $tbl_qry.add_cols "Cosine(mix)", $engine.get_mpset_cosine( $mprel, $mpmix_h ), :round_at=>3
+      $tbl_qry.add_cols "Prec@1(mix)", $engine.get_mpset_prec( $mprel, $mpmix_h ), :round_at=>3
     end
     puts "[exp_perf] table values calculated..."
   end
