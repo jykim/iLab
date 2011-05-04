@@ -35,14 +35,17 @@ end
 def evaluate_at(xvals , yvals , o={})
   $mpmix = $engine.get_mixture_mpset($queries, xvals ,yvals)
   $mpmix_h = $mpmix.map{|e|$engine.marr2hash e}
-  klds = $engine.get_mpset_klds( $mprel, $mpmix_h )
+  klds = $engine.mpset_calc( $mprel, $mpmix_h ){|mp1,mp2|mp1.kld_s(mp2.to_p)}
+  cosims = $engine.mpset_calc( $mprel, $mpmix_h ){|mp1,mp2|mp1.cosim(mp2.to_p)}
   case $opt_for
   when 'kld'
     {'kld'=>(-klds.avg)}    
+  when 'cosine'
+    {'cosine'=>cosims.avg}    
   when 'map'
     qs = $i.create_query_set(get_opt_qry_name(xvals , yvals, o), o.merge(:template=>:tew, :mps=>$mpmix, :skip_result_set=>true, :smoothing=>$sparam_prm ))
     stats = qs.calc_stat($file_qrel)
-    info ["MAP-KLD", yvals, -klds.avg, stats['all']['map']].flatten.inspect if $o[:verbose]
+    info ["KLD/COS/MAP", yvals, -klds.avg, cosims.avg, stats['all']['map']].flatten.inspect if $o[:verbose]
     stats['all']
   end
 end

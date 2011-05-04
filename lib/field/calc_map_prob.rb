@@ -87,34 +87,40 @@ module CalcMapProb
     end
   end
   
-  # Get the KL-divrgence between two MP sets
+  # Get Cosine similarity between two MP sets
   # 
-  def get_mpset_klds( mpset1, mpset2  )
+  def mpset_calc( mpset1, mpset2 )
     return error "Length not equal!" if mpset1.size != mpset2.size
-    mpset1.map_with_index{|mps,i| 
+    mpset1.map_with_index do |mps,i| 
       begin
-        mps.map_with_index{|mp,j|
-          mp[1].kld_s(mpset2[i][j][1].to_p)}.sum
+        mp_terms = mps.map{|e|e[0]}
+        mps2 = mpset2[i].find_all{|e|mp_terms.include? e[0]}
+        raise ArgumentException, "[mpset_calc] length not match! (#{mp_terms.size} != #{mps2.size})" if mp_terms.size != mps2.size
+        results = mps.map_with_index{|mp,j|
+           yield mp[1], mps2[j][1]
+        }.avg
       rescue Exception => e
-        error "[get_mpset_klds] error in #{i}th query : #{$queries[i]} \n#{mps[i].inspect}-#{mpset2[i].inspect} #{e.inspect}"
+        error "[mpset_calc] error in #{i}th query : #{$queries[i]} \n#{mps.inspect}-#{mps2.inspect} #{e.inspect}"
         0
       end      
-      }
+    end
   end
   
   # Get the KL-divrgence between two MP sets
   # 
+  def get_mpset_klds( mpset1, mpset2  )
+    mpset_calc( mpset1, mpset2 ){|mp1,mp2|mp1.kld_s(mp2.to_p)}
+  end
+  
+  def get_mpset_cosine( mpset1, mpset2  )
+    mpset_calc( mpset1, mpset2 ){|mp1,mp2|mp1.cosim(mp2)}
+  end
+  
+  # Get the Precision between two MP sets
+   
   def get_mpset_prec( mpset1, mpset2  )
-    return error "Length not equal!" if mpset1.size != mpset2.size
-    mpset1.map_with_index{|mps,i| 
-      begin
-        mps.map_with_index{|mp,j|
-          (mp[1].max_pair[0] == mpset2[i][j][1].max_pair[0])? 1 : 0 }.sum.to_f / mps.size
-      rescue Exception => e
-        error "[get_mpset_klds] error in #{i}th query : #{$queries[i]} \n#{mps[i].inspect}-#{mpset2[i].inspect} #{e.inspect}"
-        0.0
-      end
-      }
+    mpset_calc( mpset1, mpset2 ){|mp1,mp2|
+      ((mp1.max_pair[0] == mp2.max_pair[0])? 1 : 0 ).to_f}
   end
   
   # Turn Hash form of MP to Array
