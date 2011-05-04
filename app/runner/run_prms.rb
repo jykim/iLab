@@ -33,7 +33,7 @@ begin
     #$mp_types, $mix_weights = [:cug, :rug, :cbg], [0.5, 0.8, 0.1]	
     #$types, $weights = [:cug, :rug, :cbg, :prior, :rbg ], $mix_weights
     $mpmix = $engine.get_mixture_mpset($queries, $mp_types, $mix_weights)
-    $i.crt_add_query_set("#{$query_prefix}_PRMSmx5_2", o.merge(:template=>:tew, :mps=>$mpmix ))
+    $i.crt_add_query_set("#{$query_prefix}_PRMSmx5", o.merge(:template=>:tew, :mps=>$mpmix ))
     $i.crt_add_query_set("#{$query_prefix}_PRMSrl", o.merge(:flms=>$rlflms1))
   
   # Feature Evaluation
