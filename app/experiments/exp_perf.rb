@@ -21,6 +21,11 @@ if $o[:verbose]
     
     #$tbl_qry.add_diff_col(6, 3, :title=>"Ora-PRMS")
 
+    if $mpmix
+      $tbl_qry.add_diff_col(4, 3, :title=>"Mix-PRMS")
+      $tbl_qry.add_diff_col(5, 4, :title=>"Ora-Mix")
+    end
+
     # Aggregate KL-divergence (sum term-wise scores)
     $tbl_qry.add_cols "D_KL", $engine.get_mpset_klds( $mprel, $mpcol ), :round_at=>3
     $tbl_qry.add_cols "Cosine", $engine.get_mpset_cosine( $mprel, $mpcol ), :round_at=>3
@@ -30,8 +35,6 @@ if $o[:verbose]
 
 
     if $mpmix
-      #$tbl_qry.add_diff_col(5, 3, :title=>"Mix-PRMS")
-      #$tbl_qry.add_diff_col(6, 5, :title=>"Ora-Mix")
       $mpmix_h = $mpmix.map{|e|$engine.marr2hash e}
       $tbl_qry.add_cols "D_KL(mix)", $engine.get_mpset_klds( $mprel, $mpmix_h ), :round_at=>3
       mps_prec = $engine.get_mpset_prec( $mprel, $mpmix_h )
