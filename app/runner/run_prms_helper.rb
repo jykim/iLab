@@ -162,7 +162,8 @@ def set_collection_param(col_id)
   when 'trec'
     $sparam = get_sparam('jm',0.1)#get_sparam('dirichlet',500)
     $sparam_prm = get_sparam('jm',0.1)# get_sparam('dirichlet',10)
-    $mix_weights = [0.099, 1.0, 0.099, 0.01, 0.333]
+    $mix_weights = [0.01, 1.0, 0.154, 0.189, 0.099]
+    #[0.01, 1.0, 0.154, 0.189, 0.099]	#(cosim/test)
     #[0.099, 1.0, 0.099, 0.01, 0.333]	#(cosim/train)
     #[0.677, 1.0, 0.01, 0.065, 1.0]	#(map/train)
     #[0.01, 0.065, 1.0, 0.244, 1.0] #(map/test)
