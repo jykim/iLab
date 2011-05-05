@@ -129,12 +129,11 @@ begin
     $i.crt_add_query_set("#{$query_prefix}_PRM-D", :template=>:prm_ql ,:smoothing=>$sparam_prm, :lambda=>$prmd_lambda)
   
   # Smoothing parameter sweep
-  when 'param_jm'
+  when 'param_smt'
     [0,0.1, 0.3, 0.5, 0.7, 0.8, 0.9].each do |lambda|
       $i.crt_add_query_set("#{$query_prefix}_DQL_l#{lambda}" ,:smoothing=>get_sparam('jm',lambda))
       $i.crt_add_query_set("#{$query_prefix}_PRM_l#{lambda}", :template=>:prm, :smoothing=>get_sparam('jm',lambda))    
     end
-  when 'param_dir'
     [5,10,50,100,250,500,1500,2500].each do |mu|
       $i.crt_add_query_set("#{$query_prefix}_DQL_mu#{mu}" ,:smoothing=>get_sparam('dirichlet',mu))
       $i.crt_add_query_set("#{$query_prefix}_PRM_mu#{mu}", :template=>:prm, :smoothing=>get_sparam('dirichlet',mu))

@@ -160,8 +160,8 @@ end
 def set_collection_param(col_id)
   case col_id
   when 'trec'
-    $sparam = get_sparam('jm',0.1)#get_sparam('dirichlet',500)
-    $sparam_prm = get_sparam('jm',0.1)# get_sparam('dirichlet',10)
+    $sparam = get_sparam('dirichlet',500)#get_sparam('jm',0.1)
+    $sparam_prm = get_sparam('dirichlet',10)#get_sparam('jm',0.1)
     $mix_weights = [0.099, 1.0, 0.099, 0.01, 0.333]
     #[0.01, 1.0, 0.154, 0.189, 0.099]	#(cosim/test)
     #[0.099, 1.0, 0.099, 0.01, 0.333]	#(cosim/train)
