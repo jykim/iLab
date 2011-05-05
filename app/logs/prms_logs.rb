@@ -99,10 +99,6 @@ $o = {:topic_id=>'test', :verbose=>:mp}; $method='prms_mix'; $col='trec'; $exp='
 
 #== Getting Baseline Results  (4/26)
 
-$o = {:topic_id=>'train', :verbose=>true}; $method='param_dir'; $col='trec'; $exp='perf'; $remark='0426_param'; eval IO.read('run_prms.rb')
-
-$o = {:topic_id=>'train', :verbose=>true}; $method='param_jm'; $col='enron'; $exp='perf'; $remark='0426_param'; eval IO.read('run_prms.rb')
-
 $o={:mode=>:hlm_weights,:topic_id=>'train'}; $col='trec' ;$exp='optimize_prm'; $method='golden'; eval IO.read('run_prms.rb')
 
 $o = {:verbose=>:mp, :topic_id=>'train'}; $method='prms_plus1'; $col='imdb'; $exp='perf'; $remark='0429'; eval IO.read('run_prms.rb')
@@ -119,7 +115,9 @@ $ scp qrel/qrel_qlm_train $SYH/work/prj/dih/imdb/qrels.train
 
 # Mixture MP Debugging (5/2)
 
-$o = {:topic_id=>'train', :verbose=>:mp,:redo=>true}; $method='prms_mix'; $col='trec'; $exp='perf'; $remark='0504'; eval IO.read('run_prms.rb')
+$o = {:redo=>true,:topic_id=>'test', :verbose=>true}; $method='param_smt'; $col='enron'; $exp='perf'; $remark='0504_param'; eval IO.read('run_prms.rb')
+
+$o = {:topic_id=>'train', :verbose=>:mp}; $method='prms_mix'; $col='trec'; $exp='perf'; $remark='0504_nowsum_smt'; eval IO.read('run_prms.rb')
 
 $o={:mode=>:mix_weights,:opt_for=>'cosine',:topic_id=>'test'}; $col='enron' ;$exp='optimize_rpm'; $method='golden'; $remark='0504'; eval IO.read('run_prms.rb')
 
