@@ -15,18 +15,20 @@ module IndriFieldHelper
     parse_col_freq(cf_fn)
     parse_col_freq(bgram_fn, :bgram=>true)
     #parse_col_freq(df_fn, :df=>true)
-    $cf[o.to_s]
+    $cf[o]
   end
   
   def parse_col_freq(filename, o = {})
-    if !$cf[o.to_s]
+    if !$cf[o]
       cf_raw = IO.read(to_path(filename)).split("\n").
         map_hash{|l|la = l.split("\t");[la[0], la[1..-1].map_hash{|e|a = e.split ; [a[0] , a[1].to_f]}]}
       puts "[parse_col_freq] reading #{filename} (#{o.inspect})..."
       #puts "[parse_col_freq] Fields read : #{cf_raw.keys.inspect}"
-      $cf[o.merge(:whole_doc=>true).to_s] = cf_raw['document'] ; cf_raw.delete('document')
-      $cf[o.merge(:prob=>true).to_s] = cf_raw.map_hash{|k,v|[k,v.to_p]}
-      $cf[o.to_s] = cf_raw
+      $cf[o.merge(:whole_doc=>true)] = cf_raw['document']
+      $cf[o.merge(:whole_doc=>true,:prob=>true)] = cf_raw['document'].to_p
+      cf_raw.delete('document')
+      $cf[o.merge(:prob=>true)] = cf_raw.map_hash{|k,v|[k,v.to_p]}
+      $cf[o] = cf_raw
     end
   end
   

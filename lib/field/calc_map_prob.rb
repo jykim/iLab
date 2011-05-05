@@ -72,15 +72,17 @@ module CalcMapProb
   
   def get_mixture_mpset(queries, types, weights, o = {})
     queries.map_with_index do |q,i|
+      qno = o[:qno] || i
       info ["QWord","Field",types,"=== #{i}th : #{q} ==="].flatten.join("\t") if $o[:verbose]
+      info weights.inspect  if $o[:verbose]
       flms = []
       types.each_with_index do |type, j|
         case type
         when :prior : flms << $hlm_weight
         when :cug   : flms << get_col_freq(:prob=>true)
         when :cbg   : flms << get_col_freq(:bgram=>true)
-        when :rug   : flms << $rsflms[i][1].map_hash{|k,v|[k,v.to_p]}
-        when :rbg   : flms << $rsflms[i][2].map_hash{|k,v|[k,v.to_p]}
+        when :rug   : flms << $rsflms[qno][1].map_hash{|k,v|[k,v.to_p]}
+        when :rbg   : flms << $rsflms[qno][2].map_hash{|k,v|[k,v.to_p]}
         end
       end
       get_mixture_map_prob(q, flms, types , weights, o )

@@ -119,7 +119,7 @@ $ scp qrel/qrel_qlm_train $SYH/work/prj/dih/imdb/qrels.train
 
 # Mixture MP Debugging (5/2)
 
-$o = {:topic_id=>'test', :verbose=>:mp}; $method='prms_mix'; $col='trec'; $exp='perf'; $remark='0504'; eval IO.read('run_prms.rb')
+$o = {:topic_id=>'train', :verbose=>:mp,:redo=>true}; $method='prms_mix'; $col='trec'; $exp='perf'; $remark='0504'; eval IO.read('run_prms.rb')
 
 $o={:mode=>:mix_weights,:opt_for=>'cosine',:topic_id=>'test'}; $col='trec' ;$exp='optimize_rpm'; $method='golden'; $remark='0504'; eval IO.read('run_prms.rb')
 
@@ -130,3 +130,11 @@ $o = {:verbose=>:mp, :topic_id=>'test', :redo=>true}; $method='prms_prf'; $col='
 $o = {:topic_id=>'train', :verbose=>:mp}; $method='prms_plus2'; $col='enron'; $exp='perf'; $remark='0502'; eval IO.read('run_prms.rb')
 
 $o = {:topic_id=>'test', :verbose=>:mp, :range=>[131,27,129,61,72,115,84,83,93,74]}; $method='prms_mix'; $col='trec'; $exp='document'; $remark='0504'; eval IO.read('run_prms.rb')
+
+$o = {:topic_id=>'train', :verbose=>:mp, :range=>[3,8,9]}; $method='prms_mix'; $col='trec'; $exp='document'; $remark='0504'; eval IO.read('run_prms.rb')
+
+# Document-level Debugging
+
+$engine.run_prm_query_for($queries[2], ['lists-026-11624171','lists-061-13977904'], :prms)
+
+
