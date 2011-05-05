@@ -1,0 +1,12 @@
+<parameters>
+<% if smoothing %>
+        <scorer><%= smoothing %></scorer>
+				<mu><%= mu %></mu>
+				<lambda><%= lambda %></lambda>
+<% end %>
+<% o[:mps].each_with_index do |mps,i| %>
+        <query>
+					<number><%= i + query_offset %></number>
+					<text>#combine(<%= get_tew_query(mps, o.merge(:engine=>:galago)) %>)</text>
+				</query><% end  %>
+</parameters>

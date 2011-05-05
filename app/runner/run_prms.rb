@@ -28,13 +28,22 @@ begin
     $rsflms = qs.qrys.map_with_index{|q,i|
       puts "[get_res_flm] #{i}th query processed" if i % 20 == 1      
       $engine.get_res_flm q.rs.docs[0..topk]} if $o[:redo] || !$rsflms
-    #$i.crt_add_query_set("#{$query_prefix}_PRMSrs", o.merge(:flms=>$rsflms.map{|e|e[1]}))
-
-    #$mp_types, $mix_weights = [:cug, :rug, :cbg], [0.5, 0.8, 0.1]	
-    #$types, $weights = [:cug, :rug, :cbg, :prior, :rbg ], $mix_weights
     $mpmix = $engine.get_mixture_mpset($queries, $mp_types, $mix_weights)
     $i.crt_add_query_set("#{$query_prefix}_PRMSmx5", o.merge(:template=>:tew, :mps=>$mpmix ))
     $i.crt_add_query_set("#{$query_prefix}_PRMSrl", o.merge(:flms=>$rlflms1))
+  
+  when 'gprms_mix'
+    o.merge!(:engine=>:galago, :index_path=>$gindex_path, :smoothing=>'linear', :lambda=>0.1)
+    qs = $i.crt_add_query_set("#{$query_prefix}_gDQL" , :smoothing=>$sparam)
+    topk = $o[:topk] || 5
+    $i.crt_add_query_set("#{$query_prefix}_gPRMS", o)
+    
+    $rsflms = qs.qrys.map_with_index{|q,i|
+      puts "[get_res_flm] #{i}th query processed" if i % 20 == 1      
+      $engine.get_res_flm q.rs.docs[0..topk]} if $o[:redo] || !$rsflms
+    $mpmix = $engine.get_mixture_mpset($queries, $mp_types, $mix_weights)
+    $i.crt_add_query_set("#{$query_prefix}_gPRMSmx5", o.merge(:template=>:tew, :mps=>$mpmix ))
+    $i.crt_add_query_set("#{$query_prefix}_gPRMSrl", o.merge(:flms=>$rlflms1))
   
   # Feature Evaluation
   when 'prms_plus2'
@@ -47,10 +56,8 @@ begin
     [0.1,0.2,0.4,0.5,0.6,0.8].each do |weight|
       mpmix = $engine.get_mixture_mpset($queries, [:cug, :rug, :cbg], [0.5,0.8,weight])
       $i.crt_add_query_set("#{$query_prefix}_PRMS_rug08_cbg#{weight}", o.merge(:template=>:tew, :mps=>mpmix ))
-    
-    #  mpmix = $engine.get_mixture_mpset($queries, [:cug, :rug, :prior], [0.5,0.8,weight])
-    #  $i.crt_add_query_set("#{$query_prefix}_PRMS_rug08_prior#{weight}", o.merge(:template=>:tew, :mps=>mpmix ))
     end
+  
   when 'prms_plus1'
     qs = $i.crt_add_query_set("#{$query_prefix}_DQL" , :smoothing=>$sparam)
     topk = $o[:topk] || 5

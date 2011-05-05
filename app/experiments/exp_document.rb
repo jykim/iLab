@@ -5,6 +5,7 @@ else
   test_qids = $i.qsa[0].qrys.find_all{|q| !$o[:range] || $o[:range].include?(q.qid)}.map{|q|q.qid}
 end
 
+
 =begin
 #Query-wise Analysis
 qw_set = {}

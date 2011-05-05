@@ -29,6 +29,37 @@ module PRMHelper
       get_tew_query(mps, o)
     end
   end
+  
+  # Run PRM-S query given query & docids
+  def run_prm_query_for(qno, docids, retmodel, o = {})
+    case retmodel
+    when :prms
+      types, weights = [:cug],[1]
+    when :mix
+      types, weights = $mp_types, $mix_weights
+    end
+    sparam = o[:sparam] || 0.1
+    qidx = qno - $offset
+    mps = get_mixture_mpset([$queries[qidx]], types, weights, :qno=>qidx)[0]
+    clm = get_col_freq(:whole_doc=>true,:prob=>true)
+    
+    docids.each do |did|
+      score_doc = 0
+      dflm = get_doc_field_lm(did, 1)[1]
+      mps.each_with_index do |mp,i|
+        score_qw = 0
+        qw = kstem(mp[0])
+        mp[1].each_with_index do |e,j|
+          ql = (1-sparam) * (dflm[e[0]][qw] || 0.0) + sparam * (clm[qw] || 0.0)
+          puts "         #{(ql * e[1]).round_at(6)}\t= #{ql.round_at(6)} * #{e[1].r3} <- #{qw}/#{e[0]}"
+          score_qw += ql * e[1]
+        end
+        puts "#{Math.log10(score_qw).r3}"
+        score_doc += Math.log10(score_qw)
+      end
+      puts "#{score_doc.r3} <- TotalScore(#{did})\n\n"
+    end
+  end
 
   #Get Term-wise Element Weighting Query given Mapping Prob.
   # mps = [[qw1, [f1, prob1], [...]], [qw2, ]]
@@ -47,9 +78,16 @@ module PRMHelper
         mp
       end
     end#.sort_by{|e|e[1]}.reverse
-    mps_new.map{|mp| 
-      mp_str = mp[1].map{|e|"#{e[1].r3} #{mp[0]}"+((e[0]!="BoW")? ".(#{e[0]})":"")}.join(' ')
-      " #wsum(#{mp_str})" }.join("\n")
+    if o[:engine] == :galago
+      mps_new.map{|mp| 
+        weight_str = mp[1].map_with_index{|e,i|"#{i}=#{e[1].r3}"}.join(':')
+        term_str = mp[1].map{|e|"#{mp[0]}"+((e[0]!="BoW")? ".#{e[0]}":"")}.join(' ')
+        " #combine:#{weight_str}(#{term_str})" }.join("\n")
+    else
+      mps_new.map{|mp| 
+        mp_str = mp[1].map{|e|"#{e[1].r3} #{mp[0]}"+((e[0]!="BoW")? ".(#{e[0]})":"")}.join(' ')
+        " #weight(#{mp_str})" }.join("\n")      
+    end
   end
   
   def get_hlm_query(query, weights, fields = nil)
