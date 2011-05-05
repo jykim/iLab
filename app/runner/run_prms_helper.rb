@@ -179,7 +179,7 @@ def set_collection_param(col_id)
     $bm25_weight = [0.382, 0.382, 0.0, 0.382, 0.382, 0.0]
   when 'enron'
     $sparam = get_sparam('dirichlet',250)
-    $sparam_prm = get_sparam('dirichlet',50)
+    $sparam_prm = get_sparam('dirichlet',10)
     $mix_weights = [0.154, 1.0, 0.01, 0.01, 0.299]
     
     $hlm_weight = [2.0, 0.652, 0.0, 0.0, 0.0]
