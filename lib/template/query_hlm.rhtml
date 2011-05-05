@@ -7,7 +7,7 @@
         <queryOffset><%= query_offset %></queryOffset>
 <% topics.each do |query| %>
         <query>
-        #combine (<%= get_hlm_query(query, o[:hlm_weights], o[:hlm_fields]) %>)
+        #combine (<%= get_hlm_query(query, o[:hlm_weights], o.merge(:fields=>o[:hlm_fields])) %>)
         </query>
 <% end  %>
 </parameters>

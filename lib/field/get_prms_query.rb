@@ -29,9 +29,43 @@ module PRMHelper
       get_tew_query(mps, o)
     end
   end
+
+  #Get Term-wise Element Weighting Query given Mapping Prob.
+  # mps = [[qw1, [f1, prob1], [...]], [qw2, ]]
+  def get_tew_query(mps, o)
+    #debugger
+    #info "[get_tew_query] #{o.inspect}"
+    
+    op_comb = o[:op_comb] || :wsum
+    op_smt = o[:op_smt] || :field
+    
+    mps_new = mps.map_with_index do |mp,i|
+      #p "#{o[:topk_field]}"
+      if o[:topk_field]
+        mp_topk = mp[1].sort_by{|e|e[1]}.reverse[0..(o[:topk_field]-1)]
+        norm = mp_topk.map{|e|e[1]}.sum
+        [mp[0], mp_topk.map{|e|[e[0], e[1] / norm]}]
+      elsif o[:prior_weight]
+        [mp[0], mp[1].map{|e|[ e[0], e[1]*(o[:prior_weight][e[0]] || 1.0) ]}]
+      else
+        mp
+      end
+    end#.sort_by{|e|e[1]}.reverse
+    
+    if o[:engine] == :galago
+      mps_new.map{|mp| 
+        weight_str = mp[1].map_with_index{|e,i|"#{i}=#{e[1].r3}"}.join(':')
+        term_str = mp[1].map{|e| "#{mp[0]}.#{e[0]}"}.join(' ')
+        " #combine:#{weight_str}(#{term_str})" }.join("\n")
+    else
+      mps_new.map{|mp|
+        mp_str = mp[1].map{|e|"#{e[1].r3} #{mp[0]}"+((op_smt == :field)? ".(#{e[0]})" : ".#{e[0]}")}.join(' ')
+        " ##{op_comb}(#{mp_str})" }.join("\n")
+    end
+  end
   
   # Run PRM-S query given query & docids
-  def run_prm_query_for(qno, docids, retmodel, o = {})
+  def debug_prm_query(qno, docids, retmodel, o = {})
     case retmodel
     when :prms
       types, weights = [:cug],[1]
@@ -60,39 +94,12 @@ module PRMHelper
       puts "#{score_doc.r3} <- TotalScore(#{did})\n\n"
     end
   end
-
-  #Get Term-wise Element Weighting Query given Mapping Prob.
-  # mps = [[qw1, [f1, prob1], [...]], [qw2, ]]
-  def get_tew_query(mps, o)
-    #debugger
-    #info "[get_tew_query] #{mps.inspect}"
-    mps_new = mps.map_with_index do |mp,i|
-      #p "#{o[:topk_field]}"
-      if o[:topk_field]
-        mp_topk = mp[1].sort_by{|e|e[1]}.reverse[0..(o[:topk_field]-1)]
-        norm = mp_topk.map{|e|e[1]}.sum
-        [mp[0], mp_topk.map{|e|[e[0], e[1] / norm]}]
-      elsif o[:prior_weight]
-        [mp[0], mp[1].map{|e|[ e[0], e[1]*(o[:prior_weight][e[0]] || 1.0) ]}]
-      else
-        mp
-      end
-    end#.sort_by{|e|e[1]}.reverse
-    if o[:engine] == :galago
-      mps_new.map{|mp| 
-        weight_str = mp[1].map_with_index{|e,i|"#{i}=#{e[1].r3}"}.join(':')
-        term_str = mp[1].map{|e|"#{mp[0]}"+((e[0]!="BoW")? ".#{e[0]}":"")}.join(' ')
-        " #combine:#{weight_str}(#{term_str})" }.join("\n")
-    else
-      mps_new.map{|mp| 
-        mp_str = mp[1].map{|e|"#{e[1].r3} #{mp[0]}"+((e[0]!="BoW")? ".(#{e[0]})":"")}.join(' ')
-        " #weight(#{mp_str})" }.join("\n")      
-    end
-  end
   
-  def get_hlm_query(query, weights, fields = nil)
-    fields ||= $fields
-    query.split(" ").map{|qw| s = weights.map_with_index{|w,i|"#{w} #{qw}.(#{fields[i]})"}.join(" ") ; " #wsum(#{s})" }.join(" ")
+  def get_hlm_query(query, weights, o = {})
+    op_comb = o[:op_comb] || :wsum
+    op_smt = o[:op_smt] || :field
+    fields = o[:fields] || $fields
+    query.split(" ").map{|qw| s = weights.map_with_index{|w,i|"#{w} #{qw}.#{((op_smt == :field)? "(#{fields[i]})" : "#{fields[i]}")}"}.join(" ") ; " ##{op_comb}(#{s})" }.join(" ")
   end
   
   def get_hlm_gquery(query, weights, fields = nil)
