@@ -152,7 +152,7 @@ def init_collection(col)
     $title_field = 'title'
   end#case
   $engine.init_kstem($file_topic)
-  $rlflms1 = $engine.get_rel_flms($file_qrel).map{|e|e[1]} #if !$rlflms1
+  $rlflms1 = $engine.get_rel_flms($file_qrel).map{|e|e[1]} if !$rlflms1
   $queries =  $i.parse_topic_file($file_topic, $ptn_qry_title)
 end
 
@@ -178,9 +178,9 @@ def set_collection_param(col_id)
     $bs = [0.0, 0.138, 0.382, 0.0, 0.382, 0.0]
     $bm25_weight = [0.382, 0.382, 0.0, 0.382, 0.382, 0.0]
   when 'enron'
-    $sparam = get_sparam('jm',0.1)#get_sparam('dirichlet',250)
-    $sparam_prm = get_sparam('jm',0.1)# get_sparam('dirichlet',50)
-    $mix_weights = [0.189, 1.0, 0.388, 0.01, 0.388]
+    $sparam = get_sparam('dirichlet',250)
+    $sparam_prm = get_sparam('dirichlet',50)
+    $mix_weights = [0.154, 1.0, 0.01, 0.01, 0.299]
     
     $hlm_weight = [2.0, 0.652, 0.0, 0.0, 0.0]
     $mflmf_weight = [1.0, 0.292, 1.0, 0.472, 0.0]
