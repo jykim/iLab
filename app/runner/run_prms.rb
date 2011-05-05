@@ -13,13 +13,6 @@ begin
   o = $o.dup.merge(:template=>:prm, :smoothing=>$sparam_prm)
   $mp_types = [:cug, :rug, :cbg, :prior, :rbg ]
   case $method
-  # Getting Optimal MP results
-  when 'prms'
-    $i.crt_add_query_set("#{$query_prefix}_DQL" , :smoothing=>$sparam)
-    $i.crt_add_query_set("#{$query_prefix}_PRMS", o)
-    #$i.crt_add_query_set("#{$query_prefix}_PRMSdf", o.merge(:df=>true))
-    $i.crt_add_query_set("#{$query_prefix}_PRMSo", o.merge(:flms=>$rlflms1))
-    
   when 'prms_mix'
     qs = $i.crt_add_query_set("#{$query_prefix}_DQL" , :smoothing=>$sparam)
     topk = $o[:topk] || 5
@@ -31,6 +24,40 @@ begin
     $mpmix = $engine.get_mixture_mpset($queries, $mp_types, $mix_weights)
     $i.crt_add_query_set("#{$query_prefix}_PRMSmx5", o.merge(:template=>:tew, :mps=>$mpmix ))
     $i.crt_add_query_set("#{$query_prefix}_PRMSrl", o.merge(:flms=>$rlflms1))
+    
+  when 'mp_oracle'
+    [0.0,0.1,0.25,0.5,0.75,1.0].each do |mp_smooth|
+      o = o.dup.merge(:flms=>$rlflms1, :mp_smooth=>mp_smooth, :mp_all_fields=>true)
+      $i.crt_add_query_set("#{$query_prefix}_oPRM-S_s#{mp_smooth}", o)
+    end
+    [0.0,0.1,0.25,0.5,0.75,1.0].each do |mp_unsmooth|
+      o = o.dup.merge(:flms=>$rlflms1, :mp_unsmooth=>mp_unsmooth, :mp_all_fields=>true)
+      $i.crt_add_query_set("#{$query_prefix}_oPRM-S_u#{mp_unsmooth}", o)
+    end
+    
+  # Getting Baseline Results
+  when 'baseline' 
+    $i.crt_add_query_set("#{$query_prefix}_DQL" , :smoothing=>$sparam)
+    $i.crt_add_query_set("#{$query_prefix}_MFLM" ,:template=>:hlm, :smoothing=>$sparam_prm, :hlm_weights=>($hlm_weight || [0.1]*($fields.size)))
+    $i.crt_add_query_set("#{$query_prefix}_PRM-S", :template=>:prm, :smoothing=>$sparam_prm)
+    $i.crt_add_query_set("#{$query_prefix}_PRM-D", :template=>:prm_ql ,:smoothing=>$sparam_prm, :lambda=>$prmd_lambda)
+  
+  # Retrieval parameter sweep
+  when 'param_sweep'
+    [0.1, 0.3, 0.5, 0.7, 0.8, 0.9, 5,10,25,50,100,250,500,1000].each do |lambda|
+      o.merge!(:smoothing=>get_sparam((lambda > 1)? "dirichlet" : "jm", lambda))
+      $i.crt_add_query_set("#{$query_prefix}_DQL_l#{lambda}", o.merge(:template=>:ql))
+      [:document, :field].each do |op_smt|
+        [:weight, :wsum].each do |op_comb|
+          o.merge!(:op_smt=>op_smt, :op_comb=>op_comb)
+          $i.crt_add_query_set("#{$query_prefix}_MFLM_#{op_smt}_#{op_comb}_l#{lambda}" , o.merge(:template=>:hlm, :hlm_weights=>[0.1]*($fields.size)))
+          $i.crt_add_query_set("#{$query_prefix}_PRM_#{op_smt}_#{op_comb}_l#{lambda}", o.merge(:template=>:prm))    
+        end
+      end
+    end
+  
+  ################################### Deprecated 
+  
   
   when 'gprms_mix'
     o.merge!(:engine=>:galago, :index_path=>$gindex_path, :smoothing=>'linear', :lambda=>0.1)
@@ -75,21 +102,21 @@ begin
       mpmix = $engine.get_mixture_mpset($queries, [:cug, :rbg], [0.5,weight])
       $i.crt_add_query_set("#{$query_prefix}_PRMS_rbg#{weight}", o.merge(:template=>:tew, :mps=>mpmix ))
     end
-    
+  
   # PRF Parameter Sweep
   when 'prms_prf'
-      qs = $i.crt_add_query_set("#{$query_prefix}_DQL" , :smoothing=>$sparam)
-      $i.crt_add_query_set("#{$query_prefix}_PRMS", o)
-      [3,5,7].each do |topk|
-        $rsflms = qs.qrys.map_with_index{|q,i|
-          puts "[get_res_flm] #{i}th query processed" if i % 20 == 1      
-          $engine.get_res_flm q.rs.docs[0..topk]} #if $o[:redo] || !$rsflms
-        [0.2,0.4,0.5,0.6,0.8].each do |weight|
-          mpmix = $engine.get_mixture_mpset($queries, [:cug, :rug], [0.5,weight])
-          $i.crt_add_query_set("#{$query_prefix}_PRMS_top#{topk}_rug#{weight}", o.merge(:template=>:tew, :mps=>mpmix ))
-        end
+    qs = $i.crt_add_query_set("#{$query_prefix}_DQL" , :smoothing=>$sparam)
+    $i.crt_add_query_set("#{$query_prefix}_PRMS", o)
+    [3,5,7].each do |topk|
+      $rsflms = qs.qrys.map_with_index{|q,i|
+        puts "[get_res_flm] #{i}th query processed" if i % 20 == 1      
+        $engine.get_res_flm q.rs.docs[0..topk]} #if $o[:redo] || !$rsflms
+      [0.2,0.4,0.5,0.6,0.8].each do |weight|
+        mpmix = $engine.get_mixture_mpset($queries, [:cug, :rug], [0.5,weight])
+        $i.crt_add_query_set("#{$query_prefix}_PRMS_top#{topk}_rug#{weight}", o.merge(:template=>:tew, :mps=>mpmix ))
       end
-      
+    end
+  
   # Adding Phrase (OW#1) to PRM-S
   when 'prms_bgram'
     $i.crt_add_query_set("#{$query_prefix}_PRMS", o)
@@ -97,7 +124,7 @@ begin
       $i.crt_add_query_set("#{$query_prefix}_PRMS_bgram_prm#{bg_weight}", o.merge(:template=>:prm, :bgram=>:prm, :bg_weight=>bg_weight ))
       $i.crt_add_query_set("#{$query_prefix}_PRMS_bgram_dm#{bg_weight}", o.merge(:template=>:prm, :bgram=>:dm, :bg_weight=>bg_weight))
     end
-    
+  
   # Vary Mapping Probabilities
   when 'prmso_topk'
     $i.crt_add_query_set("#{$query_prefix}_PRMS", o)
@@ -110,35 +137,6 @@ begin
       o = o.dup.merge(:flms=>$rlflms1, :mp_noise=>mp_noise, :mp_all_fields=>true)
       $i.crt_add_query_set("#{$query_prefix}_PRM-S_n#{mp_noise}", o)
     end
-  when 'mp_smooth'
-    [0.0,0.1,0.25,0.5,0.75,1.0].each do |mp_smooth|
-      o = o.dup.merge(:flms=>$rlflms1, :mp_smooth=>mp_smooth, :mp_all_fields=>true)
-      $i.crt_add_query_set("#{$query_prefix}_oPRM-S_s#{mp_smooth}", o)
-    end
-  when 'mp_unsmooth'
-    [0.0,0.1,0.25,0.5,0.75,1.0].each do |mp_unsmooth|
-      o = o.dup.merge(:flms=>$rlflms1, :mp_unsmooth=>mp_unsmooth, :mp_all_fields=>true)
-      $i.crt_add_query_set("#{$query_prefix}_oPRM-S_u#{mp_unsmooth}", o)
-    end
-    
-  # Getting Baseline Results
-  when 'simple' 
-    $i.crt_add_query_set("#{$query_prefix}_DQL" , :smoothing=>$sparam)
-    $i.crt_add_query_set("#{$query_prefix}_MFLM" ,:template=>:hlm, :smoothing=>$sparam_prm, :hlm_weights=>($hlm_weight || [0.1]*($fields.size)))
-    $i.crt_add_query_set("#{$query_prefix}_PRM-S", :template=>:prm, :smoothing=>$sparam_prm)
-    $i.crt_add_query_set("#{$query_prefix}_PRM-D", :template=>:prm_ql ,:smoothing=>$sparam_prm, :lambda=>$prmd_lambda)
-  
-  # Smoothing parameter sweep
-  when 'param_smt'
-    [0,0.1, 0.3, 0.5, 0.7, 0.8, 0.9].each do |lambda|
-      $i.crt_add_query_set("#{$query_prefix}_DQL_l#{lambda}" ,:smoothing=>get_sparam('jm',lambda))
-      $i.crt_add_query_set("#{$query_prefix}_PRM_l#{lambda}", :template=>:prm, :smoothing=>get_sparam('jm',lambda))    
-    end
-    [5,10,50,100,250,500,1500,2500].each do |mu|
-      $i.crt_add_query_set("#{$query_prefix}_DQL_mu#{mu}" ,:smoothing=>get_sparam('dirichlet',mu))
-      $i.crt_add_query_set("#{$query_prefix}_PRM_mu#{mu}", :template=>:prm, :smoothing=>get_sparam('dirichlet',mu))
-    end
-    
   # Indri vs. Galago comparison
   when 'engines_dql'
     $o[:lambda] ||= 0.1
