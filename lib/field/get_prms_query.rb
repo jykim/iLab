@@ -51,11 +51,11 @@ module PRMHelper
         qw = kstem(mp[0])
         mp[1].each_with_index do |e,j|
           ql = (1-sparam) * (dflm[e[0]][qw] || 0.0) + sparam * (clm[qw] || 0.0)
-          puts "         #{(ql * e[1]).round_at(6)}\t= #{ql.round_at(6)} * #{e[1].r3} <- #{qw}/#{e[0]}"
-          score_qw += ql * e[1]
+          puts "         #{(slog(ql) * e[1]).round_at(6)}\t= #{slog(ql).round_at(6)} * #{e[1].r3} <- #{qw}/#{e[0]}"
+          score_qw += slog(ql) * e[1]
         end
-        puts "#{Math.log10(score_qw).r3}"
-        score_doc += Math.log10(score_qw)
+        puts "#{score_qw.r3}"
+        score_doc += score_qw
       end
       puts "#{score_doc.r3} <- TotalScore(#{did})\n\n"
     end

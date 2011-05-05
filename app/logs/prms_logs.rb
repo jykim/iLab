@@ -121,7 +121,7 @@ $ scp qrel/qrel_qlm_train $SYH/work/prj/dih/imdb/qrels.train
 
 $o = {:topic_id=>'train', :verbose=>:mp,:redo=>true}; $method='prms_mix'; $col='trec'; $exp='perf'; $remark='0504'; eval IO.read('run_prms.rb')
 
-$o={:mode=>:mix_weights,:opt_for=>'cosine',:topic_id=>'test'}; $col='trec' ;$exp='optimize_rpm'; $method='golden'; $remark='0504'; eval IO.read('run_prms.rb')
+$o={:mode=>:mix_weights,:opt_for=>'cosine',:topic_id=>'test'}; $col='enron' ;$exp='optimize_rpm'; $method='golden'; $remark='0504'; eval IO.read('run_prms.rb')
 
 #$o = {:verbose=>:mp, :topic_id=>'test'}; $method='prms_bgram'; $col='trec'; $exp='perf'; $remark='0502'; eval IO.read('run_prms.rb')
 
@@ -135,6 +135,6 @@ $o = {:topic_id=>'train', :verbose=>:mp, :range=>[3,8,9]}; $method='prms_mix'; $
 
 # Document-level Debugging
 
-$engine.run_prm_query_for($queries[2], ['lists-026-11624171','lists-061-13977904'], :prms)
+$engine.run_prm_query_for(3, ['lists-026-11624171','lists-061-13977904'], :prms)
 
 
