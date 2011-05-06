@@ -161,7 +161,8 @@ def set_collection_param(col_id)
   case col_id
   when 'trec'
     $sparam = get_sparam('dirichlet',500)#get_sparam('jm',0.1)
-    $sparam_prm = get_sparam('dirichlet',10)#get_sparam('jm',0.1)
+    $sparam_prm = get_sparam('dirichlet',25)#get_sparam('jm',0.1)
+    $sparam_mflm = get_sparam('dirichlet',250)#get_sparam('jm',0.1)
     $mix_weights = [0.099, 1.0, 0.099, 0.01, 0.333]
     #[0.01, 1.0, 0.154, 0.189, 0.099]	#(cosim/test)
     #[0.099, 1.0, 0.099, 0.01, 0.333]	#(cosim/train)
@@ -179,7 +180,9 @@ def set_collection_param(col_id)
     $bm25_weight = [0.382, 0.382, 0.0, 0.382, 0.382, 0.0]
   when 'enron'
     $sparam = get_sparam('dirichlet',250)
-    $sparam_prm = get_sparam('dirichlet',10)
+    $sparam_prm = get_sparam('dirichlet',50)
+    $sparam_mflm = get_sparam('dirichlet',5)
+    
     $mix_weights = [0.154, 1.0, 0.01, 0.01, 0.299]
     
     $hlm_weight = [2.0, 0.652, 0.0, 0.0, 0.0]
