@@ -16,10 +16,10 @@ begin
   when 'prms_mix'
     $sparam = $sparam_prm = $o[:sparam] if $o[:sparam] ### INDRI SCORING TEST ###
     qs = $i.crt_add_query_set("#{$query_prefix}_DQL" , :smoothing=>$sparam)
-    topk = $o[:topk] || 5
-    $i.crt_add_query_set("#{$query_prefix}_PRMS", o.merge(:smoothing=>$sparam_prm))
     $i.crt_add_query_set("#{$query_prefix}_MFLM" ,:template=>:hlm, :smoothing=>$sparam_prm, :hlm_weights=>($hlm_weight || [0.1]*($fields.size)))
+    $i.crt_add_query_set("#{$query_prefix}_PRMS", o.merge(:smoothing=>$sparam_prm))
     
+    topk = $o[:topk] || 5
     $rsflms = qs.qrys.map_with_index{|q,i|
       puts "[get_res_flm] #{i}th query processed" if i % 20 == 1      
       $engine.get_res_flm q.rs.docs[0..topk]} if !$rsflms
