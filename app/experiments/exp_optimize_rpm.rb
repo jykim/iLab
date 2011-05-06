@@ -43,7 +43,7 @@ def evaluate_at(xvals , yvals , o={})
   when 'cosine'
     {'cosine'=>cosims.avg}    
   when 'map'
-    qs = $i.create_query_set(get_opt_qry_name(xvals , yvals, o), o.merge(:template=>:tew, :mps=>$mpmix, :skip_result_set=>true, :smoothing=>$sparam_prm ))
+    qs = $i.create_query_set(get_opt_qry_name(xvals , yvals, o), o.merge(:template=>:tew, :mps=>$mpmix, :skip_result_set=>true, :smoothing=>( $o[:sparam] || $sparam_prm) ))
     stats = qs.calc_stat($file_qrel)
     info ["KLD/COS/MAP", yvals, -klds.avg, cosims.avg, stats['all']['map']].flatten.inspect if $o[:verbose]
     stats['all']

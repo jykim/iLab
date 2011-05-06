@@ -163,10 +163,10 @@ def set_collection_param(col_id)
     $sparam = get_sparam('dirichlet',500)#get_sparam('jm',0.1)
     $sparam_prm = get_sparam('dirichlet',25)#get_sparam('jm',0.1)
     $sparam_mflm = get_sparam('dirichlet',250)#get_sparam('jm',0.1)
-    $mix_weights = [0.099, 1.0, 0.099, 0.01, 0.333]
+    $mix_weights = [0.388, 0.388, 0.388, 0.388, 0.677]
     #[0.01, 1.0, 0.154, 0.189, 0.099]	#(cosim/test)
     #[0.099, 1.0, 0.099, 0.01, 0.333]	#(cosim/train)
-    #[0.677, 1.0, 0.01, 0.065, 1.0]	#(map/train)
+    #[0.388, 0.388, 0.388, 0.388, 0.677]	#(map/train)
     #[0.01, 0.065, 1.0, 0.244, 1.0] #(map/test)
     
     #['sent','name','email','subject','to','text'] <= ['subject','text','to','sent','name','email']
@@ -183,7 +183,9 @@ def set_collection_param(col_id)
     $sparam_prm = get_sparam('dirichlet',50)
     $sparam_mflm = get_sparam('dirichlet',5)
     
-    $mix_weights = [0.154, 1.0, 0.01, 0.01, 0.299]
+    $mix_weights = [0.01, 0.388, 0.388, 0.477, 0.189]
+    #[0.01, 0.388, 0.388, 0.477, 0.189]	#(map/train)
+    #[0.154, 1.0, 0.01, 0.01, 0.299] #(cosim/train)???
     
     $hlm_weight = [2.0, 0.652, 0.0, 0.0, 0.0]
     $mflmf_weight = [1.0, 0.292, 1.0, 0.472, 0.0]
