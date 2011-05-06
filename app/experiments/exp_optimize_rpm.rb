@@ -23,7 +23,7 @@ end
 $qs = $i.crt_add_query_set("#{$query_prefix}_DQL" , :smoothing=>$sparam) if !$qs
 $rsflms = $qs.qrys.map_with_index{|q,i|
   puts "[get_res_flm] #{i}th query processed" if i % 20 == 1      
-  $engine.get_res_flm q.rs.docs[0..($o[:topk] || 5)]} if $o[:redo] || !$rsflms
+  $engine.get_res_flm q.rs.docs[0..($o[:topk] || 5)]} if !$rsflms
 $mprel = $engine.get_mpset_from_flms($queries, $rlflms1)
 
 def get_opt_qry_name(xvals , yvals, o)

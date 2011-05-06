@@ -21,7 +21,7 @@ begin
     
     $rsflms = qs.qrys.map_with_index{|q,i|
       puts "[get_res_flm] #{i}th query processed" if i % 20 == 1      
-      $engine.get_res_flm q.rs.docs[0..topk]} if $o[:redo] || !$rsflms
+      $engine.get_res_flm q.rs.docs[0..topk]} if !$rsflms
     $mpmix = $engine.get_mixture_mpset($queries, $mp_types, $mix_weights)
     $i.crt_add_query_set("#{$query_prefix}_PRMSmx5", o.merge(:template=>:tew, :mps=>$mpmix, :smoothing=>$sparam_prm ))
     $i.crt_add_query_set("#{$query_prefix}_PRMSrl", o.merge(:flms=>$rlflms1, :smoothing=>$sparam_prm))

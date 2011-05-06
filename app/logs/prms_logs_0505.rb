@@ -130,7 +130,7 @@ $o = {:topic_id=>'train', :verbose=>true}; $method='gprms_mix'; $col='trec'; $ex
 
 # Document-level Debugging
 
-$o = {:redo=>true,:topic_id=>'train', :verbose=>true}; $method='prms_mix'; $col='trec'; $exp='perf'; $remark='0505_test'; eval IO.read('run_prms.rb')
+$o = {:redo=>true,:topic_id=>'train', :verbose=>:mp}; $method='prms_mix'; $col='trec'; $exp='perf'; $remark='0506_ibugfix'; eval IO.read('run_prms.rb')
 
 $o = {:topic_id=>'test', :verbose=>:mp, :range=>[131,27,129,61,72,115,84,83,93,74]}; $method='prms_mix'; $col='trec'; $exp='document'; $remark='0504'; eval IO.read('run_prms.rb')
 
