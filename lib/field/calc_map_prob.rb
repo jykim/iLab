@@ -92,7 +92,7 @@ module CalcMapProb
   # Get Cosine similarity between two MP sets
   # 
   def mpset_calc( mpset1, mpset2 )
-    return error "Length not equal!" if mpset1.size != mpset2.size
+    return error "[mpset_calc] query number not equal!" if mpset1.size != mpset2.size
     mpset1.map_with_index do |mps,i| 
       begin
         mp_terms = mps.map{|e|e[0]}
@@ -104,7 +104,7 @@ module CalcMapProb
       rescue Exception => e
         error "[mpset_calc] error in #{i}th query : #{$queries[i]} \n#{mps.inspect}-#{mps2.inspect} #{e.inspect}"
         0
-      end      
+      end
     end
   end
   
