@@ -90,7 +90,7 @@ module PRMHelper
         qw = kstem(mp[0])
         mp[1].each_with_index do |e,j|
           bglm = (op_smt == :field) ? cflm[e[0]] : clm
-          ql = (1-sparam) * (dflm[e[0]][qw] || 0.0) + sparam * (bglm[qw] || 0.0)
+          ql = (1-sparam) * (dflm[e[0]][qw] || 0.0) + sparam * (bglm[qw] || 1 / (bglm.size * 2.0))
           puts "         #{(ql * e[1]).round_at(6)}\t= #{ql.round_at(6)} * #{e[1].r3} <- #{qw}/#{e[0]}"
           #puts "         #{(slog(ql) * e[1]).round_at(6)}\t= #{slog(ql).round_at(6)} * #{e[1].r3} <- #{qw}/#{e[0]}"
           (op_comb == :weight) ? score_qw += slog(ql) * e[1] : score_qw += ql * e[1]
