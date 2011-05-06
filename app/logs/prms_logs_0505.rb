@@ -117,23 +117,30 @@ $ scp qrel/qrel_qlm_train $SYH/work/prj/dih/imdb/qrels.train
 
 $o = {:redo=>true,:topic_id=>'test', :verbose=>true}; $method='param_smt'; $col='enron'; $exp='perf'; $remark='0504_param'; eval IO.read('run_prms.rb')
 
-$o = {:topic_id=>'test', :verbose=>:mp}; $method='prms_mix'; $col='enron'; $exp='perf'; $remark='0504_nowsum_smt'; eval IO.read('run_prms.rb')
 
 $o={:mode=>:mix_weights,:opt_for=>'map',:topic_id=>'test'}; $col='enron' ;$exp='optimize_rpm'; $method='golden'; $remark='0505'; eval IO.read('run_prms.rb')
+
+# Galago vs. Indri
 
 $o = {:topic_id=>'train', :verbose=>true}; $method='gprms_mix'; $col='trec'; $exp='perf'; $remark='0505'; eval IO.read('run_prms.rb')
 
 #$o = {:verbose=>:mp, :topic_id=>'test'}; $method='prms_bgram'; $col='trec'; $exp='perf'; $remark='0502'; eval IO.read('run_prms.rb')
 
-$o = {:verbose=>:mp, :topic_id=>'train', :redo=>true}; $method='prms_prf'; $col='enron'; $exp='perf'; $remark='0504'; eval IO.read('run_prms.rb')
+#$o = {:verbose=>:mp, :topic_id=>'train', :redo=>true}; $method='prms_prf'; $col='enron'; $exp='perf'; $remark='0504'; eval IO.read('run_prms.rb')
+
+# Document-level Debugging
+
+$o = {:redo=>true,:topic_id=>'train', :verbose=>true}; $method='prms_mix'; $col='trec'; $exp='perf'; $remark='0505_test'; eval IO.read('run_prms.rb')
 
 $o = {:topic_id=>'test', :verbose=>:mp, :range=>[131,27,129,61,72,115,84,83,93,74]}; $method='prms_mix'; $col='trec'; $exp='document'; $remark='0504'; eval IO.read('run_prms.rb')
 
-$o = {:topic_id=>'train', :verbose=>:mp, :range=>[3,8,9]}; $method='prms_mix'; $col='trec'; $exp='document'; $remark='0504'; eval IO.read('run_prms.rb')
+$o = {:topic_id=>'train', :verbose=>:mp, :range=>[8,9]}; $method='prms_mix'; $col='trec'; $exp='document'; $remark='0505'; eval IO.read('run_prms.rb')
 
-# Document-level Debugging
 
 $engine.run_prm_query_for(3, ['lists-026-11624171','lists-061-13977904'], :prms)
 
 
+$engine.debug_prm_query(8, ['lists-055-6139690','lists-036-9267146'], :prms, :op_comb=>:wsum)
 
+
+$engine.debug_prm_query(9, ['lists-023-6857404', 'lists-080-9157092'], :prms, :op_comb=>:wsum)

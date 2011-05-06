@@ -14,29 +14,31 @@ begin
   $mp_types = [:cug, :rug, :cbg, :prior, :rbg ]
   case $method
   when 'prms_mix'
+    #$sparam = $sparam_prm = get_sparam('jm',0.1) ### INDRI SCORING TEST ###
     qs = $i.crt_add_query_set("#{$query_prefix}_DQL" , :smoothing=>$sparam)
     topk = $o[:topk] || 5
-    $i.crt_add_query_set("#{$query_prefix}_PRMS", o)
+    $i.crt_add_query_set("#{$query_prefix}_PRMS", o.merge(:smoothing=>$sparam_prm))
     
     $rsflms = qs.qrys.map_with_index{|q,i|
       puts "[get_res_flm] #{i}th query processed" if i % 20 == 1      
       $engine.get_res_flm q.rs.docs[0..topk]} if $o[:redo] || !$rsflms
     $mpmix = $engine.get_mixture_mpset($queries, $mp_types, $mix_weights)
-    $i.crt_add_query_set("#{$query_prefix}_PRMSmx5", o.merge(:template=>:tew, :mps=>$mpmix ))
-    $i.crt_add_query_set("#{$query_prefix}_PRMSrl", o.merge(:flms=>$rlflms1))
+    $i.crt_add_query_set("#{$query_prefix}_PRMSmx5", o.merge(:template=>:tew, :mps=>$mpmix, :smoothing=>$sparam_prm ))
+    $i.crt_add_query_set("#{$query_prefix}_PRMSrl", o.merge(:flms=>$rlflms1, :smoothing=>$sparam_prm))
     
   when 'mp_oracle'
-    [0.0,0.1,0.25,0.5,0.75,1.0].each do |mp_smooth|
-      o = o.dup.merge(:flms=>$rlflms1, :mp_smooth=>mp_smooth, :mp_all_fields=>true)
-      $i.crt_add_query_set("#{$query_prefix}_oPRM-S_s#{mp_smooth}", o)
+    [:weight, :wsum].each do |op_comb|
+      [0.0,0.1,0.25,0.5,0.75,1.0].each do |mp_smooth|
+        o = o.dup.merge(:flms=>$rlflms1, :op_comb=>op_comb, :mp_unsmooth=>nil, :mp_smooth=>mp_smooth, :mp_all_fields=>true)
+        $i.crt_add_query_set("#{$query_prefix}_oPRMS_#{op_comb}_s#{mp_smooth}", o)
+      end
+      [0.0,0.1,0.25,0.5,0.75,1.0].each do |mp_unsmooth|
+        o = o.dup.merge(:flms=>$rlflms1, :op_comb=>op_comb, :mp_smooth=>nil, :mp_unsmooth=>mp_unsmooth, :mp_all_fields=>true)
+        $i.crt_add_query_set("#{$query_prefix}_oPRMS_#{op_comb}_u#{mp_unsmooth}", o)
+      end
     end
-    [0.0,0.1,0.25,0.5,0.75,1.0].each do |mp_unsmooth|
-      o = o.dup.merge(:flms=>$rlflms1, :mp_unsmooth=>mp_unsmooth, :mp_all_fields=>true)
-      $i.crt_add_query_set("#{$query_prefix}_oPRM-S_u#{mp_unsmooth}", o)
-    end
-    
   # Getting Baseline Results
-  when 'baseline' 
+  when 'baseline'
     $i.crt_add_query_set("#{$query_prefix}_DQL" , :smoothing=>$sparam)
     $i.crt_add_query_set("#{$query_prefix}_MFLM" ,:template=>:hlm, :smoothing=>$sparam_prm, :hlm_weights=>($hlm_weight || [0.1]*($fields.size)))
     $i.crt_add_query_set("#{$query_prefix}_PRM-S", :template=>:prm, :smoothing=>$sparam_prm)
