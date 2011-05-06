@@ -14,7 +14,7 @@ begin
   $mp_types = [:cug, :rug, :cbg, :prior, :rbg ]
   case $method
   when 'prms_mix'
-    #$sparam = $sparam_prm = get_sparam('jm',0.1) ### INDRI SCORING TEST ###
+    $sparam = $sparam_prm = $o[:sparam] if $o[:sparam] ### INDRI SCORING TEST ###
     qs = $i.crt_add_query_set("#{$query_prefix}_DQL" , :smoothing=>$sparam)
     topk = $o[:topk] || 5
     $i.crt_add_query_set("#{$query_prefix}_PRMS", o.merge(:smoothing=>$sparam_prm))

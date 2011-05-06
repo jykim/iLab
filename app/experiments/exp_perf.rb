@@ -42,7 +42,7 @@ if $o[:verbose]
   end
 
   $sig_test, $log_reg = {}, {}
-  if $i.check_R()
+  if false # $i.check_R()
     $i.qsa.map{|qs|qs.name}.to_comb.each_with_index do |qs,i|
       $log_reg[qs.join]  = $i.log_reg(qs[0], qs[1], $tbl_qry) if $o[:logreg]
       $sig_test[qs.join] = $i.sig_test(qs[0], qs[1])
