@@ -22,21 +22,22 @@ if $o[:verbose]
     #$tbl_qry.add_diff_col(6, 3, :title=>"Ora-PRMS")
 
     if $mpmix
-      $tbl_qry.add_diff_col(4, 3, :title=>"Mix-PRMS")
-      $tbl_qry.add_diff_col(5, 4, :title=>"Ora-Mix")
-    end
+      $tbl_qry.add_diff_col(4, 3, :title=>"PRMS-MFLM")
+      $tbl_qry.add_diff_col(5, 4, :title=>"Mix-PRMS")
+      $tbl_qry.add_diff_col(6, 5, :title=>"Ora-Mix")
 
-    # Aggregate KL-divergence (sum term-wise scores)
-    $tbl_qry.add_cols "D_KL", $engine.get_mpset_klds( $mprel, $mpcol ), :round_at=>3
-    $tbl_qry.add_cols "Cosine", $engine.get_mpset_cosine( $mprel, $mpcol ), :round_at=>3
-    $tbl_qry.add_cols "Prec@1", $engine.get_mpset_prec( $mprel, $mpcol ), :round_at=>3
-
-
-    if $mpmix
       $mpmix_h = $mpmix.map{|e|$engine.marr2hash e}
+
+      # Aggregate KL-divergence (sum term-wise scores)
+      $tbl_qry.add_cols "D_KL", $engine.get_mpset_klds( $mprel, $mpcol ), :round_at=>3
       $tbl_qry.add_cols "D_KL(mix)", $engine.get_mpset_klds( $mprel, $mpmix_h ), :round_at=>3
+      $tbl_qry.add_diff_col(11, 10, :title=>"DiffDKL")
+      $tbl_qry.add_cols "Cosine", $engine.get_mpset_cosine( $mprel, $mpcol ), :round_at=>3
       $tbl_qry.add_cols "Cosine(mix)", $engine.get_mpset_cosine( $mprel, $mpmix_h ), :round_at=>3
+      $tbl_qry.add_diff_col(14, 13, :title=>"DiffCOS")
+      $tbl_qry.add_cols "Prec@1", $engine.get_mpset_prec( $mprel, $mpcol ), :round_at=>3
       $tbl_qry.add_cols "Prec@1(mix)", $engine.get_mpset_prec( $mprel, $mpmix_h ), :round_at=>3
+      $tbl_qry.add_diff_col(17, 16, :title=>"DiffPrec")
     end
     puts "[exp_perf] table values calculated..."
   end
