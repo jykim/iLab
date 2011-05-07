@@ -162,10 +162,10 @@ def init_collection(col)
     case $o[:topic_id]
     when 'test'
       $offset, $count = 1, 40
-      $file_topic ,$file_qrel = 'topics.001-040' , 'qrels.001-040'
+      $file_topic ,$file_qrel = 'topics.01-40' , 'qrels.01-40'
     when 'train'
       $offset, $count = 41,20
-      $file_topic ,$file_qrel = 'topics.041-060' , 'qrels.041-060'
+      $file_topic ,$file_qrel = 'topics.41-60' , 'qrels.41-60'
     end
     $title_field = 'resumetitle'
   end#case
