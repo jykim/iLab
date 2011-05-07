@@ -137,19 +137,37 @@ def init_collection(col)
   when 'imdb'
     $index_path = "#$exp_root/imdb/#{$o[:index_path] || 'index_plot'}"
     $i.config_path( :work_path=>$exp_root+'/imdb' ,:index_path=>$index_path )
-    #$engine.build_knownitem_topics($file_topic, $file_qrel, $o.dup) if $o[:topic_type] && !File.exist?(to_path($file_topic))
-    $ptn_qry_title = ($o[:topic_id] =~ /dbir/)? /\<title\> (.*)/ : /\<title\> (.*) \<\/title\>/
-    $fields = ['title','year','releasedate','language','genre', 'country','location','colorinfo','actors','team','plot']
+    $ptn_qry_title = ($o[:topic_id] =~ /^d/)? /\<title\> (.*)/ : /\<title\> (.*) \<\/title\>/
+    $fields = ['title','year','releasedate','language','genre', 'country','location','colorinfo','actors','team'] #,'plot'
     case $o[:topic_id]
-    when 'test'
+    when 'qtest'
       $offset, $count = 1, 1000
       $file_topic ,$file_qrel = 'queries.test' , 'qrels.test'
-    when 'train'
+    when 'qtrain'
       $offset, $count = 1, 100
       $file_topic ,$file_qrel = 'queries.train' , 'qrels.train'
+    when 'dtest'
+      $offset, $count = 1, 40
+      $file_topic ,$file_qrel = 'topics.001-040' , 'qrels.001-040'
+    when 'dtrain'
+      $offset, $count = 41,10
+      $file_topic ,$file_qrel = 'topics.041-050' , 'qrels.041-050'
     end
-    #$hlm_weight =  [1.9, 0.3, 0.2, 0.3, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1]
     $title_field = 'title'
+  when 'monster'
+    $index_path = "#$exp_root/monster/#{$o[:index_path] || 'index'}"
+    $i.config_path( :work_path=>$exp_root+'/monster' ,:index_path=>$index_path )
+    $ptn_qry_title = /\<title\> (.*)/
+    $fields = ['resumetitle','summary','desiredjobtitle','schoolrecord','experiencerecord','location','skill','additionalinfo'] 
+    case $o[:topic_id]
+    when 'dtest'
+      $offset, $count = 1, 40
+      $file_topic ,$file_qrel = 'topics.001-040' , 'qrels.001-040'
+    when 'dtrain'
+      $offset, $count = 41,20
+      $file_topic ,$file_qrel = 'topics.041-060' , 'qrels.041-060'
+    end
+    $title_field = 'resumetitle'
   end#case
   $engine.init_kstem($file_topic)
   $rlflms1 = $engine.get_rel_flms($file_qrel).map{|e|e[1]} if !$rlflms1
@@ -169,10 +187,8 @@ def set_collection_param(col_id)
     #[0.099, 1.0, 0.099, 0.01, 0.333]	#(cosim/train)
     #[0.388, 0.01, 1.0, 0.388, 1.0]	#(map/train)
     #[0.01, 0.065, 1.0, 0.244, 1.0] #(map/test)
-    [0.388, 0.01, 1.0, 0.388, 1.0]	
     #['sent','name','email','subject','to','text'] <= ['subject','text','to','sent','name','email']
     $hlm_weight = [0.0,0.0,0.0,2.0,0.0,0.652].to_p #[2.0, 0.652, 0.0, 0.0, 0.0, 0.0]#[0.1,0.1,0.5,0.1,0.3];
-    $mflmf_weight = [1.0, 0.292, 1.0, 0.472, 0.0, 0.382]
     $mus = [2.631, 6.386, 18.034, 1.626, 3.947, 6.386]#[3.44418499304202, 4.25724680243181, 13.2742407237162, 20.1626111634632, 3.44418499304202, 0.0]
     $prmd_lambda = 0.7
     $bfs = [0.0, 0.549, 0.0, 0.0, 0.188, 0.0]#[0.0, 0.541019645878629, 0.0, 0.0, 0.291796053982211, 0.0]
@@ -189,13 +205,7 @@ def set_collection_param(col_id)
     #[0.154, 1.0, 0.01, 0.01, 0.299] #(cosim/train)???
     
     $hlm_weight = [0.674, 0.562, 0.562, 0.146, 0.472]
-    $mflmf_weight = [1.0, 0.292, 1.0, 0.472, 0.0]
-    $mus = [2.631, 6.386, 18.034, 1.626, 3.947]
     $prmd_lambda = 0.7
-    $bfs = [0.0, 0.549, 0.0, 0.0, 0.188]
-    $bm25f_weight = [1.0, 0.292, 0.18, 0.18, 1.0]
-    $bs = [0.0, 0.138, 0.382, 0.0, 0.382]
-    $bm25_weight = [0.382, 0.382, 0.0, 0.382, 0.382]
   when 'imdb'
     $sparam = get_sparam('dirichlet',1500)
     $sparam_prm = get_sparam('jm',0.7)
