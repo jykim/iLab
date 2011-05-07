@@ -10,11 +10,11 @@ set_collection_param($col_id)
 #def ILabLoader.build(ilab)
 begin
   puts "METHOD : #$method"
+  $sparam = $sparam_prm = $sparam_mflm = $o[:sparam] if $o[:sparam] ### INDRI SCORING TEST ###
   o = $o.dup.merge(:template=>:prm, :smoothing=>$sparam_prm)
   $mp_types = [:cug, :rug, :cbg, :prior, :rbg ]
   case $method
   when 'prms_mix'
-    $sparam = $sparam_prm = $sparam_mflm = $o[:sparam] if $o[:sparam] ### INDRI SCORING TEST ###
     qs = $i.crt_add_query_set("#{$query_prefix}_DQL" , :smoothing=>$sparam)
     $i.crt_add_query_set("#{$query_prefix}_MFLM" ,:template=>:hlm, :smoothing=>$sparam_mflm, :hlm_weights=>($hlm_weight || [0.1]*($fields.size)))
     $i.crt_add_query_set("#{$query_prefix}_PRMS", o.merge(:smoothing=>$sparam_prm))
@@ -30,11 +30,11 @@ begin
   when 'mp_oracle'
     [:wsum].each do |op_comb|
       [0.0,0.1,0.25,0.5,0.75,1.0].each do |mp_smooth|
-        o = o.dup.merge(:flms=>$rlflms1, :op_comb=>op_comb, :mp_unsmooth=>nil, :mp_smooth=>mp_smooth, :mp_all_fields=>true)
+        o = o.dup.merge(:flms=>$rlflms1, :op_comb=>op_comb, :mp_unsmooth=>nil, :mp_smooth=>mp_smooth, :mp_all_fields=>true, :smoothing=>$sparam_prm)
         $i.crt_add_query_set("#{$query_prefix}_oPRMS_#{op_comb}_s#{mp_smooth}", o)
       end
       [0.0,0.1,0.25,0.5,0.75,1.0].each do |mp_unsmooth|
-        o = o.dup.merge(:flms=>$rlflms1, :op_comb=>op_comb, :mp_smooth=>nil, :mp_unsmooth=>mp_unsmooth, :mp_all_fields=>true)
+        o = o.dup.merge(:flms=>$rlflms1, :op_comb=>op_comb, :mp_smooth=>nil, :mp_unsmooth=>mp_unsmooth, :mp_all_fields=>true, :smoothing=>$sparam_prm)
         $i.crt_add_query_set("#{$query_prefix}_oPRMS_#{op_comb}_u#{mp_unsmooth}", o)
       end
     end
