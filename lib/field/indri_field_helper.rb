@@ -102,11 +102,31 @@ module IndriFieldHelper
     end
   end
   
-  # Get the list and LM of relevant docs from TREC QRel
   def get_rel_flms( file_qrel, n = 1 )
     IO.read( to_path(file_qrel) ).split("\n").map do |l|
       get_doc_field_lm(l.split(" ")[2], n)
     end
+  end
+  
+  
+  # Get the list and LM of relevant docs from TREC QRel
+  def get_rel_flms_multi( file_qrel, n = 1 )
+    results = IO.read( to_path(file_qrel) ).split("\n").map do |l|
+      [l.split(" ")[0].to_i, get_doc_field_lm(l.split(" ")[2], 1)[1]]
+    end
+    results = results.group_by{|e|e[0]}.map_hash do |qid,flms|
+      rflm = if flms.size == 1
+        flms[0][1]
+      else
+        rflm_t = flms[0][1]
+        flms[1..-1].each do |flm|
+          rflm_t = rflm_t.map_hash{|k,v| [k, v.sum_prob(flm[1][v] || {})]}
+        end
+        rflm_t
+      end#if
+      [qid, rflm]
+    end#group_by
+    results.sort_by{|k,v|k}.map{|e|e[1]}
   end
   
   # Get the list and term vectors of relevant docs from TREC QRel

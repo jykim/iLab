@@ -170,7 +170,7 @@ def init_collection(col)
     $title_field = 'resumetitle'
   end#case
   $engine.init_kstem($file_topic)
-  $rlflms1 = $engine.get_rel_flms($file_qrel).map{|e|e[1]} if !$rlflms1
+  $rlflms1 = $engine.get_rel_flms_multi($file_qrel)if !$rlflms1
   $queries =  $i.parse_topic_file($file_topic, $ptn_qry_title)
 end
 
