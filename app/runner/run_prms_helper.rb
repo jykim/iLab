@@ -164,10 +164,10 @@ def set_collection_param(col_id)
     $sparam_prm = get_sparam('dirichlet',25)#get_sparam('jm',0.1)
     $sparam_mflm = get_sparam('dirichlet',250)#get_sparam('jm',0.1)
     
-    $mix_weights = [0.388, 0.01, 1.0, 0.388, 1.0]	#[0.388, 0.388, 0.388, 0.388, 0.677]
+    $mix_weights = [0.388, 0.01, 1.0, 0.388, 1.0]
     #[0.01, 1.0, 0.154, 0.189, 0.099]	#(cosim/test)
     #[0.099, 1.0, 0.099, 0.01, 0.333]	#(cosim/train)
-    #[0.388, 0.388, 0.388, 0.388, 0.677]	#(map/train)
+    #[0.388, 0.01, 1.0, 0.388, 1.0]	#(map/train)
     #[0.01, 0.065, 1.0, 0.244, 1.0] #(map/test)
     [0.388, 0.01, 1.0, 0.388, 1.0]	
     #['sent','name','email','subject','to','text'] <= ['subject','text','to','sent','name','email']
