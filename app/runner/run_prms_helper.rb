@@ -135,7 +135,7 @@ def init_collection(col)
     $title_field = "SUBJECT"
     
   when 'imdb'
-    $index_path = "#$exp_root/imdb/#{$o[:index_path] || 'index_plot'}"
+    $index_path = "#$exp_root/imdb/#{$o[:index_path] || 'index_no_plot'}"
     $i.config_path( :work_path=>$exp_root+'/imdb' ,:index_path=>$index_path )
     $ptn_qry_title = ($o[:topic_id] =~ /^d/)? /\<title\> (.*)/ : /\<title\> (.*) \<\/title\>/
     $fields = ['title','year','releasedate','language','genre', 'country','location','colorinfo','actors','team'] #,'plot'
