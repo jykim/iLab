@@ -28,7 +28,7 @@ begin
     $i.crt_add_query_set("#{$query_prefix}_PRMSrl", o.merge(:flms=>$rlflms1, :smoothing=>$sparam_prm))
     
   when 'mp_oracle'
-    [:weight, :wsum].each do |op_comb|
+    [:wsum].each do |op_comb|
       [0.0,0.1,0.25,0.5,0.75,1.0].each do |mp_smooth|
         o = o.dup.merge(:flms=>$rlflms1, :op_comb=>op_comb, :mp_unsmooth=>nil, :mp_smooth=>mp_smooth, :mp_all_fields=>true)
         $i.crt_add_query_set("#{$query_prefix}_oPRMS_#{op_comb}_s#{mp_smooth}", o)
@@ -50,10 +50,10 @@ begin
     [0.1, 0.3, 0.5, 0.7, 0.8, 0.9, 5,10,25,50,100,250,500,1000].each do |lambda|
       o.merge!(:smoothing=>get_sparam((lambda > 1)? "dirichlet" : "jm", lambda))
       $i.crt_add_query_set("#{$query_prefix}_DQL_l#{lambda}", o.merge(:template=>:ql))
-      [:document, :field].each do |op_smt|
-        [:weight, :wsum].each do |op_comb|
+      [:field].each do |op_smt|
+        [:wsum].each do |op_comb|
           o.merge!(:op_smt=>op_smt, :op_comb=>op_comb)
-          $i.crt_add_query_set("#{$query_prefix}_MFLM_#{op_smt}_#{op_comb}_l#{lambda}" , o.merge(:template=>:hlm, :hlm_weights=>[0.1]*($fields.size)))
+          $i.crt_add_query_set("#{$query_prefix}_MFLM_#{op_smt}_#{op_comb}_l#{lambda}" , o.merge(:template=>:hlm, :hlm_weights=>($hlm_weight || [0.1]*($fields.size))))
           $i.crt_add_query_set("#{$query_prefix}_PRM_#{op_smt}_#{op_comb}_l#{lambda}", o.merge(:template=>:prm))    
         end
       end
