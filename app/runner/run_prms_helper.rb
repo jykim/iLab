@@ -160,10 +160,10 @@ def init_collection(col)
     $ptn_qry_title = /\<title\> (.*)/
     $fields = ['resumetitle','summary','desiredjobtitle','schoolrecord','experiencerecord','location','skill','additionalinfo'] 
     case $o[:topic_id]
-    when 'dtest'
+    when 'test'
       $offset, $count = 1, 40
       $file_topic ,$file_qrel = 'topics.001-040' , 'qrels.001-040'
-    when 'dtrain'
+    when 'train'
       $offset, $count = 41,20
       $file_topic ,$file_qrel = 'topics.041-060' , 'qrels.041-060'
     end
@@ -207,6 +207,9 @@ def set_collection_param(col_id)
     $hlm_weight = [0.674, 0.562, 0.562, 0.146, 0.472]
     $prmd_lambda = 0.7
   when 'imdb'
+    $sparam = get_sparam('dirichlet',1500)
+    $sparam_prm = get_sparam('jm',0.7)
+  when 'monster'
     $sparam = get_sparam('dirichlet',1500)
     $sparam_prm = get_sparam('jm',0.7)
   end
