@@ -209,14 +209,16 @@ def set_collection_param(col_id)
     $prmd_lambda = 0.7
 
   when 'imdb'
-    $sparam = get_sparam('dirichlet',1500)
-    $sparam_prm = get_sparam('jm',0.7)
+    $sparam = get_sparam('dirichlet',1000)
+    $sparam_prm = get_sparam('dirichlet',250)
+    $sparam_mflm = get_sparam('dirichlet',50)
     $mix_weights = [0.388, 0.01, 1.0, 0.388, 1.0]
     $hlm_weight = [1.9, 1.8, 0.1, 0.9, 0.9, 0.5, 0.5, 0.5, 0.6, 0.4]
 
   when 'monster'
-    $sparam = get_sparam('dirichlet',1500)
-    $sparam_prm = get_sparam('jm',0.7)
+    $sparam = get_sparam('jm',0.5)
+    $sparam_prm = get_sparam('jm',0.5)
+    $sparam_mflm = get_sparam('jm',0.5)
     $hlm_weight = [1.236, 1.236, 1.236, 0.0, 1.055, 0.790, 0.901, 2.0]
   end
 end
