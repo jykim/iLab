@@ -4,6 +4,7 @@ $o = {:redo=>true,:topic_id=>'train', :verbose=>true}; $method='param_sweep'; $c
 
 $o = {:redo=>true,:topic_id=>'train', :verbose=>true}; $method='param_sweep'; $col='monster'; $exp='perf'; $remark='0507'; eval IO.read('run_prms.rb')
 
+$o = {:redo=>true,:topic_id=>'dtrain', :verbose=>true}; $method='param_sweep'; $col='imdb'; $exp='perf'; $remark='0507'; eval IO.read('run_prms.rb')
 
 # Weight Training
 
@@ -13,7 +14,7 @@ $o={:mode=>:mix_weights,:opt_for=>'map',:topic_id=>'test', :sparam=>get_sparam('
 
 # Evaluate Oracle
 
-$o = {:redo=>true,:topic_id=>'test', :verbose=>true}; $method='mp_oracle'; $col='trec'; $exp='perf'; $remark='0506'; eval IO.read('run_prms.rb')
+$o = {:redo=>true,:topic_id=>'test', :sparam=>get_sparam('jm',0.1), :verbose=>true}; $method='mp_oracle'; $col='trec'; $exp='perf'; $remark='0507_jm'; eval IO.read('run_prms.rb')
 
 # Get Results
 
