@@ -135,7 +135,7 @@ def init_collection(col)
     $title_field = "SUBJECT"
     
   when 'imdb'
-    $index_path = "#$exp_root/imdb/#{$o[:index_path] || 'index_no_plot'}"
+    $index_path = "#$exp_root/imdb/#{$o[:index_path] || 'index_noplot'}"
     $i.config_path( :work_path=>$exp_root+'/imdb' ,:index_path=>$index_path )
     $ptn_qry_title = ($o[:topic_id] =~ /^d/)? /\<title\> (.*)/ : /\<title\> (.*) \<\/title\>/
     $fields = ['title','year','releasedate','language','genre', 'country','location','colorinfo','actors','team'] #,'plot'
@@ -195,10 +195,11 @@ def set_collection_param(col_id)
     $bm25f_weight = [1.0, 0.292, 0.18, 0.18, 1.0, 0.0]
     $bs = [0.0, 0.138, 0.382, 0.0, 0.382, 0.0]
     $bm25_weight = [0.382, 0.382, 0.0, 0.382, 0.382, 0.0]
+
   when 'enron'
     $sparam = get_sparam('dirichlet',250)
     $sparam_prm = get_sparam('dirichlet',50)
-    $sparam_mflm = get_sparam('dirichlet',5)
+    $sparam_mflm = get_sparam('dirichlet',50)
     
     $mix_weights = [0.01, 0.388, 0.388, 0.477, 0.189]
     #[0.01, 0.388, 0.388, 0.477, 0.189]	#(map/train)
@@ -206,11 +207,16 @@ def set_collection_param(col_id)
     
     $hlm_weight = [0.674, 0.562, 0.562, 0.146, 0.472]
     $prmd_lambda = 0.7
+
   when 'imdb'
     $sparam = get_sparam('dirichlet',1500)
     $sparam_prm = get_sparam('jm',0.7)
+    $mix_weights = [0.388, 0.01, 1.0, 0.388, 1.0]
+    $hlm_weight = [1.9, 1.8, 0.1, 0.9, 0.9, 0.5, 0.5, 0.5, 0.6, 0.4]
+
   when 'monster'
     $sparam = get_sparam('dirichlet',1500)
     $sparam_prm = get_sparam('jm',0.7)
+    $hlm_weight = [1.236, 1.236, 1.236, 0.0, 1.055, 0.790, 0.901, 2.0]
   end
 end
