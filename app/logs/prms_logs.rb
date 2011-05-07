@@ -12,7 +12,7 @@ $o={:mode=>:hlm_weights,:topic_id=>'train'}; $col='enron' ;$exp='optimize_prm'; 
 
 $o={:mode=>:mix_weights,:opt_for=>'map',:topic_id=>'test', :sparam=>get_sparam('jm',0.1)}; $col='trec' ;$exp='optimize_rpm'; $method='golden'; $remark='0506'; eval IO.read('run_prms.rb')
 
-$o={:mode=>:mix_weights,:opt_for=>'map',:topic_id=>'train'}; $col='imdb' ;$exp='optimize_rpm'; $method='golden'; $remark='0507'; eval IO.read('run_prms.rb')
+$o={:mode=>:mix_weights, :opt_for=>'map', :topic_id=>'dtrain'}; $col='imdb' ;$exp='optimize_rpm'; $method='golden'; $remark='0507'; eval IO.read('run_prms.rb')
 
 
 # Evaluate Oracle
@@ -36,5 +36,5 @@ $o = {:topic_id=>'test', :verbose=>:mp, :sparam=>get_sparam('jm',0.1), :redo=>tr
 
 # IMDB
 
-$o = {:topic_id=>'dtrain', :verbose=>:mp, :redo=>true}; $method='prms_mix'; $col='imdb'; $exp='perf'; $remark='0507'; eval IO.read('run_prms.rb')
+$o = {:topic_id=>'dtest', :verbose=>:mp, :redo=>true}; $method='prms_mix'; $col='imdb'; $exp='perf'; $remark='0507'; eval IO.read('run_prms.rb')
 
