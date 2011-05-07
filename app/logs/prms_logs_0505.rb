@@ -122,7 +122,7 @@ $o={:mode=>:mix_weights,:opt_for=>'map',:topic_id=>'test'}; $col='enron' ;$exp='
 
 # Galago vs. Indri
 
-$o = {:topic_id=>'train', :verbose=>true}; $method='gprms_mix'; $col='trec'; $exp='perf'; $remark='0505'; eval IO.read('run_prms.rb')
+$o = {:topic_id=>'train', :verbose=>true, :redo=>true}; $method='gprms_mix'; $col='trec'; $exp='perf'; $remark='0505'; eval IO.read('run_prms.rb')
 
 #$o = {:verbose=>:mp, :topic_id=>'test'}; $method='prms_bgram'; $col='trec'; $exp='perf'; $remark='0502'; eval IO.read('run_prms.rb')
 
