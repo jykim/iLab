@@ -29,7 +29,7 @@ $o={:mode=>:mix_weights,:opt_for=>'map',:redo=>true, :topic_id=>'train', :sparam
 
 # Enron
 
-$o={:mode=>:mix_weights,:opt_for=>'map',:redo=>true, :topic_id=>'train', :sparam=>get_sparam('jm',0.1)}; $col='enron' ;$exp='optimize_rpm'; $method='golden'; $remark='0506_jm'; eval IO.read('run_prms.rb')
+$o={:mode=>:mix_weights,:opt_for=>'map',:redo=>true, :topic_id=>'qtrain'}; $col='imdb' ;$exp='optimize_rpm'; $method='golden'; $remark='0507'; eval IO.read('run_prms.rb')
 
 
 $o = {:topic_id=>'test', :verbose=>:mp, :sparam=>get_sparam('jm',0.1), :redo=>true}; $method='prms_mix'; $col='enron'; $exp='perf'; $remark='0506_jm_optmap'; eval IO.read('run_prms.rb')
@@ -38,3 +38,5 @@ $o = {:topic_id=>'test', :verbose=>:mp, :sparam=>get_sparam('jm',0.1), :redo=>tr
 
 $o = {:topic_id=>'dtest', :verbose=>:mp, :redo=>true}; $method='prms_mix'; $col='imdb'; $exp='perf'; $remark='0507'; eval IO.read('run_prms.rb')
 
+
+$o = {:topic_id=>'test', :verbose=>:mp, :redo=>true}; $method='prms_mix'; $col='monster'; $exp='perf'; $remark='0507'; eval IO.read('run_prms.rb')
