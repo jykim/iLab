@@ -106,7 +106,9 @@ $o = {:verbose=>:mp, :topic_id=>'train'}; $method='prms_plus1'; $col='imdb'; $ex
 
 # Removing bad queries (4/29)
 
-qs.qrys.find_all{|q| p [q.text,q.qid, (q.rs.docs)? q.rs.docs.size : q.rs.docs] }
+qs.qrys.find_all{|q| !q.rs.docs }.each{|q| p [q.text,q.qid, (q.rs.docs)? q.rs.docs.size : q.rs.docs]}
+
+qs.qrys.find_all{|q| !q.rs.docs }.each{|q| p [q.text,q.qid, (q.rs.docs)? q.rs.docs.size : q.rs.docs]}
 
 $ scp topic/topic_qlm_train $SYH/work/prj/dih/imdb/queries.train
 $ scp qrel/qrel_qlm_train $SYH/work/prj/dih/imdb/qrels.train
