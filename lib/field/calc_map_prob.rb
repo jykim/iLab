@@ -50,7 +50,7 @@ module CalcMapProb
         #debugger
         if types[j] == :prior
           mp_flms << [[qw, fields.map_with_index{|f,k|[ f, flm[k] ]}]]
-        elsif types[j] == :cug || types[j] == :rug
+        elsif types[j] == :cug || types[j] == :rug || types[j] == :ora
           mp_flms << get_map_prob(qw, :flm => flm)
         elsif types[j] == :cbg || types[j] == :rbg
           mp_flms << get_map_prob([(prev_qw || ""),qw].join(" "), :flm => flm, :bgram=>true) #if prev_qw
@@ -83,6 +83,7 @@ module CalcMapProb
         when :cbg   : flms << get_col_freq(:bgram=>true)
         when :rug   : flms << $rsflms[qno][1].map_hash{|k,v|[k,v.to_p]}
         when :rbg   : flms << $rsflms[qno][2].map_hash{|k,v|[k,v.to_p]}
+        when :ora   : flms << $rlflms1[qno].map_hash{|k,v|[k,v.to_p]}
         end
       end
       get_mixture_map_prob(q, flms, types , weights, o )

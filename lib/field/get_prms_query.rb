@@ -32,7 +32,7 @@ module PRMHelper
 
   #Get Term-wise Element Weighting Query given Mapping Prob.
   # mps = [[qw1, [f1, prob1], [...]], [qw2, ]]
-  def get_tew_query(mps, o)
+  def get_tew_query(mps, o = {})
     #debugger
     #info "[get_tew_query] #{o.inspect}"
     
@@ -64,13 +64,23 @@ module PRMHelper
     end
   end
   
+  def get_mp_tbl(mps)
+    mps.map{|mp| ["",mp[0],mp[1].map{|e|"#{e[0][0..1]}:#{e[1].r3}"},""].flatten.join("|") }.join("\n")
+  end
+  
   # Run PRM-S query given query & docids
-  def debug_prm_query(qno, docids, retmodel, o = {})
+  def debug_prm_query(qno, retmodel, docids = nil, o = {})
     case retmodel
+    when :mflm
+      types, weights = [:prior],[1]
     when :prms
       types, weights = [:cug],[1]
+    when :ora
+      types, weights = [:ora],[1]
     when :mix
       types, weights = $mp_types, $mix_weights
+    else
+      return nil
     end
     
     op_comb = o[:op_comb] || :wsum
@@ -79,6 +89,10 @@ module PRMHelper
     
     qidx = qno - $offset
     mps = get_mixture_mpset([$queries[qidx]], types, weights, :qno=>qidx)[0]
+    
+    return get_tew_query(mps) if !docids
+    #return get_mp_tbl(mps) if !docids
+    
     clm = get_col_freq(:whole_doc=>true,:prob=>true)
     cflm = get_col_freq(:prob=>true)
     
