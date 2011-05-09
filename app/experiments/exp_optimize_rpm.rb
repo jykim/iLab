@@ -21,7 +21,7 @@ when :mix_weights
 end
 
 $qs = $i.crt_add_query_set("#{$query_prefix}_DQL" , :smoothing=>$sparam) if !$qs
-$rsflms = get_rsflms() if !$rsflms
+$rsflms = get_rsflms($qs) if !$rsflms
 $mprel = $engine.get_mpset_from_flms($queries, $rlflms1)
 
 def get_opt_qry_name(xvals , yvals, o)

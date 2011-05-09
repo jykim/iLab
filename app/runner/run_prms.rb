@@ -6,7 +6,7 @@ init_env()
 init_collection($col)
 set_collection_param($col_id)
 
-def get_rsflms()
+def get_rsflms(qs)
   topk = $o[:topk] || 5
   qs.qrys.map_with_index{|q,i|
     puts "[get_res_flm] #{i}th query processed" if i % 20 == 1      
@@ -26,7 +26,7 @@ begin
     $i.crt_add_query_set("#{$query_prefix}_MFLM" ,:template=>:hlm, :smoothing=>$sparam_mflm, :hlm_weights=>($hlm_weight || [0.1]*($fields.size)))
     $i.crt_add_query_set("#{$query_prefix}_PRMS", o.merge(:smoothing=>$sparam_prm))
     
-    $rsflms = get_rsflms() if !$rsflms
+    $rsflms = get_rsflms(qs) if !$rsflms
     $mpmix = $engine.get_mixture_mpset($queries, $mp_types, $mix_weights)
     $i.crt_add_query_set("#{$query_prefix}_PRMSmx5", o.merge(:template=>:tew, :mps=>$mpmix, :smoothing=>$sparam_prm ))
     $i.crt_add_query_set("#{$query_prefix}_PRMSrl", o.merge(:flms=>$rlflms1, :smoothing=>$sparam_prm))
@@ -81,9 +81,7 @@ begin
     topk = $o[:topk] || 5
     $i.crt_add_query_set("#{$query_prefix}_gPRMS", o)
     
-    $rsflms = qs.qrys.map_with_index{|q,i|
-      puts "[get_res_flm] #{i}th query processed" if i % 20 == 1      
-      $engine.get_res_flm q.rs.docs[0..topk]} if $o[:redo] || !$rsflms
+    $rsflms = get_rsflms(qs) !$rsflms
     $mpmix = $engine.get_mixture_mpset($queries, $mp_types, $mix_weights)
     $i.crt_add_query_set("#{$query_prefix}_gPRMSmx5", o.merge(:template=>:tew, :mps=>$mpmix ))
     $i.crt_add_query_set("#{$query_prefix}_gPRMSrl", o.merge(:flms=>$rlflms1))
