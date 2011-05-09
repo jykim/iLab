@@ -27,17 +27,22 @@ if $o[:verbose]
       $tbl_qry.add_diff_col(6, 5, :title=>"Ora-Mix")
 
       $mpmix_h = $mpmix.map{|e|$engine.marr2hash e}
+      $mp_mflm = $engine.get_mixture_mpset($queries, [:prior], [1.0]).
+        map{|e|$engine.marr2hash e}
 
       # Aggregate KL-divergence (sum term-wise scores)
-      $tbl_qry.add_cols "D_KL", $engine.get_mpset_klds( $mprel, $mpcol ), :round_at=>3
-      $tbl_qry.add_cols "D_KL(mix)", $engine.get_mpset_klds( $mprel, $mpmix_h ), :round_at=>3
-      $tbl_qry.add_diff_col(11, 10, :title=>"DiffDKL")
-      $tbl_qry.add_cols "Cosine", $engine.get_mpset_cosine( $mprel, $mpcol ), :round_at=>3
-      $tbl_qry.add_cols "Cosine(mix)", $engine.get_mpset_cosine( $mprel, $mpmix_h ), :round_at=>3
-      $tbl_qry.add_diff_col(14, 13, :title=>"DiffCOS")
-      $tbl_qry.add_cols "Prec@1", $engine.get_mpset_prec( $mprel, $mpcol ), :round_at=>3
-      $tbl_qry.add_cols "Prec@1(mix)", $engine.get_mpset_prec( $mprel, $mpmix_h ), :round_at=>3
-      $tbl_qry.add_diff_col(17, 16, :title=>"DiffPrec")
+      $tbl_qry.add_cols "DKL", $engine.get_mpset_klds( $mprel, $mp_mflm ), :round_at=>3
+      $tbl_qry.add_cols "DKL(p)", $engine.get_mpset_klds( $mprel, $mpcol ), :round_at=>3
+      $tbl_qry.add_cols "DKL(m)", $engine.get_mpset_klds( $mprel, $mpmix_h ), :round_at=>3
+      #$tbl_qry.add_diff_col(11, 10, :title=>"DiffDKL")
+      $tbl_qry.add_cols "Cos", $engine.get_mpset_cosine( $mprel, $mp_mflm ), :round_at=>3
+      $tbl_qry.add_cols "Cos(p)", $engine.get_mpset_cosine( $mprel, $mpcol ), :round_at=>3
+      $tbl_qry.add_cols "Cos(m)", $engine.get_mpset_cosine( $mprel, $mpmix_h ), :round_at=>3
+      #$tbl_qry.add_diff_col(14, 13, :title=>"DiffCOS")
+      $tbl_qry.add_cols "P@1", $engine.get_mpset_prec( $mprel, $mp_mflm ), :round_at=>3
+      $tbl_qry.add_cols "P@1(p)", $engine.get_mpset_prec( $mprel, $mpcol ), :round_at=>3
+      $tbl_qry.add_cols "P@1(m)", $engine.get_mpset_prec( $mprel, $mpmix_h ), :round_at=>3
+      #$tbl_qry.add_diff_col(17, 16, :title=>"DiffPrec")
     end
     puts "[exp_perf] table values calculated..."
   end
