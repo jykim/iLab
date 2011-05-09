@@ -36,7 +36,10 @@ $o = {:topic_id=>'test', :verbose=>:mp, :sparam=>get_sparam('jm',0.1), :redo=>tr
 
 # IMDB
 
-$o = {:topic_id=>'dtest', :verbose=>:mp, :redo=>true}; $method='prms_mix'; $col='imdb'; $exp='perf'; $remark='0507'; eval IO.read('run_prms.rb')
-
+$o = {:topic_id=>'dtest', :verbose=>:mp, :redo=>true}; $method='prms_mix'; $col='imdb'; $exp='perf'; $remark='0508'; eval IO.read('run_prms.rb')
 
 $o = {:topic_id=>'qtest', :verbose=>:mp, :redo=>true}; $method='prms_mix'; $col='imdb'; $exp='perf'; $remark='0508'; eval IO.read('run_prms.rb')
+
+# Monster
+
+$o = {:topic_id=>'test', :verbose=>:mp, :redo=>true}; $method='prms_mix'; $col='monster'; $exp='perf'; $remark='0508'; eval IO.read('run_prms.rb')
