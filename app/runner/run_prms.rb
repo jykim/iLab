@@ -6,6 +6,13 @@ init_env()
 init_collection($col)
 set_collection_param($col_id)
 
+def get_rsflms()
+  topk = $o[:topk] || 5
+  qs.qrys.map_with_index{|q,i|
+    puts "[get_res_flm] #{i}th query processed" if i % 20 == 1      
+    $engine.get_res_flm q.rs.docs[0..topk]} 
+end
+
 #Choose Retrieval Method
 #def ILabLoader.build(ilab)
 begin
@@ -19,13 +26,19 @@ begin
     $i.crt_add_query_set("#{$query_prefix}_MFLM" ,:template=>:hlm, :smoothing=>$sparam_mflm, :hlm_weights=>($hlm_weight || [0.1]*($fields.size)))
     $i.crt_add_query_set("#{$query_prefix}_PRMS", o.merge(:smoothing=>$sparam_prm))
     
-    topk = $o[:topk] || 5
-    $rsflms = qs.qrys.map_with_index{|q,i|
-      puts "[get_res_flm] #{i}th query processed" if i % 20 == 1      
-      $engine.get_res_flm q.rs.docs[0..topk]} if !$rsflms
+    $rsflms = get_rsflms() if !$rsflms
     $mpmix = $engine.get_mixture_mpset($queries, $mp_types, $mix_weights)
     $i.crt_add_query_set("#{$query_prefix}_PRMSmx5", o.merge(:template=>:tew, :mps=>$mpmix, :smoothing=>$sparam_prm ))
     $i.crt_add_query_set("#{$query_prefix}_PRMSrl", o.merge(:flms=>$rlflms1, :smoothing=>$sparam_prm))
+  
+  when 'param_prmd'
+    $rsflms = get_rsflms() if !$rsflms
+    $mpmix = $engine.get_mixture_mpset($queries, $mp_types, $mix_weights)
+    [0.1, 0.3, 0.5, 0.7, 0.85, 0.9, 0.95].each do |lambda|
+      $i.crt_add_query_set("#{$query_prefix}_PRMD_l#{lambda}", o.merge(:template=>:prm_ql, :smoothing=>$sparam_prm, :lambda=>lambda))
+      $i.crt_add_query_set("#{$query_prefix}_PRMDmx5_l#{lambda}", :template=>:tew_ql,
+                              :smoothing=>$sparam_prm, :lambda=>lambda, :mps=>$mpmix)
+    end
     
   when 'mp_oracle'
     [:wsum].each do |op_comb|
@@ -46,7 +59,7 @@ begin
     $i.crt_add_query_set("#{$query_prefix}_PRM-D", :template=>:prm_ql ,:smoothing=>$sparam_prm, :lambda=>$prmd_lambda)
   
   # Retrieval parameter sweep
-  when 'param_sweep'
+  when 'param_swt'
     [0.1, 0.3, 0.5, 0.7, 0.8, 0.9, 5,10,25,50,100,250,500,1000].each do |lambda|
       o.merge!(:smoothing=>get_sparam((lambda > 1)? "dirichlet" : "jm", lambda))
       $i.crt_add_query_set("#{$query_prefix}_DQL_l#{lambda}", o.merge(:template=>:ql))
