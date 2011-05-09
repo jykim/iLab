@@ -81,7 +81,7 @@ begin
     topk = $o[:topk] || 5
     $i.crt_add_query_set("#{$query_prefix}_gPRMS", o)
     
-    $rsflms = get_rsflms(qs) !$rsflms
+    $rsflms = get_rsflms(qs) if !$rsflms
     $mpmix = $engine.get_mixture_mpset($queries, $mp_types, $mix_weights)
     $i.crt_add_query_set("#{$query_prefix}_gPRMSmx5", o.merge(:template=>:tew, :mps=>$mpmix ))
     $i.crt_add_query_set("#{$query_prefix}_gPRMSrl", o.merge(:flms=>$rlflms1))
