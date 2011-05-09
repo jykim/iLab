@@ -1,5 +1,6 @@
 = Experiment
 == Query-wise Analysis
+<% $rstypes = [:mflm, :prms, :mix, :ora]%>
 <% test_qids.each do |q| %>
 <% puts "Processing Query : #{q}" %>
 
@@ -7,15 +8,19 @@
 <table>
   <tr><%= $i.rsa.map{|rs| "<td>#{rs.name.gsub($query_prefix+'_',"")}</td>"}.join('')%></tr>
   <tr>
-<% $i.rsa.each do |rs| %>
+<% $i.rsa.each_with_index do |rs,i| %>
   <td>
 
 <%= rs.export_docs(:title_field=>$title_field, :order_by=>'rank'){|d|q == d.qid and d.rank <= $topk} %>
 
   </td>
 <% end %>
-</tr></table>
+</tr>
+</table>
 
+<% $rstypes.each do |rstype| %>
+<pre><%= $engine.debug_prm_query(q, rstype) %></pre>
+<% end %>
 /*
 
 <% $i.rs.each do |k,v| %>
