@@ -23,9 +23,13 @@ $o = {:redo=>true,:topic_id=>'test', :sparam=>get_sparam('jm',0.1), :verbose=>tr
 
 # TREC
 
-$o = {:topic_id=>'test', :verbose=>:mp, :redo=>true, :sparam=>get_sparam('jm',0.1) }; $method='prms_mix'; $col='trec'; $exp='perf'; $remark='0505_jm_optmap'; eval IO.read('run_prms.rb')
+$o = {:topic_id=>'test', :verbose=>:mp, :sparam=>get_sparam('jm',0.1) }; $method='prms_mix'; $col='trec'; $exp='perf'; $remark='0509_optmap'; eval IO.read('run_prms.rb')
 
 $o={:mode=>:mix_weights,:opt_for=>'map',:redo=>true, :topic_id=>'train', :sparam=>get_sparam('jm',0.1)}; $col='trec' ;$exp='optimize_rpm'; $method='golden'; $remark='0506_jm'; eval IO.read('run_prms.rb')
+
+$o = {:topic_id=>'test', :verbose=>:mp, :range=>[117,138,36,71,150,60,72,137,124,45,109,129,44,88]}; $method='prms_mix'; $col='trec'; $exp='document'; $remark='0509'; eval IO.read('run_prms.rb')
+
+$o = {:topic_id=>'test', :verbose=>:mp, :sparam=>get_sparam('jm',0.1) }; $method='param_prmd'; $col='trec'; $exp='perf'; $remark='0509_optmap'; eval IO.read('run_prms.rb')
 
 # Enron
 
@@ -41,6 +45,8 @@ $o = {:topic_id=>'test', :verbose=>:mp, :sparam=>get_sparam('jm',0.1), :redo=>tr
 $o = {:topic_id=>'dtest', :verbose=>:mp, :redo=>true}; $method='prms_mix'; $col='imdb'; $exp='perf'; $remark='0508'; eval IO.read('run_prms.rb')
 
 $o = {:topic_id=>'dtest', :verbose=>:mp, :range=>[3,4,25,27]}; $method='prms_mix'; $col='imdb'; $exp='document'; $remark='0509_local'; eval IO.read('run_prms.rb')
+
+$o = {:topic_id=>'dtest', :verbose=>:mp}; $method='param_prmd'; $col='imdb'; $exp='perf'; $remark='0509'; eval IO.read('run_prms.rb')
 
 $o = {:topic_id=>'dtest', :verbose=>:mp, :range=>[3,28,14,20,31,9,1,22]}; $method='prms_mix'; $col='imdb'; $exp='document'; $remark='0509'; eval IO.read('run_prms.rb')
 
