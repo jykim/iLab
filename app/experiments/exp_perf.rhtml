@@ -8,6 +8,8 @@
 == Query-wise Performance
 <%= $tbl_qry.map{|e|e.to_tbl}.join("\n") %>
 
+<%= "\"Download as TSV\":#{$rpt_filename}"%>
+
 /*
 
 <% $i.qsa.map{|qs|qs.name}.to_comb.each_with_index do |qs,i| %>
