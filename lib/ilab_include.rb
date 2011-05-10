@@ -27,7 +27,7 @@ load 'lib/etc/stat_length.rb'
 load 'lib/etc/stemmer.rb'
 
 load 'lib/field/calc_map_prob.rb'
-load 'lib/field/get_prms_query.rb'
+load 'lib/field/build_prms_query.rb'
 load 'lib/field/prm_multicol_helper.rb'
 load 'lib/field/gen_query.rb'
 load 'lib/field/gen_markov_query.rb'

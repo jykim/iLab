@@ -69,6 +69,12 @@ module IndriFieldHelper
     #$dflm[dno] = results
   end
   
+  def get_doc_field_length(dno)
+    results = {}
+    field_terms = get_doc_field_vector(dno)
+    field_terms.map_hash{|k,v|[ k , v.size ]}
+  end
+  
   def get_unigram_lm(words)
     words.find_all{|e|e != "[OOV]"}.to_pdist
   end

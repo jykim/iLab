@@ -101,19 +101,20 @@ module PRMHelper
     return get_tew_query(mps) if !docids
     #return get_mp_tbl(mps) if !docids
     
-    clm = get_col_freq(:whole_doc=>true,:prob=>true)
+    clm = get_col_freq(:whole_doc=>true, :prob=>true)
     cflm = get_col_freq(:prob=>true)
-    
     docids.each do |did|
       score_doc = 0
       dflm = get_doc_field_lm(did, 1)[1]
+      dfl = get_doc_field_length(did)
       mps.each_with_index do |mp,i|
         score_qw = 0
         qw = kstem(mp[0])
         mp[1].each_with_index do |e,j|
           bglm = (op_smt == :field) ? cflm[e[0]] : clm
-          ql = (1-sparam) * (dflm[e[0]][qw] || 0.0) + sparam * (bglm[qw] || 1 / (bglm.size * 2.0))
-          puts "         #{(ql * e[1]).round_at(6)}\t= #{ql.round_at(6)} * #{e[1].r3} <- #{qw}/#{e[0]}"
+          lambda = (sparam < 1) ? sparam : sparam.to_f / (dfl[e[0]] + sparam)
+          ql = (1-lambda) * (dflm[e[0]][qw] || 0.0) + lambda * (bglm.to_p[qw] || 1 / (bglm.size * 2.0))
+          puts "         #{(ql * e[1]).round_at(6)}\t= #{ql.round_at(6)} * #{e[1].r3} <- #{qw}/#{e[0]}/#{lambda.r3}"
           #puts "         #{(slog(ql) * e[1]).round_at(6)}\t= #{slog(ql).round_at(6)} * #{e[1].r3} <- #{qw}/#{e[0]}"
           (op_comb == :weight) ? score_qw += slog(ql) * e[1] : score_qw += ql * e[1]
         end
