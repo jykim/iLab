@@ -47,7 +47,7 @@ if $o[:verbose]
     puts "[exp_perf] table values calculated..."
   end
   
-  $rpt_filename = "rpt_#{$col}_#{$o[:topic_id]}.tsv"
+  $rpt_filename = "rpt_#{$col}_#{$o[:topic_id]}_#{$method}.tsv"
   $tbl_qry.export_tbl(to_path($rpt_filename))
 
   $sig_test, $log_reg = {}, {}
