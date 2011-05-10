@@ -1,17 +1,20 @@
-> d = read.table('result_0405.txt',sep='\t',header=T)
-> plot(d$D_KL, d$PRMSrl - d$PRMS)
-> d2 = d[which(d$PRMSrl - d$PRMS > 0),]
+dt = read.table('rpt_monster_test_prms_mix.tsv',header=T,sep='\t')
 
-> plot(d2$D_KL, d2$PRMSrl - d2$PRMS)
+dt = read.table('rpt_trec_test_prms_mix.tsv',header=T,sep='\t')
 
-> cor(d2$D_KL, d2$PRMSrl - d2$PRMS)
-[1] 0.06885386
 
-> t.test(d$PRMS, d$PRMSmix, paired= T)
+cor(list(dt$PRMS.MFLM, dt$Cos.p - dt$Cos, dt$DKL.p - dt$DKL, dt$P.1.p - dt$P.1))
+cor(dt$Mix.PRMS, dt$Cos.m - dt$Cos.p)
 
-t = -0.987, df = 124, p-value = 0.3256
+par ( mfrow=c(1,2) ) 
+plot(dt$PRMS.MFLM, dt$Cos.p - dt$Cos)
+plot(dt$Mix.PRMS, dt$Cos.m - dt$Cos.p)
 
-> t.test(d$PRMS, d$PRMSmix, paired= T,alternative=c('less'))
+mean(dt[,c(3:7)])
+mean(dt[,c(11:19)])
 
-t = -0.987, df = 124, p-value = 0.1628
+cor(dt[,c(3:7)])
+cor(dt[,c(11:19)])
 
+plot(dt[,c(3:7)])
+plot(dt[,c(11:19)])
