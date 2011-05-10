@@ -7,6 +7,7 @@ module PRMHelper
   def get_prm_query(query, o={})
     #p query
     mps = get_map_prob(query, o.merge(:bgram=>false))
+    mps = mps.map{|e|[e[0], mp_normalize(e[1])]} if o[:mp_norm]    
     mps = mps.map{|e|[e[0], e[1].find_all{|e2|e2[1] > o[:mp_thr]}]} if o[:mp_thr]    
     mps = mps.map{|e|[e[0], e[1].to_h.add_noise(o[:mp_noise]).to_a]} if o[:mp_noise]
     mps = mps.map{|e|[e[0], e[1].to_h.smooth(o[:mp_smooth]).to_a]} if o[:mp_smooth]
@@ -29,6 +30,11 @@ module PRMHelper
       get_tew_query(mps, o)
     end
   end
+  
+  def mp_normalize(mp)
+    norm = mp.map{|e|e[1]}.r
+    mp.map{|e|[e[0], e[1] / norm]}
+  end
 
   #Get Term-wise Element Weighting Query given Mapping Prob.
   # mps = [[qw1, [f1, prob1], [...]], [qw2, ]]
@@ -47,6 +53,8 @@ module PRMHelper
         [mp[0], mp_topk.map{|e|[e[0], e[1] / norm]}]
       elsif o[:prior_weight]
         [mp[0], mp[1].map{|e|[ e[0], e[1]*(o[:prior_weight][e[0]] || 1.0) ]}]
+      elsif o[:mp_norm]
+        [mp[0], mp_normalize(mp[1])]
       else
         mp
       end

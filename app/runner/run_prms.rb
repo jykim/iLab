@@ -25,6 +25,7 @@ begin
     qs = $i.crt_add_query_set("#{$query_prefix}_DQL" , :smoothing=>$sparam)
     $i.crt_add_query_set("#{$query_prefix}_MFLM" ,:template=>:hlm, :smoothing=>$sparam_mflm, :hlm_weights=>($hlm_weight || [0.1]*($fields.size)))
     $i.crt_add_query_set("#{$query_prefix}_PRMS", o.merge(:smoothing=>$sparam_prm))
+    #$i.crt_add_query_set("#{$query_prefix}_PRMSnorm", o.merge(:smoothing=>$sparam_prm, :mp_norm=>true))
     
     $rsflms = get_rsflms(qs) if !$rsflms
     $mpmix = $engine.get_mixture_mpset($queries, $mp_types, $mix_weights)
