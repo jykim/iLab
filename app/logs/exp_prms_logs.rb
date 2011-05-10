@@ -4,7 +4,7 @@ $o = {:redo=>true,:topic_id=>'train', :verbose=>true}; $method='param_sweep'; $c
 
 $o = {:redo=>true,:topic_id=>'train', :verbose=>true}; $method='param_sweep'; $col='monster'; $exp='perf'; $remark='0507'; eval IO.read('run_prms.rb')
 
-$o = {:redo=>true,:topic_id=>'dtrain', :verbose=>true}; $method='param_sweep'; $col='imdb'; $exp='perf'; $remark='0507'; eval IO.read('run_prms.rb')
+$o = {:redo=>true,:topic_id=>'dtest', :verbose=>true}; $method='param_sweep'; $col='imdb'; $exp='perf'; $remark='0510'; eval IO.read('run_prms.rb')
 
 # Weight Training
 
@@ -52,6 +52,11 @@ $o = {:topic_id=>'dtest', :verbose=>:mp, :range=>[3,4,25,27]}; $method='prms_mix
 $o = {:topic_id=>'dtest', :verbose=>:mp}; $method='param_prmd'; $col='imdb'; $exp='perf'; $remark='0509'; eval IO.read('run_prms.rb')
 
 $o = {:topic_id=>'dtest', :verbose=>:mp, :range=>[3,28,14,20,31,9,1,22]}; $method='prms_mix'; $col='imdb'; $exp='document'; $remark='0509'; eval IO.read('run_prms.rb')
+
+$o={};$engine.debug_prm_query(3, :prms, ['imdb_196520.xml', 'imdb_283601.xml', ], :sparam=>250)
+$o={};$engine.debug_prm_query(4, :prms, ['imdb_32838.xml', 'imdb_79791.xml', ], :sparam=>250)
+$o={};$engine.debug_prm_query(25, :prms, ['imdb_28636.xml', 'imdb_295862.xml', ], :sparam=>250)
+$o={};$engine.debug_prm_query(27, :prms, ['imdb_42307.xml', 'imdb_341412.xml', ], :sparam=>250)
 
 $o = {:topic_id=>'qtest', :verbose=>:mp, :redo=>true}; $method='prms_mix'; $col='imdb'; $exp='perf'; $remark='0508'; eval IO.read('run_prms.rb')
 
