@@ -56,10 +56,13 @@ $o = {:topic_id=>'test', :verbose=>:mp}; $method='prms_mix'; $col='enron'; $exp=
 
 $o={:mode=>:mix_weights,:opt_for=>'map',:redo=>true, :topic_id=>'dtest'}; $col='imdb' ;$exp='optimize_rpm'; $method='golden'; $remark='0510'; eval IO.read('run_prms.rb')
 
-$o = {:topic_id=>'test', :verbose=>:mp}; $method='pmix_var'; $col='trec'; $exp='perf'; $remark='0510'; eval IO.read('run_prms.rb')
+$o = {:topic_id=>'test', :verbose=>:mp}; $method='pmix_var'; $col='monster'; $exp='perf'; $remark='0510'; eval IO.read('run_prms.rb')
 
-$o = {:topic_id=>'dtest', :verbose=>:mp, :range=>[3,4,25,27]}; $method='prms_mix'; $col='imdb'; $exp='document'; $remark='0509_local'; eval IO.read('run_prms.rb')
+$o = {:topic_id=>'dtest', :verbose=>:mp}; $method='final'; $col='imdb'; $exp='perf'; $remark='0510'; eval IO.read('run_prms.rb')
 
+$o = {:topic_id=>'dtest', :verbose=>:mp, :range=>[6,33,39]}; $method='final'; $col='imdb'; $exp='document'; $remark='0510_local'; eval IO.read('run_prms.rb')
+
+$o={};$engine.debug_prm_query(6, :prms, ['imdb_855.xml', 'imdb_265690.xml', ], :sparam=>0.1)
 
 $o = {:topic_id=>'dtest', :verbose=>:mp, :range=>[3,28,14,20,31,9,1,22]}; $method='prms_mix'; $col='imdb'; $exp='document'; $remark='0509'; eval IO.read('run_prms.rb')
 
