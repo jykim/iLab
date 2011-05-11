@@ -117,11 +117,11 @@ module IndriFieldHelper
   
   # Get the list and LM of relevant docs from TREC QRel
   def get_rel_flms_multi( file_qrel, n = 1 )
-    results = IO.read( to_path(file_qrel) ).split("\n").map{|l|
+    $dflms_rl = IO.read( to_path(file_qrel) ).split("\n").map{|l|
       e = l.split(" ")
-      [e[0].to_i, get_doc_field_lm(e[2], 1)[1], e[3].to_i]
+      [e[0].to_i, get_doc_field_lm(e[2], 1)[1], e[3].to_f]
     }.find_all{|e|e[2] > 0}
-    results = results.group_by{|e|e[0]}.map_hash do |qid,flms|
+    results = $dflms_rl.group_by{|e|e[0]}.map_hash do |qid,flms|
       rflm = if flms.size == 1
         flms[0][1]
       else
@@ -157,12 +157,11 @@ module IndriFieldHelper
     max_score = res_docs[0].score
     result = {1=>nil, 2=>nil}
     nscores = res_docs.map{|e|e.score - max_score}.map{|e|Math.exp(e)}
-    
     result.map_hash do |ng,v| #iterate through all n-grams
-      result_n = v
-      
+      result_n = v      
       res_docs.each_with_index do |d,i|
         dflm = get_doc_field_lm(d.did, n)[ng]
+        $dflms_rs << [d.qid, dflm, nscores[i]]
         #p dflm.keys
         if !result_n
           result_n = dflm

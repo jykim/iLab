@@ -21,7 +21,7 @@ if $o[:verbose]
     
     #$tbl_qry.add_diff_col(6, 3, :title=>"Ora-PRMS")
 
-    if $mpmix
+    if $method == 'final'
       $tbl_qry.add_diff_col(4, 3, :title=>"PRMS-MFLM")
       $tbl_qry.add_diff_col(5, 4, :title=>"Mix-PRMS")
       $tbl_qry.add_diff_col(6, 5, :title=>"Ora-Mix")

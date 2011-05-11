@@ -31,6 +31,23 @@ module CalcMapProb
     mhash2arr mps
   end
   
+  # Get mapping probability by the mixture of multiple MPs
+  # - flms : [[qno1, flm1, score1]]
+  def get_map_prob_multi(qw, flms)
+    #p flms.map{|e|e[0]},flms.map{|e|e[2]}
+    mp_set = flms.map{|flm|
+      mp = get_map_prob(qw, :flm=>flm[1])
+      next if !mp[0]
+      mp[0][1].to_h.map_hash{|k2,v2|[k2, v2 * flm[2]]}
+    }.find_all{|e|e}
+    result = mp_set[0]
+    mp_set[1..-1].each do |mp|
+      result = result.sum_prob(mp)
+    end
+    #p [qw, result.to_p.to_a]
+    [[qw, result.to_p.to_a]]
+  end
+  
   def get_stem(qw, o)
     case (o[:stemmer] || $stemmer)
     when 'krovetz' : kstem(qw)
@@ -52,6 +69,8 @@ module CalcMapProb
           mp_flms << [[qw, fields.map_with_index{|f,k|[ f, flm[k] ]}]]
         elsif types[j] == :cug || types[j] == :rug || types[j] == :ora
           mp_flms << get_map_prob(qw, :flm => flm)
+        elsif types[j] == :rug2 || types[j] == :ora2
+          mp_flms << get_map_prob_multi(qw, flm)
         elsif types[j] == :cbg || types[j] == :rbg
           mp_flms << get_map_prob([(prev_qw || ""),qw].join(" "), :flm => flm, :bgram=>true) #if prev_qw
         end
@@ -72,7 +91,8 @@ module CalcMapProb
   
   def get_mixture_mpset(queries, types, weights, o = {})
     queries.map_with_index do |q,i|
-      qno = o[:qno] ? (o[:qno] - $offset) : i
+      qidx = o[:qno] ? (o[:qno] - $offset) : i
+      qno = o[:qno] ? o[:qno] : (i + $offset)
       #info ["QWord","Field",types,"=== #{i}th : #{q} ==="].flatten.join("\t") if $o[:verbose]
       #info weights.inspect  if $o[:verbose]
       flms = []
@@ -81,9 +101,11 @@ module CalcMapProb
         when :prior : flms << $hlm_weight
         when :cug   : flms << get_col_freq(:prob=>true)
         when :cbg   : flms << get_col_freq(:bgram=>true)
-        when :rug   : flms << $rsflms[qno][1].map_hash{|k,v|[k,v.to_p]}
-        when :rbg   : flms << $rsflms[qno][2].map_hash{|k,v|[k,v.to_p]}
-        when :ora   : flms << $rlflms1[qno].map_hash{|k,v|[k,v.to_p]}
+        when :rug   : flms << $rsflms[qidx][1].map_hash{|k,v|[k,v.to_p]}
+        when :rbg   : flms << $rsflms[qidx][2].map_hash{|k,v|[k,v.to_p]}
+        when :ora   : flms << $rlflms1[qidx].map_hash{|k,v|[k,v.to_p]}
+        when :rug2  : flms << $dflms_rs.find_all{|e|e[0] == qno}
+        when :ora2  : flms << $dflms_rl.find_all{|e|e[0] == qno}
         end
       end
       get_mixture_map_prob(q, flms, types , weights, o )

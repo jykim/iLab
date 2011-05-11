@@ -20,6 +20,9 @@ def init_env()
   $dfv = {} if !defined?($dfv)
   $cf = {} if !defined?($cf)
 
+  $dflms_rl = [] if !$dflms_rl
+  $dflms_rs = [] if !$dflms_rs 
+  
   #Set Global Vars
   $t_start = Time.now
   if $o[:col_type]
