@@ -72,7 +72,7 @@ module CalcMapProb
   
   def get_mixture_mpset(queries, types, weights, o = {})
     queries.map_with_index do |q,i|
-      qno = o[:qno] || i
+      qno = (o[:qno] - $offset) || i
       #info ["QWord","Field",types,"=== #{i}th : #{q} ==="].flatten.join("\t") if $o[:verbose]
       #info weights.inspect  if $o[:verbose]
       flms = []
