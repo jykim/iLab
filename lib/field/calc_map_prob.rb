@@ -41,9 +41,10 @@ module CalcMapProb
       mp[0][1].to_h.map_hash{|k2,v2|[k2, v2 * flm[2]]}
     }.find_all{|e|e}
     result = mp_set[0]
-    mp_set[1..-1].each do |mp|
-      result = result.sum_prob(mp)
-    end
+    if mp_set.size > 1
+      mp_set[1..-1].each do |mp|
+        result = result.sum_prob(mp)
+      end
     #p [qw, result.to_p.to_a]
     [[qw, result.to_p.to_a]]
   end
