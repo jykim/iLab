@@ -178,9 +178,9 @@ end
 def set_collection_param(col_id)
   case col_id
   when 'trec'
-    $sparam = get_sparam('dirichlet',500)#get_sparam('jm',0.1)
-    $sparam_prm = get_sparam('dirichlet',25)#get_sparam('jm',0.1)
-    $sparam_mflm = get_sparam('dirichlet',250)#get_sparam('jm',0.1)
+    $sparam = get_sparam('jm',0.1)
+    $sparam_prm = get_sparam('jm',0.1)
+    $sparam_mflm = get_sparam('jm',0.1)
     
     $mix_weights = [0.388, 0.01, 1.0, 0.388, 1.0]
     #[0.01, 1.0, 0.154, 0.189, 0.099]	#(cosim/test)
@@ -197,9 +197,9 @@ def set_collection_param(col_id)
     $bm25_weight = [0.382, 0.382, 0.0, 0.382, 0.382, 0.0]
 
   when 'enron'
-    $sparam = get_sparam('dirichlet',250)
-    $sparam_prm = get_sparam('dirichlet',50)
-    $sparam_mflm = get_sparam('dirichlet',50)
+    $sparam = get_sparam('jm',0.1)#
+    $sparam_prm = get_sparam('jm',0.1)#
+    $sparam_mflm = get_sparam('jm',0.1)#
     
     $mix_weights = [0.01, 0.388, 0.388, 0.477, 0.189]
     #[0.01, 0.388, 0.388, 0.477, 0.189]	#(map/train)
@@ -210,8 +210,8 @@ def set_collection_param(col_id)
 
   when 'imdb'
     $sparam = get_sparam('dirichlet',1000)
-    $sparam_prm = get_sparam('dirichlet',250)
-    $sparam_mflm = get_sparam('dirichlet',50)
+    $sparam_prm = get_sparam('jm',0.1)#get_sparam('dirichlet',250)
+    $sparam_mflm = get_sparam('jm',0.3)#get_sparam('dirichlet',50)
     $mix_weights = [0.388, 0.01, 1.0, 0.388, 1.0]
     $hlm_weight = [1.9, 1.8, 0.1, 0.9, 0.9, 0.5, 0.5, 0.5, 0.6, 0.4]
     $mix_weights = [0.388, 0.01, 0.388, 0.622, 0.388]	

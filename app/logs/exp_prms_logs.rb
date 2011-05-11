@@ -1,10 +1,12 @@
 # Parameter Sweep
 
-$o = {:redo=>true,:topic_id=>'train', :verbose=>true}; $method='param_sweep'; $col='trec'; $exp='perf'; $remark='0505_ifix'; eval IO.read('run_prms.rb')
+$o = {:redo=>true,:topic_id=>'train', :verbose=>true}; $method='param_smt'; $col='trec'; $exp='perf'; $remark='0505_ifix'; eval IO.read('run_prms.rb')
 
-$o = {:redo=>true,:topic_id=>'train', :verbose=>true}; $method='param_sweep'; $col='monster'; $exp='perf'; $remark='0507'; eval IO.read('run_prms.rb')
+$o = {:redo=>true,:topic_id=>'test', :verbose=>true}; $method='param_smt'; $col='enron'; $exp='perf'; $remark='0510'; eval IO.read('run_prms.rb')
 
-$o = {:redo=>true,:topic_id=>'dtest', :verbose=>true}; $method='param_sweep'; $col='imdb'; $exp='perf'; $remark='0510'; eval IO.read('run_prms.rb')
+$o = {:redo=>true,:topic_id=>'test', :verbose=>true}; $method='param_smt'; $col='monster'; $exp='perf'; $remark='0507'; eval IO.read('run_prms.rb')
+
+$o = {:redo=>true,:topic_id=>'dtest', :verbose=>true}; $method='param_smt'; $col='imdb'; $exp='perf'; $remark='0510'; eval IO.read('run_prms.rb')
 
 # Weight Training
 
@@ -65,6 +67,6 @@ $o = {:topic_id=>'qtest', :verbose=>:mp, :range=>[509,256,643,369,240,508,538,95
 
 # Monster
 
-$o = {:topic_id=>'test', :verbose=>:mp, :redo=>true}; $method='prms_mix'; $col='monster'; $exp='perf'; $remark='0508'; eval IO.read('run_prms.rb')
+$o = {:topic_id=>'test', :verbose=>:mp, :redo=>true}; $method='prms_mix'; $col='monster'; $exp='perf'; $remark='0510'; eval IO.read('run_prms.rb')
 
 
