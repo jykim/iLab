@@ -51,7 +51,6 @@ $o = {:topic_id=>'dtest', :verbose=>:mp,:redo=>true}; $method='prms_mix'; $col='
 
 $o = {:topic_id=>'dtest', :verbose=>:mp, :range=>[3,4,25,27]}; $method='prms_mix'; $col='imdb'; $exp='document'; $remark='0509_local'; eval IO.read('run_prms.rb')
 
-$o = {:topic_id=>'dtest', :verbose=>:mp}; $method='param_prmd'; $col='imdb'; $exp='perf'; $remark='0509'; eval IO.read('run_prms.rb')
 
 $o = {:topic_id=>'dtest', :verbose=>:mp, :range=>[3,28,14,20,31,9,1,22]}; $method='prms_mix'; $col='imdb'; $exp='document'; $remark='0509'; eval IO.read('run_prms.rb')
 

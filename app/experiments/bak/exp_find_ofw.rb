@@ -18,7 +18,7 @@ $xvals = $fields ; info "$xvals : #{$xvals.inspect}"
 $yvals << [1.0] * $xvals.size
 o_opt.merge!(:ymax=>1.0, :ymin=>0)
 
-$mprels = $engine.get_mpset_from_flms($queries, $rlflms1)
+s = $engine.get_mpset_from_flms($queries, $rlflms1)
 
 $search_method = case $method
                  when 'grid'
@@ -49,7 +49,7 @@ $search_method = case $method
    stats['all']
  end
 
-$mprels.each_with_index do |mprel, i|
+s.each_with_index do |mprel, i|
   
   evaluate_at($xvals, $yvals)
 end
