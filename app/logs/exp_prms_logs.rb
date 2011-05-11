@@ -56,7 +56,7 @@ $o = {:topic_id=>'test', :verbose=>:mp}; $method='prms_mix'; $col='enron'; $exp=
 
 $o={:mode=>:mix_weights,:opt_for=>'map',:redo=>true, :topic_id=>'dtest'}; $col='imdb' ;$exp='optimize_rpm'; $method='golden'; $remark='0510'; eval IO.read('run_prms.rb')
 
-$o = {:topic_id=>'dtest', :verbose=>:mp}; $method='prms_mix'; $col='imdb'; $exp='perf'; $remark='0510_final'; eval IO.read('run_prms.rb')
+$o = {:topic_id=>'test', :verbose=>:mp}; $method='pmix_var'; $col='trec'; $exp='perf'; $remark='0510'; eval IO.read('run_prms.rb')
 
 $o = {:topic_id=>'dtest', :verbose=>:mp, :range=>[3,4,25,27]}; $method='prms_mix'; $col='imdb'; $exp='document'; $remark='0509_local'; eval IO.read('run_prms.rb')
 
