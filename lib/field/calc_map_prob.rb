@@ -45,6 +45,7 @@ module CalcMapProb
       mp_set[1..-1].each do |mp|
         result = result.sum_prob(mp)
       end
+    end
     #p [qw, result.to_p.to_a]
     [[qw, result.to_p.to_a]]
   end
