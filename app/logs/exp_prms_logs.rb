@@ -16,6 +16,12 @@ $o={:mode=>:mix_weights,:opt_for=>'map',:topic_id=>'test', :sparam=>get_sparam('
 
 $o={:mode=>:mix_weights, :opt_for=>'map', :topic_id=>'dtrain'}; $col='imdb' ;$exp='optimize_rpm'; $method='golden'; $remark='0507'; eval IO.read('run_prms.rb')
 
+# Debugging
+
+$o = {:topic_id=>'train', :verbose=>:mp }; $method='prms_mix'; $col='trec'; $exp='perf'; $remark='0511_debug'; eval IO.read('run_prms.rb')
+
+$o = {:topic_id=>'dtrain', :verbose=>:mp }; $method='prms_mix'; $col='imdb'; $exp='perf'; $remark='0511_debug'; eval IO.read('run_prms.rb')
+
 
 # Evaluate Oracle
 
@@ -47,7 +53,7 @@ $o = {:topic_id=>'test', :verbose=>:mp}; $method='prms_mix'; $col='enron'; $exp=
 
 $o={:mode=>:mix_weights,:opt_for=>'map',:redo=>true, :topic_id=>'dtest'}; $col='imdb' ;$exp='optimize_rpm'; $method='golden'; $remark='0510'; eval IO.read('run_prms.rb')
 
-$o = {:topic_id=>'dtest', :verbose=>:mp,:redo=>true}; $method='prms_mix'; $col='imdb'; $exp='perf'; $remark='0510_final'; eval IO.read('run_prms.rb')
+$o = {:topic_id=>'dtest', :verbose=>:mp}; $method='prms_mix'; $col='imdb'; $exp='perf'; $remark='0510_final'; eval IO.read('run_prms.rb')
 
 $o = {:topic_id=>'dtest', :verbose=>:mp, :range=>[3,4,25,27]}; $method='prms_mix'; $col='imdb'; $exp='document'; $remark='0509_local'; eval IO.read('run_prms.rb')
 
@@ -66,6 +72,6 @@ $o = {:topic_id=>'qtest', :verbose=>:mp, :range=>[509,256,643,369,240,508,538,95
 
 # Monster
 
-$o = {:topic_id=>'test', :verbose=>:mp, :redo=>true}; $method='prms_mix'; $col='monster'; $exp='perf'; $remark='0510'; eval IO.read('run_prms.rb')
+$o = {:topic_id=>'test', :verbose=>:mp, :redo=>true}; $method='prms_mix'; $col='monster'; $exp='perf'; $remark='0511'; eval IO.read('run_prms.rb')
 
 
