@@ -47,7 +47,11 @@ module CalcMapProb
       end
     end
     #p [qw, result.to_p.to_a]
-    [[qw, result.to_p.to_a]]
+    if result
+      [[qw, result.to_p.to_a]]
+    else
+      [[qw,[]]]
+    end
   end
   
   def get_stem(qw, o)
