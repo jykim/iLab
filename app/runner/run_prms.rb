@@ -21,7 +21,7 @@ begin
   o = $o.dup.merge(:template=>:prm, :smoothing=>$sparam_prm)
   $mp_types = [:cug, :rug, :cbg, :prior, :rbg ]
   case $method
-  when 'prms_mix'
+  when 'final'
     qs = $i.crt_add_query_set("#{$query_prefix}_DQL" , :smoothing=>$sparam)
     $i.crt_add_query_set("#{$query_prefix}_MFLM" ,:template=>:hlm, :smoothing=>$sparam_mflm, :hlm_weights=>($hlm_weight || [0.1]*($fields.size)))
     $i.crt_add_query_set("#{$query_prefix}_PRMS", o.merge(:smoothing=>$sparam_prm))
@@ -30,11 +30,22 @@ begin
     $mpmix = $engine.get_mixture_mpset($queries, $mp_types, $mix_weights)
     $i.crt_add_query_set("#{$query_prefix}_PRMSmx5", o.merge(:template=>:tew, :mps=>$mpmix, :smoothing=>$sparam_prm ))
     $i.crt_add_query_set("#{$query_prefix}_PRMSrl", o.merge(:flms=>$rlflms1, :smoothing=>$sparam_prm))
-  
+
+  when 'pmix_var'
+    qs = $i.crt_add_query_set("#{$query_prefix}_DQL" , :smoothing=>$sparam)    
+    $rsflms = get_rsflms(qs) if !$rsflms
+    $mpmix2 = $engine.get_mixture_mpset($queries, [:rug], [1])
+    $mpmix3 = $engine.get_mixture_mpset($queries, [:rug2], [1])
+    $mpmix = $engine.get_mixture_mpset($queries, $mp_types, $mix_weights)
+    $i.crt_add_query_set("#{$query_prefix}_PRMSmx5_rug", o.merge(:template=>:tew, :mps=>$mpmix2, :smoothing=>$sparam_prm ))
+    $i.crt_add_query_set("#{$query_prefix}_PRMSmx5_rug2", o.merge(:template=>:tew, :mps=>$mpmix3, :smoothing=>$sparam_prm ))
+    $i.crt_add_query_set("#{$query_prefix}_PRMSmx5", o.merge(:template=>:tew, :mps=>$mpmix, :smoothing=>$sparam_prm ))
+    
   when 'prms_var'
     $i.crt_add_query_set("#{$query_prefix}_PRMS", o.merge(:smoothing=>$sparam_prm))
     $i.crt_add_query_set("#{$query_prefix}_PRMS_all", o.merge(:smoothing=>$sparam_prm,:mp_all_fields=>true))
-    #$i.crt_add_query_set("#{$query_prefix}_PRMSnorm", o.merge(:smoothing=>$sparam_prm, :mp_norm=>true))
+    $i.crt_add_query_set("#{$query_prefix}_PRMSrl", o.merge(:flms=>$rlflms1, :smoothing=>$sparam_prm))
+
   
   when 'param_prmd'
     $rsflms = get_rsflms() if !$rsflms
