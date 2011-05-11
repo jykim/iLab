@@ -214,7 +214,7 @@ def set_collection_param(col_id)
     $sparam_mflm = get_sparam('jm',0.3)#get_sparam('dirichlet',50)
     $mix_weights = [0.388, 0.01, 1.0, 0.388, 1.0]
     $hlm_weight = [1.9, 1.8, 0.1, 0.9, 0.9, 0.5, 0.5, 0.5, 0.6, 0.4]
-    $mix_weights = [0.388, 0.01, 0.388, 0.622, 0.388]	
+    $mix_weights = [0.388, 1.0, 0.388, 0.567, 0.388]	#[0.388, 0.01, 0.388, 0.622, 0.388]	
     #[0.388, 0.01, 0.388, 0.622, 0.388]	# (map/qtrain)
     #[0.388, 0.01, 0.388, 0.01, 0.388] # (map/dtrain)
     
