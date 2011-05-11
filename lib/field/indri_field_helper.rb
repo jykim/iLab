@@ -125,7 +125,7 @@ module IndriFieldHelper
       rflm = if flms.size == 1
         flms[0][1]
       else
-        puts "Merging flms : \n #{flms.inspect}"
+        #puts "Merging flms : \n #{flms.inspect}"
         rflm_t = flms[0][1]
         flms[1..-1].each do |flm|
           rflm_t = rflm_t.map_hash{|k,v| [k, v.sum_prob(flm[1][k] || {})]}
