@@ -18,9 +18,9 @@ $o={:mode=>:mix_weights, :opt_for=>'map', :topic_id=>'dtrain'}; $col='imdb' ;$ex
 
 # Debugging
 
-$o = {:topic_id=>'train', :verbose=>:mp }; $method='prms_mix'; $col='trec'; $exp='perf'; $remark='0511_debug'; eval IO.read('run_prms.rb')
+$o = {:topic_id=>'train', :verbose=>:mp,:redo=>true }; $method='prms_mix'; $col='trec'; $exp='perf'; $remark='0511_debug'; eval IO.read('run_prms.rb')
 
-$o = {:topic_id=>'dtrain', :verbose=>:mp }; $method='prms_mix'; $col='imdb'; $exp='perf'; $remark='0511_debug'; eval IO.read('run_prms.rb')
+$o = {:topic_id=>'dtrain', :verbose=>:mp,:redo=>true }; $method='prms_mix'; $col='imdb'; $exp='perf'; $remark='0511_debug'; eval IO.read('run_prms.rb')
 
 
 # Evaluate Oracle
@@ -46,6 +46,9 @@ $engine.debug_prm_query(36, :prms, ['lists-017-11143340','lists-017-14056498','l
 
 $o = {:topic_id=>'test', :verbose=>:mp, :range=>[107,127,53,19,115,9,143,102]}; $method='prms_mix'; $col='enron'; $exp='document'; $remark='0509'; eval IO.read('run_prms.rb')
 
+$engine.debug_prm_query(53, :prms, ['688347.1075840813520.JavaMail.evans@thyme','8815793.1075840813281.JavaMail.evans@thyme'], :sparam => 0.1)
+
+$engine.debug_prm_query(107, :prms,['17318615.1075845678762.JavaMail.evans@thyme','21756290.1075845678833.JavaMail.evans@thyme'])
 
 $o = {:topic_id=>'test', :verbose=>:mp}; $method='prms_mix'; $col='enron'; $exp='perf'; $remark='0510'; eval IO.read('run_prms.rb')
 

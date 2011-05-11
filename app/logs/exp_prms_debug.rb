@@ -1,3 +1,6 @@
+= Merging MP =
+
+
 irb(main):009:0> p p1 = $engine.get_doc_field_lm('imdb_225145.xml')[1]['title']
 {"the"=>0.333333333333333, "mummy"=>0.333333333333333, "return"=>0.333333333333333}
 => 

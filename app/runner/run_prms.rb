@@ -25,12 +25,16 @@ begin
     qs = $i.crt_add_query_set("#{$query_prefix}_DQL" , :smoothing=>$sparam)
     $i.crt_add_query_set("#{$query_prefix}_MFLM" ,:template=>:hlm, :smoothing=>$sparam_mflm, :hlm_weights=>($hlm_weight || [0.1]*($fields.size)))
     $i.crt_add_query_set("#{$query_prefix}_PRMS", o.merge(:smoothing=>$sparam_prm))
-    #$i.crt_add_query_set("#{$query_prefix}_PRMSnorm", o.merge(:smoothing=>$sparam_prm, :mp_norm=>true))
     
     $rsflms = get_rsflms(qs) if !$rsflms
     $mpmix = $engine.get_mixture_mpset($queries, $mp_types, $mix_weights)
     $i.crt_add_query_set("#{$query_prefix}_PRMSmx5", o.merge(:template=>:tew, :mps=>$mpmix, :smoothing=>$sparam_prm ))
     $i.crt_add_query_set("#{$query_prefix}_PRMSrl", o.merge(:flms=>$rlflms1, :smoothing=>$sparam_prm))
+  
+  when 'prms_var'
+    $i.crt_add_query_set("#{$query_prefix}_PRMS", o.merge(:smoothing=>$sparam_prm))
+    $i.crt_add_query_set("#{$query_prefix}_PRMS_all", o.merge(:smoothing=>$sparam_prm,:mp_all_fields=>true))
+    #$i.crt_add_query_set("#{$query_prefix}_PRMSnorm", o.merge(:smoothing=>$sparam_prm, :mp_norm=>true))
   
   when 'param_prmd'
     $rsflms = get_rsflms() if !$rsflms
