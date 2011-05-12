@@ -204,7 +204,7 @@ def set_collection_param(col_id)
     $sparam_prm = get_sparam('jm',0.1)#
     $sparam_mflm = get_sparam('jm',0.1)#
     
-    $mix_weights = [0.01, 0.388, 0.388, 0.477, 0.189]
+    $mix_weights = [0.154, 1.0, 0.01, 0.01, 0.299]	
     #[0.01, 0.388, 0.388, 0.477, 0.189]	#(map/train)
     #[0.154, 1.0, 0.01, 0.01, 0.299] #(cosim/train)???
     
@@ -227,6 +227,8 @@ def set_collection_param(col_id)
     $sparam_prm = get_sparam('jm',0.5)
     $sparam_mflm = get_sparam('jm',0.5)
     $hlm_weight = [1.236, 1.236, 1.236, 0.0, 1.055, 0.790, 0.901, 2.0]
-    $mix_weights = [1.0, 0.01, 0.333, 0.01, 0.01]	
+    $mix_weights = [1.0, 0.477, 0.154, 0.01, 0.01]	
+    #[1.0, 0.01, 0.333, 0.01, 0.01]	# (map/train)
+    #[1.0, 0.477, 0.154, 0.01, 0.01] # (cos/train)
   end
 end

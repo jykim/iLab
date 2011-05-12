@@ -12,9 +12,9 @@ $o = {:redo=>true,:topic_id=>'dtest', :verbose=>true}; $method='param_smt'; $col
 
 $o={:mode=>:hlm_weights,:topic_id=>'train'}; $col='enron' ;$exp='optimize_prm'; $method='golden'; eval IO.read('run_prms.rb')
 
-$o={:mode=>:mix_weights,:opt_for=>'map',:topic_id=>'test', :sparam=>get_sparam('jm',0.1)}; $col='trec' ;$exp='optimize_rpm'; $method='golden'; $remark='0506'; eval IO.read('run_prms.rb')
+$o={:mode=>:mix_weights,:opt_for=>'cosine',:topic_id=>'test'}; $col='monster' ;$exp='optimize_rpm'; $method='golden'; $remark='0510'; eval IO.read('run_prms.rb')
 
-$o={:mode=>:mix_weights, :opt_for=>'map', :topic_id=>'dtrain'}; $col='imdb' ;$exp='optimize_rpm'; $method='golden'; $remark='0507'; eval IO.read('run_prms.rb')
+$o={:mode=>:mix_weights, :opt_for=>'cosine', :topic_id=>'qtest'}; $col='imdb' ;$exp='optimize_rpm'; $method='golden'; $remark='0510'; eval IO.read('run_prms.rb')
 
 # Debugging
 
@@ -50,7 +50,7 @@ $engine.debug_prm_query(53, :prms, ['688347.1075840813520.JavaMail.evans@thyme',
 
 $engine.debug_prm_query(107, :prms,['17318615.1075845678762.JavaMail.evans@thyme','21756290.1075845678833.JavaMail.evans@thyme'])
 
-$o = {:topic_id=>'test', :verbose=>:mp}; $method='prms_mix'; $col='enron'; $exp='perf'; $remark='0510'; eval IO.read('run_prms.rb')
+$o = {:topic_id=>'test', :verbose=>:mp,:redo=>true}; $method='final'; $col='enron'; $exp='perf'; $remark='0511'; eval IO.read('run_prms.rb')
 
 # IMDB
 
@@ -78,6 +78,8 @@ $o = {:topic_id=>'qtest', :verbose=>:mp, :range=>[509,256,643,369,240,508,538,95
 
 # Monster
 
-$o = {:topic_id=>'test', :verbose=>:mp, :redo=>true}; $method='prms_mix'; $col='monster'; $exp='perf'; $remark='0511'; eval IO.read('run_prms.rb')
+$o = {:topic_id=>'test', :verbose=>:mp, :redo=>true}; $method='final'; $col='monster'; $exp='perf'; $remark='0511_new'; eval IO.read('run_prms.rb')
+
+$o={:mode=>:mix_weights,:opt_for=>'map',:topic_id=>'test',:redo=>true}; $col='monster' ;$exp='optimize_rpm'; $method='golden'; $remark='0511'; eval IO.read('run_prms.rb')
 
 
