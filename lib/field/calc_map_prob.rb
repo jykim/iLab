@@ -71,7 +71,7 @@ module CalcMapProb
       mp_flms = []
       flms.each_with_index do |flm, j|
         #debugger
-        if types[j] == :prior
+        if types[j] == :prior || types[j] == :uniform
           mp_flms << [[qw, fields.map_with_index{|f,k|[ f, flm[k] ]}]]
         elsif types[j] == :cug || types[j] == :rug || types[j] == :ora
           mp_flms << get_map_prob(qw, :flm => flm)
@@ -105,6 +105,7 @@ module CalcMapProb
       types.each_with_index do |type, j|
         case type
         when :prior : flms << $hlm_weight
+        when :uniform : flms << [1.0 / $fields.size] * $fields.size
         when :cug   : flms << get_col_freq(:prob=>true)
         when :cbg   : flms << get_col_freq(:bgram=>true)
         when :rug   : flms << $rsflms[qidx][1].map_hash{|k,v|[k,v.to_p]}
