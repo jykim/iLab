@@ -16,6 +16,9 @@ $o={:mode=>:mix_weights,:opt_for=>'cosine',:topic_id=>'test'}; $col='monster' ;$
 
 $o={:mode=>:mix_weights, :opt_for=>'cosine', :topic_id=>'qtest'}; $col='imdb' ;$exp='optimize_rpm'; $method='golden'; $remark='0510'; eval IO.read('run_prms.rb')
 
+$o={:mode=>:mix_weights,:opt_for=>'map',:redo=>true, :topic_id=>'dtest'}; $col='imdb' ;$exp='optimize_rpm'; $method='golden'; $remark='0510'; eval IO.read('run_prms.rb')
+
+
 # Debugging
 
 $o = {:topic_id=>'train', :verbose=>:mp,:redo=>true }; $method='prms_mix'; $col='trec'; $exp='perf'; $remark='0511_debug'; eval IO.read('run_prms.rb')
@@ -53,10 +56,6 @@ $engine.debug_prm_query(107, :prms,['17318615.1075845678762.JavaMail.evans@thyme
 $o = {:topic_id=>'test', :verbose=>:mp,:redo=>true}; $method='final'; $col='enron'; $exp='perf'; $remark='0511'; eval IO.read('run_prms.rb')
 
 # IMDB
-
-$o={:mode=>:mix_weights,:opt_for=>'map',:redo=>true, :topic_id=>'dtest'}; $col='imdb' ;$exp='optimize_rpm'; $method='golden'; $remark='0510'; eval IO.read('run_prms.rb')
-
-$o = {:topic_id=>'test', :verbose=>:mp}; $method='pmix_var'; $col='monster'; $exp='perf'; $remark='0510'; eval IO.read('run_prms.rb')
 
 $o = {:topic_id=>'dtest', :verbose=>:mp}; $method='final'; $col='imdb'; $exp='perf'; $remark='0510'; eval IO.read('run_prms.rb')
 
