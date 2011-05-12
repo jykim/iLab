@@ -96,7 +96,7 @@ module PRMHelper
     sparam = o[:sparam] || 0.1
     
     qidx = qno - $offset
-    mps = get_mixture_mpset([$queries[qidx]], types, weights, :qno=>qidx)[0]
+    mps = get_mixture_mpset([$queries[qidx]], types, weights, :qno=>qno)[0]
     
     return get_tew_query(mps) if !docids
     #return get_mp_tbl(mps) if !docids
