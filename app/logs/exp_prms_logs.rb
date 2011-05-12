@@ -10,13 +10,13 @@ $o = {:redo=>true,:topic_id=>'dtest', :verbose=>true}; $method='param_smt'; $col
 
 # Weight Training
 
-$o={:mode=>:hlm_weights,:topic_id=>'train'}; $col='enron' ;$exp='optimize_prm'; $method='golden'; eval IO.read('run_prms.rb')
+$o={:mode=>:mix_weights,:topic_id=>'test'}; $col='enron' ;$exp='optimize_rpm'; $method='golden'; eval IO.read('run_prms.rb')
 
 $o={:mode=>:mix_weights,:opt_for=>'cosine',:topic_id=>'test'}; $col='monster' ;$exp='optimize_rpm'; $method='golden'; $remark='0510'; eval IO.read('run_prms.rb')
 
 $o={:mode=>:mix_weights, :opt_for=>'cosine', :topic_id=>'qtest'}; $col='imdb' ;$exp='optimize_rpm'; $method='golden'; $remark='0510'; eval IO.read('run_prms.rb')
 
-$o={:mode=>:mix_weights,:opt_for=>'map',:redo=>true, :topic_id=>'dtest'}; $col='imdb' ;$exp='optimize_rpm'; $method='golden'; $remark='0510'; eval IO.read('run_prms.rb')
+$o={:mode=>:mix_weights,:opt_for=>'map',:redo=>true, :topic_id=>'dtest'}; $col='imdb' ;$exp='optimize_rpm'; $method='golden'; $remark='0511_add_uniform'; eval IO.read('run_prms.rb')
 
 
 # Debugging
