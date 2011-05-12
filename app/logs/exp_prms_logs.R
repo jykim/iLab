@@ -2,6 +2,7 @@ dt = read.table('rpt_monster_test_prms_mix.tsv',header=T,sep='\t')
 
 dt = read.table('rpt_enron_test_prms_mix.tsv',header=T,sep='\t')
 dt = read.table('rpt_imdb_qtest_prms_mix.tsv',header=T,sep='\t')
+dt = read.table('rpt_imdb_dtest_prms_mix.tsv',header=T,sep='\t')
 
 dt = read.table('rpt_trec_test_prms_mix.tsv',header=T,sep='\t')
 
