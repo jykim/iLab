@@ -20,6 +20,10 @@ col.each do |c|
     #debugger
     new_path = "#{$path}/raw_doc/#{c}/#{fp.gsub(/\//,'_')}xml"
     fields = $fields[c].map_hash{|e|[e, fc.find_tag_enron(e)]}
+    fields['Person'] = [fields['From'], fields['To']].join("\n")
+    
+    # Added 5/14
+    fields.delete('From') ; fields.delete('To')
     fields['Body'] = fc.split("\r\n\r\n")[1..-1]
     #puts fields['Body']
     text = 

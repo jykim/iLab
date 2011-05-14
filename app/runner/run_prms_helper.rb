@@ -118,10 +118,32 @@ def init_collection(col)
     $i.config_path( :work_path=>File.join($exp_root,col) ,:index_path=>$index_path )
     puts "work_path : #$work_path"
     $ptn_qry_title = /\<title\>\s(.*)\s\<\/title\>/
-    $offset = 201
     $fields =  ['subject','from','to','date','body']
     if !File.exist?($index_path)
       $engine.build_index($col_id , "#$exp_root/enron/raw_doc" , $index_path , :fields=>$fields, :stemmer=>:krovetz, :stopword=>false)
+    end
+    case $o[:topic_id]
+    when 'all'
+      $offset, $count = 1, 214
+      $file_topic ,$file_qrel = 'queries.all' , 'qrels.all'
+    when 'test'
+      $offset, $count = 1, 150
+      $file_topic ,$file_qrel = 'queries.test' , 'qrels.test'
+    when 'train'
+      $offset, $count = 151, 64
+      $file_topic ,$file_qrel = 'queries.train' , 'qrels.train'
+    end
+    $sparam = get_sparam('jm',0.1)
+    $title_field = "SUBJECT"
+    
+  when 'enron2'
+    $index_path = "#$exp_root/enron2/index_enron"
+    $i.config_path( :work_path=>File.join($exp_root,col) ,:index_path=>$index_path )
+    puts "work_path : #$work_path"
+    $ptn_qry_title = /\<title\> (.*) \<\/title\>/
+    $fields =  ['subject','person','date','body']
+    if !File.exist?($index_path)
+      $engine.build_index($col_id , "#$exp_root/enron2/raw_doc" , $index_path , :fields=>$fields, :stemmer=>:krovetz, :stopword=>false)
     end
     case $o[:topic_id]
     when 'all'
@@ -175,6 +197,12 @@ def init_collection(col)
     when 'train'
       $offset, $count = 41,20
       $file_topic ,$file_qrel = 'topics.41-60' , 'qrels.41-60'
+    when 'dcv1'
+      $offset, $count = 1, 30
+      $file_topic ,$file_qrel = 'topics.1' , 'qrels.1'
+    when 'dcv2'
+      $offset, $count = 31,30
+      $file_topic ,$file_qrel = 'topics.2' , 'qrels.2'
     end
     $title_field = 'resumetitle'
   end#case
@@ -217,14 +245,31 @@ def set_collection_param(col_id)
     $hlm_weight = [0.674, 0.562, 0.562, 0.146, 0.472]
     $prmd_lambda = 0.7
 
+  when 'enron2'
+    $sparam = get_sparam('jm',0.1)#
+    $sparam_prm = get_sparam('jm',0.1)#
+    $sparam_mflm = get_sparam('jm',0.1)#
+    
+    $mix_weights = [0.154, 1.0, 0.01, 0.01, 0.299]	
+    $hlm_weight = [0.674, 0.562, 0.562, 0.146, 0.472]
+    $prmd_lambda = 0.7
+
   when 'imdb'
     $sparam = get_sparam('dirichlet',1000)
     $sparam_prm = get_sparam('jm',0.1)#get_sparam('dirichlet',250)
     $sparam_mflm = get_sparam('jm',0.3)#get_sparam('dirichlet',50)
-    $mix_weights = [0.388, 0.01, 1.0, 0.388, 1.0]
+    
+    case $o[:topic_id]
+    when "dcv1"
+      $mix_weights = [0.766, 0.422, 1.0, 0.01, 1.0]	# (cos)
+    when "dcv2"
+      $mix_weights = [0.333, 1.0, 0.299, 0.01, 0.01]	# (cos)
+    else
+      $mix_weights = [0.388, 0.01, 1.0, 0.388, 1.0]
+    end
     $hlm_weight = [1.9, 1.8, 0.1, 0.9, 0.9, 0.5, 0.5, 0.5, 0.6, 0.4]
-    $mix_weights = [0.388, 1.0, 0.388, 0.567, 0.388]	#[0.388, 0.01, 0.388, 0.622, 0.388]	
-    $mix_weights = [0.333, 0.299, 1.0, 0.01, 1.0]	
+    #$mix_weights = [0.388, 1.0, 0.388, 0.567, 0.388]	#[0.388, 0.01, 0.388, 0.622, 0.388]	
+    #$mix_weights = [0.333, 0.299, 1.0, 0.01, 1.0]	
     #[0.388, 0.01, 0.388, 0.622, 0.388]	# (map/qtrain)
     #[0.388, 0.01, 0.388, 0.01, 0.388] # (map/dtrain)
     #[0.333, 0.299, 1.0, 0.01, 1.0]	 # (cos/qtest)
@@ -234,7 +279,16 @@ def set_collection_param(col_id)
     $sparam_prm = get_sparam('jm',0.5)
     $sparam_mflm = get_sparam('jm',0.5)
     $hlm_weight = [1.236, 1.236, 1.236, 0.0, 1.055, 0.790, 0.901, 2.0]
-    $mix_weights = [1.0, 0.477, 0.154, 0.01, 0.01]	
+    
+    case $o[:topic_id]
+    when "cv1"
+      
+    when "cv2"
+      
+    else
+      $mix_weights = [1.0, 0.477, 0.154, 0.01, 0.01]
+    end
+    
     #[1.0, 0.01, 0.333, 0.01, 0.01]	# (map/train)
     #[1.0, 0.477, 0.154, 0.01, 0.01] # (cos/train)
   end
