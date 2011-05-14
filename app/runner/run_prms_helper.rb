@@ -185,6 +185,7 @@ def init_collection(col)
       $file_topic ,$file_qrel = 'topics.2' , 'qrels.2'
     end
     $title_field = 'title'
+    
   when 'monster'
     $index_path = "#$exp_root/monster/#{$o[:index_path] || 'index'}"
     $i.config_path( :work_path=>$exp_root+'/monster' ,:index_path=>$index_path )
