@@ -43,12 +43,13 @@ end
 
 def find_opt_for(qidx)
   $mprel = $engine.get_map_prob($queries[qidx], :flm=>$rlflms1[qidx])
-  result_ofw = evaluate_at(qidx, $xvals, $yvals[-1], :offset=>(qidx+$offset), :mps=>[$mprel] )
-  return if result_ofw == 1.0
   p "== Query #{qidx} : #{$queries[qidx]}"
   
   $xvals = get_probs($mprel).map{|e|e[0]}
   $yvals = [get_probs($mprel).map{|e|e[1]}]
+  result_ofw = evaluate_at(qidx, $xvals, $yvals[-1], :offset=>(qidx+$offset), :mps=>[$mprel] )
+  return if result_ofw == 1.0
+
   $search_method = case $method
                    when 'grid'
                      GridSearchMethod.new($xvals , $yvals , $o)

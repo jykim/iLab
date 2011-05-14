@@ -155,6 +155,12 @@ def init_collection(col)
     when 'dtrain'
       $offset, $count = 41,10
       $file_topic ,$file_qrel = 'topics.041-050' , 'qrels.041-050'
+    when 'dcv1'
+      $offset, $count = 1, 25
+      $file_topic ,$file_qrel = 'topics.1' , 'qrels.1'
+    when 'dcv2'
+      $offset, $count = 26,25
+      $file_topic ,$file_qrel = 'topics.2' , 'qrels.2'
     end
     $title_field = 'title'
   when 'monster'
