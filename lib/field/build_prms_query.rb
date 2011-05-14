@@ -60,7 +60,7 @@ module PRMHelper
       end
     end#.sort_by{|e|e[1]}.reverse
     
-    p mps_new
+    #p mps_new
     
     if o[:engine] == :galago
       mps_new.map{|mp| 
