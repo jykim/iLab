@@ -263,8 +263,10 @@ def set_collection_param(col_id)
     case $o[:topic_id]
     when "dcv1"
       $mix_weights = [0.766, 0.422, 1.0, 0.01, 1.0]	# (cos)
+      $mix_weights = [0.388, 0.388, 0.388, 0.01, 0.388]	#map
     when "dcv2"
       $mix_weights = [0.333, 1.0, 0.299, 0.01, 0.01]	# (cos)
+      $mix_weights = [0.388, 0.388, 0.388, 0.388, 0.388] # (map)
     else
       $mix_weights = [0.388, 0.01, 1.0, 0.388, 1.0]
     end
