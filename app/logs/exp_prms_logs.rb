@@ -26,10 +26,6 @@ $o = {:topic_id=>'train', :verbose=>:mp,:redo=>true }; $method='prms_mix'; $col=
 $o = {:topic_id=>'dtrain', :verbose=>:mp,:redo=>true }; $method='prms_mix'; $col='imdb'; $exp='perf'; $remark='0511_debug'; eval IO.read('run_prms.rb')
 
 
-# Evaluate Oracle
-
-$o = {:redo=>true,:topic_id=>'test', :sparam=>get_sparam('jm',0.1), :verbose=>true}; $method='mp_oracle'; $col='trec'; $exp='perf'; $remark='0507_jm'; eval IO.read('run_prms.rb')
-
 # Get Results
 
 # TREC
@@ -84,4 +80,9 @@ $o={:mode=>:mix_weights,:opt_for=>'map',:topic_id=>'test',:redo=>true}; $col='mo
 # Optimal Field Weights
 $o={:topic_id=>'dtrain'}; $col='imdb' ;$exp='optimize_ofw'; $method='golden'; eval IO.read('run_prms.rb')
 
-$o={:topic_id=>'train'}; $col='trec' ;$exp='optimize_ofw'; $method='golden'; eval IO.read('run_prms.rb')
+$o={:topic_id=>'test'}; $col='trec' ;$exp='optimize_ofw'; $method='golden'; eval IO.read('run_prms.rb')
+
+
+# Evaluate Oracle
+
+$o = {:redo=>true,:topic_id=>'test', :sparam=>get_sparam('jm',0.1), :verbose=>true}; $method='mp_oracle'; $col='trec'; $exp='perf'; $remark='0507_jm'; eval IO.read('run_prms.rb')
