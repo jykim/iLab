@@ -83,3 +83,5 @@ $o={:mode=>:mix_weights,:opt_for=>'map',:topic_id=>'test',:redo=>true}; $col='mo
 
 # Optimal Field Weights
 $o={:topic_id=>'dtrain'}; $col='imdb' ;$exp='optimize_ofw'; $method='golden'; eval IO.read('run_prms.rb')
+
+$o={:topic_id=>'train'}; $col='trec' ;$exp='optimize_ofw'; $method='golden'; eval IO.read('run_prms.rb')
