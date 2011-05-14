@@ -64,15 +64,15 @@ $o = {:redo=>true, :verbose=>:mp, :topic_type=>'MKV', :topic_id=>'MKV0415'}; $me
 
 
 #== Optimal Parameter finding for Mixture MP model (4/24)
-$o={:mode=>:mix_weights,:topic_id=>'train'}; $col='trec' ;$exp='optimize_rpm'; $method='golden'; eval IO.read('run_prms.rb')
+$o={:mode=>:mix_weights,:topic_id=>'train'}; $col='trec' ;$exp='optimize_mix'; $method='golden'; eval IO.read('run_prms.rb')
 
-$o={:verbose=>true,:mode=>:mix_weights,:opt_for=>'kld',:topic_id=>'train'}; $col='trec' ;$exp='optimize_rpm'; $method='golden'; eval IO.read('run_prms.rb')
+$o={:verbose=>true,:mode=>:mix_weights,:opt_for=>'kld',:topic_id=>'train'}; $col='trec' ;$exp='optimize_mix'; $method='golden'; eval IO.read('run_prms.rb')
 
 #== Retrieval Experiments using Generated Queries (4/25)
 
 $o = {:verbose=>true, :topic_id=>'train', :new_topic_id=>'MKV0427', :no_cand=>10}; $method=nil; $col='trec'; $exp='gen_query'; $remark='0427'; eval IO.read('run_prms.rb')
 
-$o={:mode=>:mix_weights,:opt_for=>'map',:topic_id=>'MKV0427'}; $col='trec' ;$exp='optimize_rpm'; $method='golden'; eval IO.read('run_prms.rb')
+$o={:mode=>:mix_weights,:opt_for=>'map',:topic_id=>'MKV0427'}; $col='trec' ;$exp='optimize_mix'; $method='golden'; eval IO.read('run_prms.rb')
 
 $o = {:redo=>true, :topic_id=>'MKV0427', :verbose=>:mp}; $method='prms_mix'; $col='trec'; $exp='perf'; $remark='0427_gen_train'; eval IO.read('run_prms.rb')
 
@@ -120,11 +120,11 @@ $ scp qrel/qrel_qlm_train $SYH/work/prj/dih/imdb/qrels.train
 $o = {:redo=>true,:topic_id=>'test', :verbose=>true}; $method='param_smt'; $col='enron'; $exp='perf'; $remark='0504_param'; eval IO.read('run_prms.rb')
 
 
-$o={:mode=>:mix_weights,:opt_for=>'map',:topic_id=>'test'}; $col='enron' ;$exp='optimize_rpm'; $method='golden'; $remark='0505'; eval IO.read('run_prms.rb')
+$o={:mode=>:mix_weights,:opt_for=>'map',:topic_id=>'test'}; $col='enron' ;$exp='optimize_mix'; $method='golden'; $remark='0505'; eval IO.read('run_prms.rb')
 
 # Galago vs. Indri
 
-$o = {:topic_id=>'train', :verbose=>true, :redo=>true}; $method='gprms_mix'; $col='trec'; $exp='perf'; $remark='0505'; eval IO.read('run_prms.rb')
+$o = {:topic_id=>'train', :verbose=>true, :redo=>true}; $method='gprms_mix'; $col='trec'; $exp='perf'; $remark='0512'; eval IO.read('run_prms.rb')
 
 #$o = {:verbose=>:mp, :topic_id=>'test'}; $method='prms_bgram'; $col='trec'; $exp='perf'; $remark='0502'; eval IO.read('run_prms.rb')
 
