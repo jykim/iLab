@@ -2,6 +2,6 @@
 Optimization of <%=$mode%> Parameter for <%=$template_query%> 
 
 
-|QID|MAP(opt)|MAP(ofw)|Weights|
+|QID|MAP(opt)|MAP(ofw)|Weights(opt)|Weights(ofw)|
 <% $best_results.each do |e| %>
-<%="|#{e[0]}|#{e[1]}|#{e[2]}|#{e[3]}|"%><% end %>
+<%="|#{e[0]}|#{e[1]}|#{e[2]}|#{e[3]}|#{e[4]}|"%><% end %>
