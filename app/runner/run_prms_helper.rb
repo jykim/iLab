@@ -198,10 +198,10 @@ def init_collection(col)
     when 'train'
       $offset, $count = 41,20
       $file_topic ,$file_qrel = 'topics.41-60' , 'qrels.41-60'
-    when 'dcv1'
+    when 'cv1'
       $offset, $count = 1, 30
       $file_topic ,$file_qrel = 'topics.1' , 'qrels.1'
-    when 'dcv2'
+    when 'cv2'
       $offset, $count = 31,30
       $file_topic ,$file_qrel = 'topics.2' , 'qrels.2'
     end
