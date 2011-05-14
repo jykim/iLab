@@ -1,0 +1,7 @@
+= Experiment
+Optimization of <%=$mode%> Parameter for <%=$template_query%> 
+
+
+|QID|MAP(opt)|MAP(ofw)|Weights|
+<% $best_results.each do |e| %>
+<%="|#{e[0]}|#{e[1]}|#{e[2]}|#{e[3]}|"%><% end %>

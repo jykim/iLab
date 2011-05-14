@@ -60,6 +60,8 @@ module PRMHelper
       end
     end#.sort_by{|e|e[1]}.reverse
     
+    p mps_new
+    
     if o[:engine] == :galago
       mps_new.map{|mp| 
         weight_str = mp[1].map_with_index{|e,i|"#{i}=#{e[1].r3}"}.join(':')

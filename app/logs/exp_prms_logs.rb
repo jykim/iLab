@@ -8,15 +8,15 @@ $o = {:redo=>true,:topic_id=>'test', :verbose=>true}; $method='param_smt'; $col=
 
 $o = {:redo=>true,:topic_id=>'dtest', :verbose=>true}; $method='param_smt'; $col='imdb'; $exp='perf'; $remark='0510'; eval IO.read('run_prms.rb')
 
-# Weight Training
+# Mixture Weight Training
 
-$o={:mode=>:mix_weights,:topic_id=>'test'}; $col='enron' ;$exp='optimize_rpm'; $method='golden'; eval IO.read('run_prms.rb')
+$o={:mode=>:mix_weights,:topic_id=>'test'}; $col='enron' ;$exp='optimize_mix'; $method='golden'; eval IO.read('run_prms.rb')
 
-$o={:mode=>:mix_weights,:opt_for=>'cosine',:topic_id=>'test'}; $col='monster' ;$exp='optimize_rpm'; $method='golden'; $remark='0510'; eval IO.read('run_prms.rb')
+$o={:mode=>:mix_weights,:opt_for=>'cosine',:topic_id=>'test'}; $col='monster' ;$exp='optimize_mix'; $method='golden'; $remark='0510'; eval IO.read('run_prms.rb')
 
-$o={:mode=>:mix_weights, :opt_for=>'cosine', :topic_id=>'qtest'}; $col='imdb' ;$exp='optimize_rpm'; $method='golden'; $remark='0510'; eval IO.read('run_prms.rb')
+$o={:mode=>:mix_weights, :opt_for=>'cosine', :topic_id=>'dtrain'}; $col='imdb' ;$exp='optimize_mix'; $method='golden'; $remark='0514'; eval IO.read('run_prms.rb')
 
-$o={:mode=>:mix_weights,:opt_for=>'map',:redo=>true, :topic_id=>'dtest'}; $col='imdb' ;$exp='optimize_rpm'; $method='golden'; $remark='0511_add_uniform'; eval IO.read('run_prms.rb')
+$o={:mode=>:mix_weights,:opt_for=>'map',:redo=>true, :topic_id=>'dtest'}; $col='imdb' ;$exp='optimize_mix'; $method='golden'; $remark='0511_add_uniform'; eval IO.read('run_prms.rb')
 
 
 # Debugging
@@ -36,7 +36,7 @@ $o = {:redo=>true,:topic_id=>'test', :sparam=>get_sparam('jm',0.1), :verbose=>tr
 
 $o = {:topic_id=>'test', :verbose=>:mp, :sparam=>get_sparam('jm',0.1) }; $method='prms_mix'; $col='trec'; $exp='perf'; $remark='0509_optmap'; eval IO.read('run_prms.rb')
 
-$o={:mode=>:mix_weights,:opt_for=>'map',:redo=>true, :topic_id=>'train', :sparam=>get_sparam('jm',0.1)}; $col='trec' ;$exp='optimize_rpm'; $method='golden'; $remark='0506_jm'; eval IO.read('run_prms.rb')
+$o={:mode=>:mix_weights,:opt_for=>'map',:redo=>true, :topic_id=>'train', :sparam=>get_sparam('jm',0.1)}; $col='trec' ;$exp='optimize_mix'; $method='golden'; $remark='0506_jm'; eval IO.read('run_prms.rb')
 
 $o = {:topic_id=>'test', :verbose=>:mp, :range=>[117,138,36,71,150,60,72,137,124,45,109,129,44,88]}; $method='prms_mix'; $col='trec'; $exp='document'; $remark='0509'; eval IO.read('run_prms.rb')
 
@@ -79,6 +79,7 @@ $o = {:topic_id=>'qtest', :verbose=>:mp, :range=>[509,256,643,369,240,508,538,95
 
 $o = {:topic_id=>'test', :verbose=>:mp, :redo=>true}; $method='final'; $col='monster'; $exp='perf'; $remark='0511_new'; eval IO.read('run_prms.rb')
 
-$o={:mode=>:mix_weights,:opt_for=>'map',:topic_id=>'test',:redo=>true}; $col='monster' ;$exp='optimize_rpm'; $method='golden'; $remark='0511'; eval IO.read('run_prms.rb')
+$o={:mode=>:mix_weights,:opt_for=>'map',:topic_id=>'test',:redo=>true}; $col='monster' ;$exp='optimize_mix'; $method='golden'; $remark='0511'; eval IO.read('run_prms.rb')
 
-
+# Optimal Field Weights
+$o={:topic_id=>'dtrain'}; $col='imdb' ;$exp='optimize_ofw'; $method='golden'; eval IO.read('run_prms.rb')
