@@ -175,6 +175,12 @@ def init_collection(col)
     when 'train'
       $offset, $count = 41,20
       $file_topic ,$file_qrel = 'topics.41-60' , 'qrels.41-60'
+    when 'dcv1'
+      $offset, $count = 1, 30
+      $file_topic ,$file_qrel = 'topics.1' , 'qrels.1'
+    when 'dcv2'
+      $offset, $count = 31,30
+      $file_topic ,$file_qrel = 'topics.2' , 'qrels.2'
     end
     $title_field = 'resumetitle'
   end#case
@@ -221,10 +227,18 @@ def set_collection_param(col_id)
     $sparam = get_sparam('dirichlet',1000)
     $sparam_prm = get_sparam('jm',0.1)#get_sparam('dirichlet',250)
     $sparam_mflm = get_sparam('jm',0.3)#get_sparam('dirichlet',50)
-    $mix_weights = [0.388, 0.01, 1.0, 0.388, 1.0]
+    
+    case $o[:topic_id]
+    when "dcv1"
+      
+    when "dcv2"
+      
+    else
+      $mix_weights = [0.388, 0.01, 1.0, 0.388, 1.0]
+    end
     $hlm_weight = [1.9, 1.8, 0.1, 0.9, 0.9, 0.5, 0.5, 0.5, 0.6, 0.4]
-    $mix_weights = [0.388, 1.0, 0.388, 0.567, 0.388]	#[0.388, 0.01, 0.388, 0.622, 0.388]	
-    $mix_weights = [0.333, 0.299, 1.0, 0.01, 1.0]	
+    #$mix_weights = [0.388, 1.0, 0.388, 0.567, 0.388]	#[0.388, 0.01, 0.388, 0.622, 0.388]	
+    #$mix_weights = [0.333, 0.299, 1.0, 0.01, 1.0]	
     #[0.388, 0.01, 0.388, 0.622, 0.388]	# (map/qtrain)
     #[0.388, 0.01, 0.388, 0.01, 0.388] # (map/dtrain)
     #[0.333, 0.299, 1.0, 0.01, 1.0]	 # (cos/qtest)
@@ -234,7 +248,16 @@ def set_collection_param(col_id)
     $sparam_prm = get_sparam('jm',0.5)
     $sparam_mflm = get_sparam('jm',0.5)
     $hlm_weight = [1.236, 1.236, 1.236, 0.0, 1.055, 0.790, 0.901, 2.0]
-    $mix_weights = [1.0, 0.477, 0.154, 0.01, 0.01]	
+    
+    case $o[:topic_id]
+    when "cv1"
+      
+    when "cv2"
+      
+    else
+      $mix_weights = [1.0, 0.477, 0.154, 0.01, 0.01]
+    end
+    
     #[1.0, 0.01, 0.333, 0.01, 0.01]	# (map/train)
     #[1.0, 0.477, 0.154, 0.01, 0.01] # (cos/train)
   end
