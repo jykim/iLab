@@ -295,10 +295,10 @@ def set_collection_param(col_id)
     case $o[:topic_id]
     when "cv1"
       $mix_weights = [0.8, 1.0, 0.01, 0.01, 0.099]		# (cos)
-      $mix_weights = [0.01, 0.477, 0.567, 0.333, 0.01]	 # (map)
+      #$mix_weights = [0.01, 0.477, 0.567, 0.333, 0.01]	 # (map)
     when "cv2"
       $mix_weights = [1.0, 0.533, 0.01, 0.01, 0.099]		# (cos)
-      $mix_weights = [1.0, 0.388, 0.677, 0.01, 0.299]	 # (map)      
+      #$mix_weights = [1.0, 0.388, 0.677, 0.01, 0.299]	 # (map)      
     else
       $mix_weights = [1.0, 0.477, 0.154, 0.01, 0.01]
     end
