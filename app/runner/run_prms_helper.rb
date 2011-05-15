@@ -117,7 +117,7 @@ def init_collection(col)
     $index_path = "#$exp_root/enron/index_enron"
     $i.config_path( :work_path=>File.join($exp_root,col) ,:index_path=>$index_path )
     puts "work_path : #$work_path"
-    $ptn_qry_title = /\<title\> (.*) \<\/title\>/
+    $ptn_qry_title = /\<title\>\s(.*)\s\<\/title\>/
     $fields =  ['subject','from','to','date','body']
     if !File.exist?($index_path)
       $engine.build_index($col_id , "#$exp_root/enron/raw_doc" , $index_path , :fields=>$fields, :stemmer=>:krovetz, :stopword=>false)
@@ -140,7 +140,7 @@ def init_collection(col)
     $index_path = "#$exp_root/enron2/index_enron"
     $i.config_path( :work_path=>File.join($exp_root,col) ,:index_path=>$index_path )
     puts "work_path : #$work_path"
-    $ptn_qry_title = /\<title\> (.*) \<\/title\>/
+    $ptn_qry_title = /\<title\>\s(.*)\s\<\/title\>/
     $fields =  ['subject','person','date','body']
     if !File.exist?($index_path)
       $engine.build_index($col_id , "#$exp_root/enron2/raw_doc" , $index_path , :fields=>$fields, :stemmer=>:krovetz, :stopword=>false)
