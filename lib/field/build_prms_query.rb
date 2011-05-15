@@ -69,7 +69,7 @@ module PRMHelper
         " #combine:#{weight_str}(#{term_str})" }.join("\n")
     else
       mps_new.map{|mp|
-        mp_str = mp[1].map{|e|"#{e[1].round_at(5)} #{mp[0]}"+((op_smt == :field)? ".(#{e[0]})" : ".#{e[0]}")}.join(' ')
+        mp_str = mp[1].map{|e|"#{e[1].round_at(3)} #{mp[0]}"+((op_smt == :field)? ".(#{e[0]})" : ".#{e[0]}")}.join(' ')
         " ##{op_comb}(#{mp_str})" }.join("\n")
     end
   end
