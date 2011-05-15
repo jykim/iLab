@@ -302,6 +302,7 @@ def set_collection_param(col_id)
     else
       $mix_weights = [1.0, 0.477, 0.154, 0.01, 0.01]
     end
+    $mix_weights = [1.0, 0.477, 0.154, 0.01, 0.01]
     
     #[1.0, 0.01, 0.333, 0.01, 0.01]	# (map/train)
     #[1.0, 0.477, 0.154, 0.01, 0.01] # (cos/train)
