@@ -10,8 +10,8 @@ dt = read.table('rpt_enron_test_final.tsv',header=T,sep='\t')
 
 dt = read.table('rpt_monster_test_final.tsv',header=T,sep='\t')
 
-dt1 = read.table('rpt_imdb_dcv1_final.tsv',header=T,sep='\t')
-dt2 = read.table('rpt_imdb_dcv2_final.tsv',header=T,sep='\t')
+dt1 = read.table('rpt_imdb_dcv1_final (1).tsv',header=T,sep='\t')
+dt2 = read.table('rpt_imdb_dcv2_final (1).tsv',header=T,sep='\t')
 dt = rbind(dt1, dt2)
 
 dt['Cos.pm'] = dt$Cos.p. - dt$Cos
