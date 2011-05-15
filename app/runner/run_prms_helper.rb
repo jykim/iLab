@@ -252,7 +252,7 @@ def set_collection_param(col_id)
     $sparam_mflm = get_sparam('jm',0.1)#
     
     $mix_weights = [0.154, 1.0, 0.01, 0.01, 0.299]	
-    $hlm_weight = [0.674, 0.562, 0.562, 0.146, 0.472]
+    $hlm_weight = [0.5] * $fields.size
     $prmd_lambda = 0.7
 
   when 'imdb'

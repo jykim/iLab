@@ -1,5 +1,5 @@
 module CalcMapProb
-  MP_MIN = 0.0001
+  MP_MIN = 0.001
   # Get Mapping Prob. for given query
   # result = [[qw1,[[f1,mp1],[f2,mp2]]], [qw2,...]]
   def get_map_prob(query, o={})
