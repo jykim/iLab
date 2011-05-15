@@ -19,7 +19,7 @@ begin
   puts "METHOD : #$method"
   $sparam = $sparam_prm = $sparam_mflm = $o[:sparam] if $o[:sparam] ### INDRI SCORING TEST ###
   o = $o.dup.merge(:template=>:prm, :smoothing=>$sparam_prm)
-  $mp_types = [:cug, :rug, :cbg, :prior, :rbg ]
+  $mp_types = $o[:mp_types] || [:cug, :rug, :cbg, :prior, :rbg ]
   case $method
   when 'final'
     qs = $i.crt_add_query_set("#{$query_prefix}_DQL" , :smoothing=>$sparam)

@@ -2,7 +2,7 @@
 
 $o = {:redo=>true,:topic_id=>'train', :verbose=>true}; $method='param_smt'; $col='trec'; $exp='perf'; $remark='0505_ifix'; eval IO.read('run_prms.rb')
 
-$o = {:redo=>true,:topic_id=>'test', :verbose=>true}; $method='param_smt'; $col='enron'; $exp='perf'; $remark='0510'; eval IO.read('run_prms.rb')
+$o = {:redo=>true,:topic_id=>'train', :verbose=>true}; $method='param_smt'; $col='enron2'; $exp='perf'; $remark='0514'; eval IO.read('run_prms.rb')
 
 $o = {:redo=>true,:topic_id=>'test', :verbose=>true}; $method='param_smt'; $col='monster'; $exp='perf'; $remark='0507'; eval IO.read('run_prms.rb')
 
@@ -80,7 +80,7 @@ $o={:mode=>:mix_weights,:opt_for=>'map',:topic_id=>'test',:redo=>true}; $col='mo
 # Optimal Field Weights
 $o={:topic_id=>'dtrain'}; $col='imdb' ;$exp='optimize_ofw'; $method='golden'; eval IO.read('run_prms.rb')
 
-$o={:topic_id=>'train', :redo=>true}; $col='trec' ;$exp='optimize_ofw'; $method='golden'; eval IO.read('run_prms.rb')
+$o={:topic_id=>'test', :redo=>true}; $col='trec' ;$exp='optimize_ofw'; $method='golden'; eval IO.read('run_prms.rb')
 
 
 # Evaluate Oracle
