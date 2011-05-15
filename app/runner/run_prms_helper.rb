@@ -227,6 +227,8 @@ def set_collection_param(col_id)
       [0.01, 0.388, 0.244]
     when [:cug, :cbg, :rug, :rbg]
       [0.01, 0.388, 1.0, 1.0]	
+    when [:cug, :rug , :prior]
+      [0.388, 0.388, 0.388]	
     else
       [0.388, 0.01, 1.0, 0.388, 1.0]
     end
@@ -260,7 +262,9 @@ def set_collection_param(col_id)
     $sparam_prm = get_sparam('jm',0.1)#
     $sparam_mflm = get_sparam('jm',0.1)#
     
-    $mix_weights = [0.154, 1.0, 0.01, 0.01, 0.299]	
+    $mix_weights = [0.01, 1.0, 0.01, 0.01, 0.244]	# cps
+    $mix_weights = [0.01, 0.01, 0.677, 0.477, 0.388]	# map
+    
     $hlm_weight = [0.5] * $fields.size
     $prmd_lambda = 0.7
 
