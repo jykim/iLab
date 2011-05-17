@@ -64,14 +64,24 @@ begin
     $i.crt_add_query_set("#{$query_prefix}_PRMSora", o.merge(:flms=>$rlflms1, :smoothing=>$sparam_prm))
     [:wsum].each do |op_comb|
       [0.1,0.25,0.5,0.75,1.0].each do |mp_smooth|
-        o = o.dup.merge(:flms=>$rlflms1, :op_comb=>op_comb, :mp_unsmooth=>nil, :mp_smooth=>mp_smooth, :mp_all_fields=>true, :smoothing=>$sparam_prm)
+        o = o.dup.merge(:flms=>$rlflms1, :op_comb=>op_comb, :mp_unsmooth=>nil, :mp_smooth=>mp_smooth, :mp_all_fields=>true)
         $i.crt_add_query_set("#{$query_prefix}_oPRMS_#{op_comb}_s#{mp_smooth}", o)
       end
       [0.1,0.25,0.5,0.75,1.0].each do |mp_unsmooth|
-        o = o.dup.merge(:flms=>$rlflms1, :op_comb=>op_comb, :mp_smooth=>nil, :mp_unsmooth=>mp_unsmooth, :mp_all_fields=>true, :smoothing=>$sparam_prm)
+        o = o.dup.merge(:flms=>$rlflms1, :op_comb=>op_comb, :mp_smooth=>nil, :mp_unsmooth=>mp_unsmooth, :mp_all_fields=>true)
         $i.crt_add_query_set("#{$query_prefix}_oPRMS_#{op_comb}_u#{mp_unsmooth}", o)
       end
     end
+    
+  
+  # Vary Mapping Probabilities
+  when 'mp_oracle_topk'
+    $i.crt_add_query_set("#{$query_prefix}_PRMS", o)
+    $i.crt_add_query_set("#{$query_prefix}_PRMSo", o.merge(:flms=>$rlflms1))
+    $i.crt_add_query_set("#{$query_prefix}_PRMSo1", o.merge(:flms=>$rlflms1, :topk_field=>1))
+    $i.crt_add_query_set("#{$query_prefix}_PRMSo2", o.merge(:flms=>$rlflms1, :topk_field=>2))
+    $i.crt_add_query_set("#{$query_prefix}_PRMSo3", o.merge(:flms=>$rlflms1, :topk_field=>3))
+
   
   # Getting Baseline Results
   when 'baseline'
@@ -161,13 +171,6 @@ begin
       $i.crt_add_query_set("#{$query_prefix}_PRMS_bgram_dm#{bg_weight}", o.merge(:template=>:prm, :bgram=>:dm, :bg_weight=>bg_weight))
     end
   
-  # Vary Mapping Probabilities
-  when 'prmso_topk'
-    $i.crt_add_query_set("#{$query_prefix}_PRMS", o)
-    $i.crt_add_query_set("#{$query_prefix}_PRMSo", o.merge(:flms=>$rlflms1))
-    $i.crt_add_query_set("#{$query_prefix}_PRMSo1", o.merge(:flms=>$rlflms1, :topk_field=>1))
-    $i.crt_add_query_set("#{$query_prefix}_PRMSo2", o.merge(:flms=>$rlflms1, :topk_field=>2))
-    $i.crt_add_query_set("#{$query_prefix}_PRMSo3", o.merge(:flms=>$rlflms1, :topk_field=>3))
   when 'mp_noise'
     [0.0,0.5,1.0,2.0,5.0].each do |mp_noise|
       o = o.dup.merge(:flms=>$rlflms1, :mp_noise=>mp_noise, :mp_all_fields=>true)
