@@ -7,7 +7,9 @@ module CalcMapProb
     mps = [] ; col_scores = {}
     qw_prev = []
     fields = o[:prm_fields] || $fields
-    flm = o[:flm] || get_col_freq((o[:df]) ? {:df=>true,:prob=>true} : {:prob=>true})
+    flm = o[:flm] ||  get_col_freq(:prob=>true)
+    bflm = get_col_freq(:prob=>true)
+    #get_col_freq((o[:df]) ? {:df=>true,:prob=>true} : {:prob=>true})
     #puts "[get_map_prob] flm = #{o[:flm]}" if o[:flm]
     query.split(" ").each_with_index do |qw,i|
       #puts "[get_map_prob] Working on #{qw}"
@@ -19,7 +21,12 @@ module CalcMapProb
       elsif o[:bgram]
         next
       end
-      weights = flm.map_hash{|k,v|[k,v[qw_s]] if v[qw_s] && fields.include?(k)}
+      if o[:mp_sparam]
+        weights = flm.map_hash{|k,v|
+          [k,(v[qw_s] || 0) * (1-o[:mp_sparam]) + (bflm[k][qw_s] || 0) * o[:mp_sparam]] if v[qw_s] && fields.include?(k) }
+      else
+        weights = flm.map_hash{|k,v|[k,v[qw_s]] if v[qw_s] && fields.include?(k)}
+      end
       mp = weights.map_hash{|e|v=e[1]/weights.values.sum ; [e[0],((v >= MP_MIN)? v : MP_MIN)]}
       if mp.size == 0
         #error "[get_map_prob] Query-term [#{qw}->#{qw_s}] not found!"

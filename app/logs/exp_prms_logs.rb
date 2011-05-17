@@ -85,4 +85,4 @@ $o={:topic_id=>'test', :redo=>true}; $col='trec' ;$exp='optimize_ofw'; $method='
 
 # Evaluate Oracle
 
-$o = {:redo=>true,:topic_id=>'test', :sparam=>get_sparam('jm',0.1), :verbose=>true}; $method='mp_oracle'; $col='trec'; $exp='perf'; $remark='0507_jm'; eval IO.read('run_prms.rb')
+$o = {:redo=>true,:topic_id=>'train', :sparam=>get_sparam('jm',0.1), :mp_sparam=>0.1, :verbose=>true}; $method='mp_oracle'; $col='trec'; $exp='perf'; $remark='0516'; eval IO.read('run_prms.rb')
