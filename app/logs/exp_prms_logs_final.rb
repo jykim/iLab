@@ -1,6 +1,6 @@
 # Monster
 
-$o = {:topic_id=>'cv2', :verbose=>:mp, :mp_types=>[:cug, :rug2, :cbg, :prior, :rbg ]}; $method='final'; $col='monster'; $exp='perf'; $remark='0515'; eval IO.read('run_prms.rb')
+$o = {:topic_id=>'cv2', :verbose=>:mp, :mp_sparam=>0.1,:mp_types=>[:cug, :rug, :cbg, :prior, :rbg ]}; $method='final'; $col='monster'; $exp='perf'; $remark='0516_mpsmt'; eval IO.read('run_prms.rb')
 
 
 # Enron2
