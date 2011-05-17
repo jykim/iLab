@@ -61,16 +61,18 @@ begin
     end
     
   when 'mp_oracle'
+    $i.crt_add_query_set("#{$query_prefix}_PRMSora", o.merge(:flms=>$rlflms1, :smoothing=>$sparam_prm))
     [:wsum].each do |op_comb|
-      [0.0,0.1,0.25,0.5,0.75,1.0].each do |mp_smooth|
+      [0.1,0.25,0.5,0.75,1.0].each do |mp_smooth|
         o = o.dup.merge(:flms=>$rlflms1, :op_comb=>op_comb, :mp_unsmooth=>nil, :mp_smooth=>mp_smooth, :mp_all_fields=>true, :smoothing=>$sparam_prm)
         $i.crt_add_query_set("#{$query_prefix}_oPRMS_#{op_comb}_s#{mp_smooth}", o)
       end
-      [0.0,0.1,0.25,0.5,0.75,1.0].each do |mp_unsmooth|
+      [0.1,0.25,0.5,0.75,1.0].each do |mp_unsmooth|
         o = o.dup.merge(:flms=>$rlflms1, :op_comb=>op_comb, :mp_smooth=>nil, :mp_unsmooth=>mp_unsmooth, :mp_all_fields=>true, :smoothing=>$sparam_prm)
         $i.crt_add_query_set("#{$query_prefix}_oPRMS_#{op_comb}_u#{mp_unsmooth}", o)
       end
     end
+  
   # Getting Baseline Results
   when 'baseline'
     $i.crt_add_query_set("#{$query_prefix}_DQL" , :smoothing=>$sparam)
