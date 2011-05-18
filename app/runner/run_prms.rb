@@ -31,7 +31,7 @@ begin
     $i.crt_add_query_set("#{$query_prefix}_PRMSmx_#{$o[:mp_types]}", o.merge(:template=>:tew, :mps=>$mpmix, :smoothing=>$sparam_prm ))
     $i.crt_add_query_set("#{$query_prefix}_PRMSrl", o.merge(:flms=>$rlflms1, :smoothing=>$sparam_prm))
     #$i.crt_add_query_set("#{$query_prefix}_PRMSrl", o.merge(:template=>:tew, :mps=>$engine.get_mixture_mpset($queries, [:ora2], [1]), :smoothing=>$sparam_prm ))
-
+    
   when 'pmix_var'
     qs = $i.crt_add_query_set("#{$query_prefix}_DQL" , :smoothing=>$sparam)    
     $rsflms = get_rsflms(qs) if !$rsflms
@@ -58,6 +58,12 @@ begin
       $i.crt_add_query_set("#{$query_prefix}_PRMD_l#{lambda}", o.merge(:template=>:prm_ql, :smoothing=>$sparam_prm, :lambda=>lambda))
       $i.crt_add_query_set("#{$query_prefix}_PRMDmx5_l#{lambda}", :template=>:tew_ql,
                               :smoothing=>$sparam_prm, :lambda=>lambda, :mps=>$mpmix)
+    end
+    
+  when 'noise'
+    [0.5,1.0,2.0,5.0].each do |mp_noise|
+      o = o.dup.merge(:flms=>$rlflms1, :op_comb=>op_comb, :mp_noise=>mp_noise, :mp_all_fields=>true)
+      $i.crt_add_query_set("#{$query_prefix}_oPRMS_#{op_comb}_n#{mp_noise}", o)
     end
     
   when 'mp_oracle'
@@ -106,7 +112,6 @@ begin
     end
   
   ################################### Deprecated 
-  
   
   when 'gprms_mix'
     o.merge!(:engine=>:galago, :index_path=>$gindex_path, :smoothing=>'linear', :lambda=>0.1)

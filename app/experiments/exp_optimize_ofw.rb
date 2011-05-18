@@ -21,32 +21,12 @@ def evaluate_at(qidx, xvals , yvals , o={})
 end
 
 
-def replace_probs(mps, probs)
-  mps.each_with_index do |mp,i|
-    mp[1].each_with_index do |e,j|
-      e[1] = probs[i+j]
-    end
-  end
-  [mps]
-end
-
-# Extract probability pairs from MPs
-def get_probs(mps)
-  result = []
-  mps.each_with_index do |mp,i|
-    mp[1].each_with_index do |e,j|
-      result << [[mp[0], e[0]].join("."), e[1]]
-    end
-  end
-  result
-end
-
 def find_opt_for(qidx)
   $mprel = $engine.get_map_prob($queries[qidx], :flm=>$rlflms1[qidx])
   p "== Query #{qidx} : #{$queries[qidx]}"
   
-  $xvals = get_probs($mprel).map{|e|e[0]}
-  $yvals = [get_probs($mprel).map{|e|e[1]}]
+  $xvals = $engine.get_probs($mprel).map{|e|e[0]}
+  $yvals = [$engine.get_probs($mprel).map{|e|e[1]}]
   result_ofw = evaluate_at(qidx, $xvals, $yvals[-1], :offset=>(qidx+$offset), :mps=>[$mprel] )
   return if result_ofw == 1.0
 
@@ -65,12 +45,12 @@ def find_opt_for(qidx)
                    end
                    
   $results = $search_method.search($iter_count , $o) do |xvals , yvals , type , remote|
-    evaluate_at(qidx, xvals , yvals , $o.merge(:offset=>(qidx+$offset), :mps=>replace_probs($mprel, yvals)))
+    evaluate_at(qidx, xvals , yvals , $o.merge(:offset=>(qidx+$offset), :mps=>$engine.replace_probs($mprel, yvals)))
   end
-  result_opt = evaluate_at(qidx, $xvals, $yvals[-1], :offset=>(qidx+$offset), :mps=>replace_probs($mprel, $yvals[-1]) )
+  result_opt = evaluate_at(qidx, $xvals, $yvals[-1], :offset=>(qidx+$offset), :mps=>$engine.replace_probs($mprel, $yvals[-1]) )
   
   $mprel = $engine.get_map_prob($queries[qidx], :flm=>$rlflms1[qidx])
-  $best_results << [ qidx , result_ofw , result_opt, $mprel.inspect, replace_probs($mprel, $yvals[-1]).inspect ]
+  $best_results << [ qidx , result_ofw , result_opt, $mprel.inspect, $engine.replace_probs($mprel, $yvals[-1]).inspect ]
 end
 
 0.upto($queries.size - 1) do |i|
