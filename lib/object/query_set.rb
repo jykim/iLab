@@ -1,7 +1,7 @@
 # Set of Queries
 # - Delegate engine-specific operation to some SearchEngineInterface class
 class QuerySet
-  attr_accessor :short_name, :name , :qrys , :qh , :rs , :o , :stat , :engine
+  attr_accessor :short_name, :name , :qrys , :qh , :rs , :o , :stat , :engine, :stat2
   include ILabHelper , QueryHelper , OptionHandler, Math
   PROB_UNFOUND = 0.0000001 #Float::EPSILON
   
@@ -74,7 +74,7 @@ class QuerySet
     a = dsvread(@name+'.eval')
     @stat = @qh.map_hash{|k,v|[k.to_s,nil]}
     a.each{|l| @stat[l[1]] = {} if !@stat[l[1]] ; @stat[l[1]][l[0]] = l[2].to_f.r3}
-    # @stat2 = {} ; a.each{|l| @stat2[l[0]] = {} if !@stat2[l[0]] ; @stat2[l[0]][l[1]] = l[2].to_f}
+    @stat2 = {} ; a.each{|l| @stat2[l[0]] = {} if !@stat2[l[0]] ; @stat2[l[0]][l[1]] = l[2].to_f}
     @stat
   end
   

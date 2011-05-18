@@ -171,6 +171,27 @@ module CalcMapProb
   def marr2hash(mps)
     mps.map{|e|[e[0], e[1].to_h]}
   end
+
+  # replace given MP estimate with given set of probabilities
+  def replace_probs(mps, probs)
+    mps.each_with_index do |mp,i|
+      mp[1].each_with_index do |e,j|
+        e[1] = probs[i+j]
+      end
+    end
+    [mps]
+  end
+
+  # Extract probability pairs from MPs
+  def get_probs(mps)
+    result = []
+    mps.each_with_index do |mp,i|
+      mp[1].each_with_index do |e,j|
+        result << [[mp[0], e[0]].join("."), e[1]]
+      end
+    end
+    result
+  end
   
   # Get MPs estimated from collection FLMs
   def get_mpset( queries, o = {} )
