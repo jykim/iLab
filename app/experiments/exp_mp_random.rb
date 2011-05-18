@@ -25,7 +25,12 @@ end
 
   qs2 = $i.crt_add_query_set("#{$query_prefix}_PRMSrand#{i}", $o.merge(:template=>:tew, :mps=>$mp_rand, :smoothing=>$sparam_prm ))
   
+  #p $qsrel.stat2['map']
+  #p qs2.stat2['map']
+    
   maps = qs2.stat2['map'].find_all{|k,v|k != 'all'}.sort_by{|e|e[0].to_i}.map_with_index{|e,j|$maprel[j] - e[1]}
+
+  p maps, klds, cosines, precs
   
   puts [klds.pcc(maps), cosines.pcc(maps), precs.pcc(maps)].join("\t")
 end
