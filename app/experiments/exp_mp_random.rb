@@ -1,7 +1,8 @@
 
 $mprel = $engine.get_mpset_from_flms($queries, $rlflms1)
 
-qs1 = $i.crt_add_query_set("#{$query_prefix}_PRMSrl", $o.merge(:flms=>$rlflms1, :smoothing=>$sparam_prm))
+$qsrel = $i.crt_add_query_set("#{$query_prefix}_PRMSrl", $o.merge(:flms=>$rlflms1, :smoothing=>$sparam_prm))
+$maprel = $qsrel.stat2['map'].find_all{|k,v|k != 'all'}.sort_by{|e|e[0].to_i}.map{|e|e[1]}
 
 def get_random_mps(qidx)
   mprel = $engine.get_map_prob($queries[qidx], :flm=>$rlflms1[qidx])  
@@ -19,11 +20,13 @@ end
   end
 
   klds = $engine.get_mpset_klds( $mprel, $mp_rand.map{|e|$engine.marr2hash e} )
+  cosines = $engine.get_mpset_cosine( $mprel, $mp_rand.map{|e|$engine.marr2hash e} )
+  precs = $engine.get_mpset_prec( $mprel, $mp_rand.map{|e|$engine.marr2hash e} )
 
   qs2 = $i.crt_add_query_set("#{$query_prefix}_PRMSrand#{i}", $o.merge(:template=>:tew, :mps=>$mp_rand, :smoothing=>$sparam_prm ))
   
-  maps = qs2.stat2['map'].find_all{|k,v|k != 'all'}.sort_by{|e|e[0].to_i}.map{|e|e[1]}
+  maps = qs2.stat2['map'].find_all{|k,v|k != 'all'}.sort_by{|e|e[0].to_i}.map_with_index{|e|$maprel[i] - e[1]}
   
-  p klds, maps, klds.pcc(maps)
+  puts [klds.pcc(maps), cosines.pcc(maps), precs.pcc(maps)].join("\t")
 end
 
