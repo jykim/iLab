@@ -15,8 +15,8 @@ end
 1.upto(10) do |i|
 
   $mp_rand = []
-  0.upto($queries.size - 1) do |i|
-    $mp_rand.concat get_random_mps(i)
+  0.upto($queries.size - 1) do |j|
+    $mp_rand.concat get_random_mps(j)
   end
 
   klds = $engine.get_mpset_klds( $mprel, $mp_rand.map{|e|$engine.marr2hash e} )
@@ -25,7 +25,7 @@ end
 
   qs2 = $i.crt_add_query_set("#{$query_prefix}_PRMSrand#{i}", $o.merge(:template=>:tew, :mps=>$mp_rand, :smoothing=>$sparam_prm ))
   
-  maps = qs2.stat2['map'].find_all{|k,v|k != 'all'}.sort_by{|e|e[0].to_i}.map_with_index{|e|$maprel[i] - e[1]}
+  maps = qs2.stat2['map'].find_all{|k,v|k != 'all'}.sort_by{|e|e[0].to_i}.map_with_index{|e,j|$maprel[j] - e[1]}
   
   puts [klds.pcc(maps), cosines.pcc(maps), precs.pcc(maps)].join("\t")
 end
