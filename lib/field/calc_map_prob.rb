@@ -158,8 +158,12 @@ module CalcMapProb
   # Get the Precision between two MP sets
    
   def get_mpset_prec( mpset1, mpset2  )
-    mpset_calc( mpset1, mpset2 ){|mp1,mp2|
+    stat = Hash.new(0)
+    result = mpset_calc( mpset1, mpset2 ){|mp1,mp2|
+      stat[mp1.max_pair[0]] += 1
       ((mp1.max_pair[0] == mp2.max_pair[0])? 1 : 0 ).to_f}
+    p stat
+    result
   end
   
   # Turn Hash form of MP to Array
