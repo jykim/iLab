@@ -1,3 +1,9 @@
+# TREC
+
+$o = {:topic_id=>'test', :verbose=>:mp) }; $method='final'; $col='trec'; $exp='perf'; $remark='0522'; eval IO.read('run_prms.rb')
+
+$o = {:topic_id=>'test' }; $method=nil; $col='trec'; $exp='mp_random'; $remark='0521'; eval IO.read('run_prms.rb')
+
 # Monster
 
 $o = {:topic_id=>'cv2', :verbose=>:mp, :mp_sparam=>0.1,:mp_types=>[:cug, :rug, :cbg, :prior, :rbg ]}; $method='final'; $col='monster'; $exp='perf'; $remark='0516_mpsmt'; eval IO.read('run_prms.rb')
@@ -32,3 +38,5 @@ end
 [[:cug, :cbg, :prior ], [:rug, :rbg , :prior], [:cug, :cbg, :rug, :rbg], [:cug, :rug , :prior]].each do |mp_types|
   $o={:topic_id=>'test', :mp_types=>mp_types}; $col='trec' ;$exp='perf'; $method='final'; $remark='0515_ablation'; eval IO.read('run_prms.rb')
 end
+
+# 

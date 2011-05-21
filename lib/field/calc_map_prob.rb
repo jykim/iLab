@@ -179,7 +179,7 @@ module CalcMapProb
         e[1] = probs[i+j]
       end
     end
-    [mps]
+    mps#[mps]
   end
 
   # Extract probability pairs from MPs
