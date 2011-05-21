@@ -1,0 +1,18 @@
+> mean(dt[,c(3:7)])
+      DQL      MFLM      PRMS   PRMSmx5    PRMSrl 
+> mean(dt[,c(11:19)])
+      DKL    DKL.p.    DKL.m.       Cos    Cos.p.    Cos.m.       P.1    P.1.p.    P.1.m. 
+> 
+> dt1 = read.table('rpt_imdb_dcv1_final (1).tsv',header=T,sep='\t')
+> dt2 = read.table('rpt_imdb_dcv2_final (1).tsv',header=T,sep='\t')
+> 
+> dt = rbind(dt1, dt2)
+> 
+
+> mean(dt[,c(3:7)])
+      DQL      MFLM      PRMS   PRMSmx5    PRMSrl 
+0.4083596 0.6124596 0.6372808 0.6569000 0.7037192 
+0.4083596 0.4221404 0.6372808 0.5021000 0.7037192 
+      DKL    DKL.p.    DKL.m.       Cos    Cos.p.    Cos.m.       P.1    P.1.p.    P.1.m. 
+2.8081000 0.7886192 1.1961192 0.4003808 0.8121000 0.7574788 0.4356596 0.8017000 0.7926788
+2.8081000 0.7886192 0.5457000 0.4003808 0.8121000 0.8581788 0.4356596 0.8017000 0.7810596 

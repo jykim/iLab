@@ -230,7 +230,7 @@ def set_collection_param(col_id)
     when [:cug, :rug , :prior]
       [0.388, 0.388, 0.388]	
     else
-      [0.388, 0.01, 1.0, 0.388, 1.0]
+      [0.01, 1.0, 0.154, 0.189, 0.099]	#(cosim/test)
     end
     #[0.01, 1.0, 0.154, 0.189, 0.099]	#(cosim/test)
     #[0.099, 1.0, 0.099, 0.01, 0.333]	#(cosim/train)
@@ -250,7 +250,7 @@ def set_collection_param(col_id)
     $sparam_prm = get_sparam('jm',0.1)#
     $sparam_mflm = get_sparam('jm',0.1)#
     
-    $mix_weights = [0.154, 1.0, 0.01, 0.01, 0.299]	
+    $mix_weights = [0.01, 0.388, 0.388, 0.477, 0.189]
     #[0.01, 0.388, 0.388, 0.477, 0.189]	#(map/train)
     #[0.154, 1.0, 0.01, 0.01, 0.299] #(cosim/train)???
     
@@ -281,7 +281,7 @@ def set_collection_param(col_id)
       $mix_weights = [0.333, 1.0, 0.299, 0.01, 0.01]	# (cos)
       $mix_weights = [0.388, 0.388, 0.388, 0.388, 0.388] # (map)
     else
-      $mix_weights = [0.388, 0.01, 1.0, 0.388, 1.0]
+      $mix_weights = [0.333, 0.299, 1.0, 0.01, 1.0]	 # (cos/qtest)
     end
     $hlm_weight = [1.9, 1.8, 0.1, 0.9, 0.9, 0.5, 0.5, 0.5, 0.6, 0.4]
     #$mix_weights = [0.388, 1.0, 0.388, 0.567, 0.388]	#[0.388, 0.01, 0.388, 0.622, 0.388]	
