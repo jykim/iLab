@@ -36,6 +36,6 @@ end
 
   #p maps, klds, cosines, precs
   
-  puts [klds.pcc(maps), cosines.pcc(maps), precs.pcc(maps), $qs2.stat2['map']['all'], $maprel.stat2['map']['all']].join("\t")
+  puts [klds.pcc(maps), cosines.pcc(maps), precs.pcc(maps), $qs2.stat2['map']['all'], $qsrel.stat2['map']['all']].join("\t")
 end
 
