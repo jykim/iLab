@@ -21,7 +21,7 @@ $o={:mode=>:mix_weights,:opt_for=>'map',:redo=>true, :topic_id=>'dtest'}; $col='
 
 # Debugging
 
-$o = {:topic_id=>'train', :verbose=>:mp,:redo=>true }; $method='prms_mix'; $col='trec'; $exp='perf'; $remark='0511_debug'; eval IO.read('run_prms.rb')
+$o = {:topic_id=>'train', :verbose=>:mp,:redo=>true }; $method='prms_mix'; $coll='trec'; $exp='perf'; $remark='0511_debug'; eval IO.read('run_prms.rb')
 
 $o = {:topic_id=>'dtrain', :verbose=>:mp,:redo=>true }; $method='prms_mix'; $col='imdb'; $exp='perf'; $remark='0511_debug'; eval IO.read('run_prms.rb')
 
