@@ -32,12 +32,6 @@ module IndriFieldHelper
     end
   end
   
-  def get_doc_lm(dno)
-    dv = get_index_info("dv", dno).split(/--- .*? ---\n/)
-    words = dv[2].split("\n").map{|l|l.split(" ")}.map{|e|e[2]}
-    get_unigram_lm(words)
-  end
-  
   # Get the field-level term vector for given document
   def get_doc_field_vector(dno)
     return $dfv[dno] if $dfv[dno]
@@ -53,6 +47,14 @@ module IndriFieldHelper
       group_by{|e|f = fields.find{|k,v|k === e[0].to_i} ; (f)? f[1] : nil }.
       map_hash{|k,v|[k, v.map{|e|e[2]}]}
   end
+  
+  
+  def get_doc_lm(dno)
+    dv = get_index_info("dv", dno).split(/--- .*? ---\n/)
+    words = dv[2].split("\n").map{|l|l.split(" ")}.map{|e|e[2]}
+    get_unigram_lm(words)
+  end
+  
   
   def get_doc_field_lm(dno, n = 1)
     #return $dflm[dno] if $dflm[dno]
@@ -173,6 +175,25 @@ module IndriFieldHelper
       end
       [ng, result_n]
     end
+  end
+  
+  # Get FLM from top K result documents
+  def get_res_lm( res_docs)
+    max_score = res_docs[0].score
+    nscores = res_docs.map{|e|e.score - max_score}.map{|e|Math.exp(e)}
+    result_n = nil
+    res_docs.each_with_index do |d,i|
+      #p d.did
+      dlm = get_doc_lm(to_dno(d.did))
+      $dlms_rs << [d.qid, dlm, nscores[i]]
+      #p dlm.keys
+      if !result_n
+        result_n = dlm
+      else
+        result_n = result_n.sum_prob(dlm.map_hash{|k2,v2|[k2, v2 * nscores[i]]})
+      end
+    end
+    result_n
   end
   
 end

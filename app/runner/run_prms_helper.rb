@@ -22,6 +22,8 @@ def init_env()
 
   $dflms_rl = [] if !$dflms_rl
   $dflms_rs = [] if !$dflms_rs 
+
+  $dlms_rs = [] if !$dlms_rs 
   
   #Set Global Vars
   $t_start = Time.now
