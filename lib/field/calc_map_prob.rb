@@ -74,20 +74,22 @@ module CalcMapProb
   def get_mixture_map_prob(query, flms, types, weights, o = {})
     fields = o[:prm_fields] || $fields
     mps = [] ; prev_qw = nil
-    query.split(" ").map_with_index do |qw,i|
+    query = query.split(" ").map{|e|[e, 1]} if query.class == String
+    query.map_with_index do |qw,i|
       mp_flms = []
+      #debugger
       flms.each_with_index do |flm, j|
-        #debugger
         if types[j] == :prior || types[j] == :uniform
-          mp_flms << [[qw, fields.map_with_index{|f,k|[ f, flm[k] ]}]]
+          mp_flms << [[qw[0], fields.map_with_index{|f,k|[ f, flm[k] ]}]]
         elsif types[j] == :cug || types[j] == :rug || types[j] == :ora
-          mp_flms << get_map_prob(qw, :flm => flm)
+          mp_flms << get_map_prob(qw[0], :flm => flm)
         elsif types[j] == :rug2 || types[j] == :ora2
-          mp_flms << get_map_prob_multi(qw, flm)
+          mp_flms << get_map_prob_multi(qw[0], flm)
         elsif types[j] == :cbg || types[j] == :rbg
-          mp_flms << get_map_prob([(prev_qw || ""),qw].join(" "), :flm => flm, :bgram=>true) #if prev_qw
+          mp_flms << get_map_prob([(prev_qw[0] || ""),qw[0]].join(" "), :flm => flm, :bgram=>true)
         end
       end
+      #p mp_flms
       prev_qw = qw
       if mp_flms.flatten.uniq.size == 0
         #error "[get_mixture_map_prob] no mp found!"
@@ -95,13 +97,14 @@ module CalcMapProb
       else
         mp_flms = mp_flms.map{|e|e[0] ? e[0][1].to_h : {}}
       end
-      #fields.map_hash{|f| info [qw, f, mp_flms.map_with_index{|mp,j|(mp[f] || 0.0).r3 } ].flatten.join("\t") } if $o[:verbose]
+      #fields.map_hash{|f| info [qw[0], f, mp_flms.map_with_index{|mp,j|(mp[f] || 0.0).r3 } ].flatten.join("\t") } if $o[:verbose]
       #File.open("MP_#{}.log",'a'){|f|f.puts }
-      mps << [qw, fields.map_hash{|f| [f, mp_flms.map_with_index{|mp,j|(mp[f] || 0) * weights[j]}.sum ]}]
+      mps << [qw[0], fields.map_hash{|f| [f, mp_flms.map_with_index{|mp,j|(mp[f] || 0) * weights[j]}.sum ]}, qw[1]]
     end
    mhash2arr mps
   end
   
+  # Collect FLMs from various sources
   def get_mixture_mpset(queries, types, weights, o = {})
     queries.map_with_index do |q,i|
       qidx = o[:qno] ? (o[:qno] - $offset) : i
@@ -156,7 +159,6 @@ module CalcMapProb
   end
   
   # Get the Precision between two MP sets
-   
   def get_mpset_prec( mpset1, mpset2  )
     stat = Hash.new(0)
     result = mpset_calc( mpset1, mpset2 ){|mp1,mp2|
@@ -168,12 +170,12 @@ module CalcMapProb
   
   # Turn Hash form of MP to Array
   def mhash2arr(mps)
-    mps.map{|e|[e[0], e[1].to_p.find_all{|term,prob|prob > 0}.sort_val]}.find_all{|mp|mp[1].size>0}
+    mps.map{|e|[e[0], e[1].to_p.find_all{|term,prob|prob > 0}.sort_val, e[2]]}.find_all{|mp|mp[1].size>0}
   end
   
   # Turn Array form of MP to Hash
   def marr2hash(mps)
-    mps.map{|e|[e[0], e[1].to_h]}
+    mps.map{|e|[e[0], e[1].to_h, e[2]]}
   end
 
   # replace given MP estimate with given set of probabilities

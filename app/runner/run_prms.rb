@@ -13,6 +13,18 @@ def get_rsflms(qs)
     $engine.get_res_flm q.rs.docs[0..topk]} 
 end
 
+def get_rslms(qs)
+  topk = $o[:topk] || 5
+  qs.qrys.map_with_index{|q,i|
+    puts "[get_res_lm] #{i}th query processed" if i % 20 == 1
+    $engine.get_res_lm q.rs.docs[0..topk]} 
+end
+
+def get_rm_queries(rslms, term_no = 10)
+  rslms.map{|rslm|
+    rslm.find_all{|w,p|!$stopwords.include?(w)}.sort_by{|e|e[1]}.reverse[0..term_no]}
+end
+
 #Choose Retrieval Method
 #def ILabLoader.build(ilab)
 begin
@@ -28,9 +40,24 @@ begin
     
     $rsflms = get_rsflms(qs) if !$rsflms
     $mpmix = $engine.get_mixture_mpset($queries, $mp_types, $mix_weights)
-    $i.crt_add_query_set("#{$query_prefix}_PRMSmx_#{$o[:mp_types]}", o.merge(:template=>:tew, :mps=>$mpmix, :smoothing=>$sparam_prm ))
+    $i.crt_add_query_set("#{$query_prefix}_PRMSmx_#{$o[:mp_types]}", 
+      o.merge(:template=>:tew, :mps=>$mpmix, :smoothing=>$sparam_prm ))
     $i.crt_add_query_set("#{$query_prefix}_PRMSrl", o.merge(:flms=>$rlflms1, :smoothing=>$sparam_prm))
     #$i.crt_add_query_set("#{$query_prefix}_PRMSrl", o.merge(:template=>:tew, :mps=>$engine.get_mixture_mpset($queries, [:ora2], [1]), :smoothing=>$sparam_prm ))
+
+  when 'param_rm'
+    $mp_types = $o[:mp_types] || [:cug]
+    $mix_weights = [1.0]
+    qs = $i.crt_add_query_set("#{$query_prefix}_DQL" , :smoothing=>$sparam)
+    $rsflms = get_rsflms(qs) if !$rsflms
+    $mpmix = $engine.get_mixture_mpset($queries, $mp_types, $mix_weights)
+    $queries_rm = get_rm_queries(get_rslms(qs)) if !$queries_rm
+    $mpmix_rm = $engine.get_mixture_mpset($queries_rm, $mp_types, $mix_weights)
+
+    [0.1, 0.2, 0.3, 0.5, 0.7, 0.9].each do |lambda|
+      $i.crt_add_query_set("#{$query_prefix}_PRMSmxRM_#{$o[:mp_types]}_l#{lambda}", 
+        o.merge(:template=>:tew_rm, :mps=>$mpmix, :mps_rm=>$mpmix_rm, :smoothing=>$sparam_prm, :lambda=>lambda ))
+    end
     
   when 'pmix_var'
     qs = $i.crt_add_query_set("#{$query_prefix}_DQL" , :smoothing=>$sparam)    

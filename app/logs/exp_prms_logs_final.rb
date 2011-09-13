@@ -1,6 +1,6 @@
 # TREC
 
-$o = {:topic_id=>'test', :verbose=>:mp) }; $method='final'; $col='trec'; $exp='perf'; $remark='0522'; eval IO.read('run_prms.rb')
+$o = {:topic_id=>'test', :verbose=>:mp }; $method='final'; $col='trec'; $exp='perf'; $remark='0522'; eval IO.read('run_prms.rb')
 
 $o = {:topic_id=>'test',:redo=>true }; $method=nil; $col='trec'; $exp='mp_random'; $remark='0521'; eval IO.read('run_prms.rb')
 
