@@ -4,6 +4,7 @@ def init_env()
   $exp_root = ENV['DH']
   $r_path = ENV['R_PROJECT']
   $indri_path = ENV['INDRI']
+  $indri_path_dih = ENV['INDRI_DIH']
   $crfpp_path = ENV['CRFPP']
   $galago_path = ENV['GALAGO']+"/galagosearch-core/target/appassembler"
   $lemur_path = ENV['LEMUR']
@@ -209,6 +210,7 @@ def init_collection(col)
     end
     $title_field = 'resumetitle'
   end#case
+  $bm25f_path = to_path("#{$query_prefix}_bm25f.in")
   $engine.init_kstem($file_topic)
   $rlflms1 = $engine.get_rel_flms_multi($file_qrel)if !$rlflms1
   $queries =  $i.parse_topic_file($file_topic, $ptn_qry_title)
