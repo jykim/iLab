@@ -75,6 +75,13 @@ module PRMHelper
     end
   end
   
+  
+  #Get Relevance Model Query
+  # mps = [[term1, prob1], [...]]
+  def get_rm_query(rm_query, o = {})
+    rm_query.map{|e|"#{e[1].r3} #{e[0]}"}.join(" ")
+  end
+  
   def get_mp_tbl(mps)
     mps.map{|mp| ["",mp[0],mp[1].map{|e|"#{e[0][0..1]}:#{e[1].r3}"},""].flatten.join("|") }.join("\n")
   end
