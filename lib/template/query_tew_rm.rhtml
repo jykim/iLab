@@ -10,9 +10,9 @@
         <queryOffset><%= query_offset %></queryOffset>
 <% o[:mps].each_with_index do |mps,i| %>
         <query>
-        #wsum(<%=1-o[:lambda]%> #wsum(
+        #weight(<%=1-o[:lambda]%> #weight(
 			<%= get_tew_query(mps, o) %>) 
-			  <%=o[:lambda]%> #wsum(
+			  <%=o[:lambda]%> #weight(
 			<%= get_tew_query(o[:mps_rm][i], o) %>) )
         </query>
 <% end  %>
