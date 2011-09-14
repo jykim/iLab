@@ -1,11 +1,23 @@
+
+# Term RM Parameter Tuning
+
+$o = {:topic_id=>'dtrain', :verbose=>:mp }; $method='param_rm'; $col='imdb'; $exp='perf'; $remark='0914_refined'; eval IO.read('run_prms.rb')
+
+$o = {:topic_id=>'train', :verbose=>:mp }; $method='param_rm'; $col='trec'; $exp='perf'; $remark='0914_refined'; eval IO.read('run_prms.rb')
+
+
+# Field RM Parameter Tuning
+
 $o = {:topic_id=>'dtrain', :verbose=>:mp }; $method='param_prms_rm'; $col='imdb'; $exp='perf'; $remark='0913'; eval IO.read('run_prms.rb')
 
 $o = {:topic_id=>'train', :verbose=>:mp }; $method='param_prms_rm'; $col='trec'; $exp='perf'; $remark='0913'; eval IO.read('run_prms.rb')
 
-$o = {:topic_id=>'dtrain', :verbose=>:mp }; $method='param_rm'; $col='imdb'; $exp='perf'; $remark='0913'; eval IO.read('run_prms.rb')
 
-$o = {:topic_id=>'train', :verbose=>:mp }; $method='param_rm'; $col='trec'; $exp='perf'; $remark='0913'; eval IO.read('run_prms.rb')
+# BM25F Parameter Tuning
+#$o = {:topic_id=>'train', :verbose=>:mp }; $method='param_bm25f'; $col='trec'; $exp='perf'; $remark='0913'; eval IO.read('run_prms.rb')
 
-$o = {:topic_id=>'train', :verbose=>:mp }; $method='param_bm25f'; $col='trec'; $exp='perf'; $remark='0913'; eval IO.read('run_prms.rb')
+$o = {:topic_id=>'train', :verbose=>:mp, :mode=>:bm25_bf }; $method='golden' ; $col='trec'; $exp='optimize_prm'; $remark='0913'; eval IO.read('run_prms.rb')
 
-$o = {:topic_id=>'train', :verbose=>:mp }; $method='golden'; $mode='bm25_bf' ; $col='trec'; $exp='optimize_prm'; $remark='0913'; eval IO.read('run_prms.rb')
+$o = {:topic_id=>'dtrain', :verbose=>:mp, :mode=>:bm25_bf }; $method='golden' ; $col='imdb'; $exp='optimize_prm'; $remark='0913'; eval IO.read('run_prms.rb')
+
+$o = {:topic_id=>'train', :verbose=>:mp, :mode=>:bm25_bf }; $method='golden';  $col='monster'; $exp='optimize_prm'; $remark='0913'; eval IO.read('run_prms.rb')

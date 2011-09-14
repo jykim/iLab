@@ -6,21 +6,21 @@ init_env()
 init_collection($col)
 set_collection_param($col_id)
 
-def get_rsflms(qs)
-  topk = $o[:topk] || 5
+def get_rsflms(qs, o = {})
+  topk = o[:topk] || 5
   qs.qrys.map_with_index{|q,i|
     puts "[get_res_flm] #{i}th query processed" if i % 20 == 1      
     $engine.get_res_flm q.rs.docs[0..topk]} 
 end
 
-def get_rslms(qs)
-  topk = $o[:topk] || 5
+def get_rslms(qs, o = {})
+  topk = o[:topk] || 10
   qs.qrys.map_with_index{|q,i|
-    puts "[get_res_lm] #{i}th query processed" if i % 20 == 1
+    puts "[get_res_lm] #{i}th query processed" if i % 10 == 1
     $engine.get_res_lm q.rs.docs[0..topk]} 
 end
 
-def get_rm_queries(rslms, term_no = 10)
+def get_rm_queries(rslms, term_no = 50)
   rslms.map{|rslm|
     rslm.find_all{|w,p|!$stopwords.include?(w)}.sort_by{|e|e[1]}.reverse[0..term_no]}
 end
@@ -58,13 +58,12 @@ begin
       $i.crt_add_query_set("#{$query_prefix}_PRMSmxRM_#{$o[:mp_types]}_l#{lambda}", 
         o.merge(:template=>:tew_rm, :mps=>$mpmix, :mps_rm=>$mpmix_rm, :smoothing=>$sparam_prm, :lambda=>lambda ))
     end
-    
 
   when 'param_rm'
     qs = $i.crt_add_query_set("#{$query_prefix}_DQL" , :smoothing=>$sparam)
     $queries_rm = get_rm_queries(get_rslms(qs)) if !$queries_rm
 
-    [0.1, 0.2, 0.3, 0.5, 0.7, 0.9].each do |lambda|
+    [0.05, 0.1, 0.15, 0.2, 0.3, 0.5, 0.7, 0.9].each do |lambda|
       $i.crt_add_query_set("#{$query_prefix}_RM_l#{lambda}", 
         o.merge(:template=>:rm, :rm_topics=>$queries_rm, :smoothing=>$sparam_prm, :lambda=>lambda ))
     end

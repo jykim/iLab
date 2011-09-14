@@ -7,7 +7,7 @@
         <queryOffset><%= query_offset %></queryOffset>
 <% o[:rm_topics].each_with_index do |rm_topic,i| %>
         <query>
-        #wsum(<%=1-o[:lambda]%> #combine(<%= topics[i] %>) <%=o[:lambda]%> #wsum(<%= get_rm_query(rm_topic, o) %>))
+        #weight(<%=1-o[:lambda]%> #combine(<%= topics[i] %>) <%=o[:lambda]%> #weight(<%= get_rm_query(rm_topic, o) %>))
         </query>
 <% end  %>
 </parameters>
