@@ -37,9 +37,9 @@ def evaluate_at(xvals , yvals , o={})
   cosims = $engine.mpset_calc( $mprel, $mpmix_h ){|mp1,mp2|mp1.cosim(mp2.to_p)}
   case $opt_for
   when 'kld'
-    {'kld'=>(-klds.avg)}    
+    {'kld'=>(-klds.avg)}
   when 'cosine'
-    {'cosine'=>cosims.avg}    
+    {'cosine'=>cosims.avg}
   when 'map'
     qs = $i.create_query_set(get_opt_qry_name(xvals , yvals, o), o.merge(:template=>:tew, :mps=>$mpmix, :skip_result_set=>true, :smoothing=>( $o[:sparam] || $sparam_prm) ))
     stats = qs.calc_stat($file_qrel)
