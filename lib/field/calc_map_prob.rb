@@ -8,9 +8,8 @@ module CalcMapProb
     qw_prev = []
     fields = o[:prm_fields] || $fields
     flm = o[:flm] ||  get_col_freq(:prob=>true)
-    bflm = get_col_freq(:prob=>true)
-    #get_col_freq((o[:df]) ? {:df=>true,:prob=>true} : {:prob=>true})
-    #puts "[get_map_prob] flm = #{o[:flm]}" if o[:flm]
+    bflm = get_col_freq(:prob=>true) if o[:mp_sparam]
+    #puts "[get_map_prob] query = [#{query.inspect}]"
     query.split(" ").each_with_index do |qw,i|
       #puts "[get_map_prob] Working on #{qw}"
       qw_prev << qw_s =  get_stem(qw, o)
@@ -74,8 +73,8 @@ module CalcMapProb
   def get_mixture_map_prob(query, flms, types, weights, o = {})
     fields = o[:prm_fields] || $fields
     mps = [] ; prev_qw = nil
-    query = query.split(" ").map{|e|[e, 1]} if query.class == String
-    query.map_with_index do |qw,i|
+    query_arr = (query.class == String) ? query.split(" ").map{|e|[e, 1]} : query
+    query_arr.map_with_index do |qw,i|
       mp_flms = []
       #debugger
       flms.each_with_index do |flm, j|
@@ -86,7 +85,7 @@ module CalcMapProb
         elsif types[j] == :rug2 || types[j] == :ora2
           mp_flms << get_map_prob_multi(qw[0], flm)
         elsif types[j] == :cbg || types[j] == :rbg
-          mp_flms << get_map_prob([(prev_qw[0] || ""),qw[0]].join(" "), :flm => flm, :bgram=>true)
+          mp_flms << get_map_prob([((prev_qw)? prev_qw[0] : ""),qw[0]].join(" "), :flm => flm, :bgram=>true)
         end
       end
       #p mp_flms
@@ -97,8 +96,14 @@ module CalcMapProb
       else
         mp_flms = mp_flms.map{|e|e[0] ? e[0][1].to_h : {}}
       end
-      #fields.map_hash{|f| info [qw[0], f, mp_flms.map_with_index{|mp,j|(mp[f] || 0.0).r3 } ].flatten.join("\t") } if $o[:verbose]
-      #File.open("MP_#{}.log",'a'){|f|f.puts }
+      if o[:export_mp]
+        puts "export_mp!"
+        File.open(to_path("MP_#{$query_prefix}.out"),'a') do |file|
+          fields.map_hash{|f| 
+            file.puts [qw[0], f, mp_flms.map_with_index{|mp,j|(mp[f] || 0.0).round_at(5) } ].flatten.join("\t") 
+          }
+        end
+      end
       mps << [qw[0], fields.map_hash{|f| [f, mp_flms.map_with_index{|mp,j|(mp[f] || 0) * weights[j]}.sum ]}, qw[1]]
     end
    mhash2arr mps
