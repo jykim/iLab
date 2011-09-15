@@ -20,6 +20,8 @@ $o = {:topic_id=>'train', :verbose=>:mp }; $method='param_prms_rm'; $col='trec';
 
 $o = {:topic_id=>'train', :verbose=>:mp}; $method='train_mpmix' ; $col='trec'; $exp='perf'; $remark='0915'; eval IO.read('run_prms.rb')
 
+$o = {:topic_id=>'test', :verbose=>:mp}; $method='final' ; $col='trec'; $exp='perf'; $remark='0915_reg_mpmix'; eval IO.read('run_prms.rb')
+
 
 # BM25F Parameter Tuning
 #$o = {:topic_id=>'train', :verbose=>:mp }; $method='param_bm25f'; $col='trec'; $exp='perf'; $remark='0913'; eval IO.read('run_prms.rb')

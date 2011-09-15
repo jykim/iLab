@@ -34,17 +34,16 @@ begin
   $mp_types = $o[:mp_types] || [:cug, :rug, :cbg, :prior, :rbg ]
   case $method
   when 'final'
-    $bm25f_smt = IndriInterface.get_field_bparam($fields , $bfs, $k1)
-    $rsflms = get_rsflms(qs) if !$rsflms
-    $mpmix = $engine.get_mixture_mpset($queries, $mp_types, $mix_weights)
-    $mpmix_reg = $engine.get_mixture_mpset($queries, $mp_types, $mix_weights_reg)
-    
+    $bm25f_smt = IndriInterface.get_field_bparam($fields , $bfs, $k1)    
     $i.crt_add_query_set("#{$query_prefix}_BM25F", :template=>:hlm, :smoothing=>$bm25f_smt, 
                             :hlm_weights=>($bm25f_weight || [0.1]*($fields.size)), :indri_path=>$indri_path_dih, :param_query=>"-msg_path='#{$bm25f_path}'")
     qs = $i.crt_add_query_set("#{$query_prefix}_DQL" , :smoothing=>$sparam)
     $i.crt_add_query_set("#{$query_prefix}_MFLM" ,:template=>:hlm, :smoothing=>$sparam_mflm, :hlm_weights=>($hlm_weight || [0.1]*($fields.size)))
     $i.crt_add_query_set("#{$query_prefix}_PRMS", o.merge(:smoothing=>$sparam_prm))
     
+    $rsflms = get_rsflms(qs) if !$rsflms
+    $mpmix = $engine.get_mixture_mpset($queries, $mp_types, $mix_weights)
+    $mpmix_reg = $engine.get_mixture_mpset($queries, $mp_types, $mix_weights_reg)
     $i.crt_add_query_set("#{$query_prefix}_PRMSmx_#{$o[:mp_types]}", 
       o.merge(:template=>:tew, :mps=>$mpmix, :smoothing=>$sparam_prm ))
     $i.crt_add_query_set("#{$query_prefix}_PRMSmxReg_#{$o[:mp_types]}", 
