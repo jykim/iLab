@@ -1,9 +1,9 @@
 
 # Term RM Parameter Tuning
 
-$o = {:topic_id=>'dtrain', :verbose=>:mp }; $method='param_rm'; $col='imdb'; $exp='perf'; $remark='0914_refined'; eval IO.read('run_prms.rb')
+$o = {:topic_id=>'dtrain' }; $method='param_rm'; $col='imdb'; $exp='perf'; $remark='0914_refined'; eval IO.read('run_prms.rb')
 
-$o = {:topic_id=>'train', :verbose=>:mp }; $method='param_rm'; $col='trec'; $exp='perf'; $remark='0914_refined'; eval IO.read('run_prms.rb')
+$o = {:topic_id=>'test' }; $method='param_rm'; $col='trec'; $exp='perf'; $remark='0914_refined'; eval IO.read('run_prms.rb')
 
 
 # Field RM Parameter Tuning
@@ -18,6 +18,8 @@ $o = {:topic_id=>'train', :verbose=>:mp }; $method='param_prms_rm'; $col='trec';
 
 $o = {:topic_id=>'train', :verbose=>:mp, :mode=>:bm25_bf }; $method='golden' ; $col='trec'; $exp='optimize_prm'; $remark='0913'; eval IO.read('run_prms.rb')
 
-$o = {:topic_id=>'dtrain', :verbose=>:mp, :mode=>:bm25_bf }; $method='golden' ; $col='imdb'; $exp='optimize_prm'; $remark='0913'; eval IO.read('run_prms.rb')
+$o = {:topic_id=>'train', :mode=>:bm25f_weight }; $method='golden' ; $col='trec'; $exp='optimize_prm'; $remark='0914'; eval IO.read('run_prms.rb')
 
-$o = {:topic_id=>'train', :verbose=>:mp, :mode=>:bm25_bf }; $method='golden';  $col='monster'; $exp='optimize_prm'; $remark='0913'; eval IO.read('run_prms.rb')
+$o = {:topic_id=>'dtrain', :mode=>:bm25_bf }; $method='golden' ; $col='imdb'; $exp='optimize_prm'; $remark='0913'; eval IO.read('run_prms.rb')
+
+$o = {:topic_id=>'train', :mode=>:bm25_bf }; $method='golden';  $col='monster'; $exp='optimize_prm'; $remark='0913'; eval IO.read('run_prms.rb')

@@ -68,6 +68,12 @@ begin
         o.merge(:template=>:rm, :rm_topics=>$queries_rm, :smoothing=>$sparam_prm, :lambda=>lambda ))
     end
   
+  when 'param_rm_indri'
+    [0.1, 0.2, 0.3, 0.5, 0.7, 0.9].each do |lambda|
+      $i.crt_add_query_set("#{$query_prefix}_RMindri_l#{lambda}", 
+        o.merge(:template=>:rm_indri, :smoothing=>$sparam_prm, :fbDocs=>10, :fbTerms=>50, :fbOrigWeight=>lambda ))
+    end
+  
   when 'param_bm25f'
     $i.crt_add_query_set("#{$query_prefix}_DQL" , :smoothing=>$sparam)
     $bm25f_smt = IndriInterface.get_field_bparam($fields , $bfs, $k1)
