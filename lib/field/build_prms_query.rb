@@ -71,7 +71,7 @@ module PRMHelper
       mps_new.map{|mp|
         mp_str = mp[1].map{|e|"#{e[1].round_at(3)} #{mp[0]}" + 
           ((op_smt == :field)? ".(#{e[0]})" : ".#{e[0]}")}.join(' ')
-        "#{mp[2]} ##{op_comb}(#{mp_str})" }.join("\n")
+        "#{(mp[2] != 1)? mp[2] : ""} ##{op_comb}(#{mp_str})" }.join("\n")
     end
   end
   
