@@ -45,3 +45,16 @@ $o = {:topic_id=>'train', :mode=>:bm25_bf }; $method='golden';  $col='monster'; 
 # Baseline Including BM25F
 
 $o = {:topic_id=>'test', :verbose=>:mp}; $method='final' ; $col='trec'; $exp='perf'; $remark='0915'; eval IO.read('run_prms.rb')
+
+
+tt = read.table('MP_trec_train.out')
+tr = lm(tt$V8 ~ tt$V3 + tt$V4 + tt$V5 + tt$V6 + tt$V7 )
+tr
+
+it = read.table('MP_imdb_dtrain.out')
+ir = lm(it$V8 ~ it$V3 + it$V4 + it$V5 + it$V6 + it$V7 )
+ir
+
+mt = read.table('MP_monster_train.out')
+mr = lm(mt$V8 ~ mt$V3 + mt$V4 + mt$V5 + mt$V6 + mt$V7 )
+mr
