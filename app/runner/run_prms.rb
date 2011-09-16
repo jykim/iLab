@@ -43,11 +43,11 @@ begin
     
     $rsflms = get_rsflms(qs) if !$rsflms
     $mpmix = $engine.get_mixture_mpset($queries, $mp_types, $mix_weights)
-    $mpmix_reg = $engine.get_mixture_mpset($queries, $mp_types, $mix_weights_reg)
+    $mpmix2 = $engine.get_mixture_mpset($queries, $mp_types, $mix_weights_reg)
     $i.crt_add_query_set("#{$query_prefix}_PRMSmx_#{$o[:mp_types]}", 
       o.merge(:template=>:tew, :mps=>$mpmix, :smoothing=>$sparam_prm ))
     $i.crt_add_query_set("#{$query_prefix}_PRMSmxReg_#{$o[:mp_types]}", 
-      o.merge(:template=>:tew, :mps=>$mpmix_reg, :smoothing=>$sparam_prm ))
+      o.merge(:template=>:tew, :mps=>$mpmix2, :smoothing=>$sparam_prm ))
     $i.crt_add_query_set("#{$query_prefix}_PRMSrl", o.merge(:flms=>$rlflms1, :smoothing=>$sparam_prm))
     #$i.crt_add_query_set("#{$query_prefix}_PRMSrl", o.merge(:template=>:tew, :mps=>$engine.get_mixture_mpset($queries, [:ora2], [1]), :smoothing=>$sparam_prm ))
     
