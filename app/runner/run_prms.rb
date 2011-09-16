@@ -82,9 +82,10 @@ begin
     end
   
   when 'param_rm_indri'
+    $i.crt_add_query_set("#{$query_prefix}_DQL" , :smoothing=>$sparam)
     [0.1, 0.2, 0.3, 0.5, 0.7, 0.9].each do |lambda|
       $i.crt_add_query_set("#{$query_prefix}_RMindri_l#{lambda}", 
-        o.merge(:template=>:rm_indri, :smoothing=>$sparam_prm, :fbDocs=>10, :fbTerms=>50, :fbOrigWeight=>lambda ))
+        o.merge(:template=>:rm_indri, :smoothing=>$sparam, :fbDocs=>10, :fbTerms=>50, :fbOrigWeight=>lambda ))
     end
   
   when 'param_bm25f'
