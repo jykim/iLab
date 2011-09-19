@@ -34,22 +34,37 @@ begin
   $mp_types = $o[:mp_types] || [:cug, :rug, :cbg, :prior, :rbg ]
   case $method
   when 'final'
-    $bm25f_smt = IndriInterface.get_field_bparam($fields , $bfs, $k1)    
-    $i.crt_add_query_set("#{$query_prefix}_BM25F", :template=>:hlm, :smoothing=>$bm25f_smt, 
-                            :hlm_weights=>($bm25f_weight || [0.1]*($fields.size)), :indri_path=>$indri_path_dih, :param_query=>"-msg_path='#{$bm25f_path}'")
     qs = $i.crt_add_query_set("#{$query_prefix}_DQL" , :smoothing=>$sparam)
+    $i.crt_add_query_set("#{$query_prefix}_RMindri", o.merge(:template=>:rm_indri, :smoothing=>$sparam, :fbDocs=>5, :fbTerms=>25, :fbOrigWeight=>0.9 ))
+    
+    # Baselines (field)
+    $bm25f_smt = IndriInterface.get_field_bparam($fields , $bfs, $k1)    
+    $i.crt_add_query_set("#{$query_prefix}_BM25F", :template=>:hlm, :smoothing=>$bm25f_smt,  :hlm_weights=>($bm25f_weight || [0.1]*($fields.size)), :indri_path=>$indri_path_dih, :param_query=>"-msg_path='#{$bm25f_path}'")
     $i.crt_add_query_set("#{$query_prefix}_MFLM" ,:template=>:hlm, :smoothing=>$sparam_mflm, :hlm_weights=>($hlm_weight || [0.1]*($fields.size)))
     $i.crt_add_query_set("#{$query_prefix}_PRMS", o.merge(:smoothing=>$sparam_prm))
     
+    # Relevance Feedback
     $rsflms = get_rsflms(qs) if !$rsflms
+    $mprug = $engine.get_mixture_mpset($queries, [:rug], [1.0])
+    $i.crt_add_query_set("#{$query_prefix}_PRMS_rug", 
+      o.merge(:template=>:tew, :mps=>$mprug, :smoothing=>$sparam_prm ))
     $mpmix = $engine.get_mixture_mpset($queries, $mp_types, $mix_weights)
-    $mpmix2 = $engine.get_mixture_mpset($queries, $mp_types, $mix_weights_reg)
     $i.crt_add_query_set("#{$query_prefix}_PRMSmx_#{$o[:mp_types]}", 
       o.merge(:template=>:tew, :mps=>$mpmix, :smoothing=>$sparam_prm ))
-    $i.crt_add_query_set("#{$query_prefix}_PRMSmxReg_#{$o[:mp_types]}", 
-      o.merge(:template=>:tew, :mps=>$mpmix2, :smoothing=>$sparam_prm ))
+    #$mpmix2 = $engine.get_mixture_mpset($queries, $mp_types, $mix_weights_reg)
+    #$i.crt_add_query_set("#{$query_prefix}_PRMSmxReg_#{$o[:mp_types]}", 
+    #  o.merge(:template=>:tew, :mps=>$mpmix2, :smoothing=>$sparam_prm ))
+    
+    # Oracle
     $i.crt_add_query_set("#{$query_prefix}_PRMSrl", o.merge(:flms=>$rlflms1, :smoothing=>$sparam_prm))
     #$i.crt_add_query_set("#{$query_prefix}_PRMSrl", o.merge(:template=>:tew, :mps=>$engine.get_mixture_mpset($queries, [:ora2], [1]), :smoothing=>$sparam_prm ))
+
+  when 'featureval'
+    qs = $i.crt_add_query_set("#{$query_prefix}_DQL" , :smoothing=>$sparam)
+    $rsflms = get_rsflms(qs) if !$rsflms
+    $mpmix_rug = $engine.get_mixture_mpset($queries, [:rug], [1.0])
+    $i.crt_add_query_set("#{$query_prefix}_PRMS_rug", 
+      o.merge(:template=>:tew, :mps=>$mpmix_rug, :smoothing=>$sparam_prm ))
     
   when 'train_mpmix' # Get training data for mixture MP by regression
     qs = $i.crt_add_query_set("#{$query_prefix}_DQL" , :smoothing=>$sparam)
@@ -85,7 +100,7 @@ begin
     $i.crt_add_query_set("#{$query_prefix}_DQL" , :smoothing=>$sparam)
     [0.1, 0.2, 0.3, 0.5, 0.7, 0.9].each do |lambda|
       $i.crt_add_query_set("#{$query_prefix}_RMindri_l#{lambda}", 
-        o.merge(:template=>:rm_indri, :smoothing=>$sparam, :fbDocs=>10, :fbTerms=>50, :fbOrigWeight=>lambda ))
+        o.merge(:template=>:rm_indri, :smoothing=>$sparam, :fbDocs=>5, :fbTerms=>25, :fbOrigWeight=>lambda ))
     end
   
   when 'param_bm25f'
@@ -112,7 +127,6 @@ begin
     $i.crt_add_query_set("#{$query_prefix}_PRMS_all", o.merge(:smoothing=>$sparam_prm,:mp_all_fields=>true))
     $i.crt_add_query_set("#{$query_prefix}_PRMSrl", o.merge(:flms=>$rlflms1, :smoothing=>$sparam_prm))
 
-  
   when 'param_prmd'
     $rsflms = get_rsflms() if !$rsflms
     $mpmix = $engine.get_mixture_mpset($queries, $mp_types, $mix_weights)
