@@ -249,6 +249,10 @@ def set_collection_param(col_id)
     $bm25f_weight = [0.236, 0.674, 0.146, 1.0, 0.146, 0.09]
     $bs = [0.0, 0.138, 0.382, 0.0, 0.382, 0.0]
     $bm25_weight = [0.382, 0.382, 0.0, 0.382, 0.382, 0.0]
+    
+    # OLD Parameters
+    $bfs = [0.0, 0.188, 0.0, 0.0, 0.0, 0.549]
+    $bm25f_weight = [0.18, 1.0, 0.0, 1.0, 0.18, 0.292]
 
   when 'enron'
     $sparam = get_sparam('jm',0.1)#
