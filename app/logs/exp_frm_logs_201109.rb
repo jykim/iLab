@@ -42,10 +42,13 @@ $o = {:topic_id=>'dtrain', :mode=>:bm25_bf }; $method='golden' ; $col='imdb'; $e
 
 $o = {:topic_id=>'train', :mode=>:bm25_bf }; $method='golden';  $col='monster'; $exp='optimize_prm'; $remark='0913'; eval IO.read('run_prms.rb')
 
-# Baseline Including BM25F
+# Baseline Including BM25F & RM
 
-$o = {:topic_id=>'test', :verbose=>:mp}; $method='final' ; $col='trec'; $exp='perf'; $remark='0915'; eval IO.read('run_prms.rb')
+$o = {:topic_id=>'test', :verbose=>:mp, :redo=>true}; $method='final' ; $col='trec'; $exp='perf'; $remark='0919'; eval IO.read('run_prms.rb')
 
+$o = {:topic_id=>'dtest', :verbose=>:mp, :redo=>true}; $method='final' ; $col='imdb'; $exp='perf'; $remark='0919'; eval IO.read('run_prms.rb')
+
+$o = {:topic_id=>'test', :verbose=>:mp, :redo=>true}; $method='final' ; $col='monster'; $exp='perf'; $remark='0919'; eval IO.read('run_prms.rb')
 
 tt = read.table('MP_trec_train.out')
 tr = lm(tt$V8 ~ tt$V3 + tt$V4 + tt$V5 + tt$V6 + tt$V7 )
@@ -58,3 +61,10 @@ ir
 mt = read.table('MP_monster_train.out')
 mr = lm(mt$V8 ~ mt$V3 + mt$V4 + mt$V5 + mt$V6 + mt$V7 )
 mr
+
+# Analyzing Performance
+
+$o = {:topic_id=>'train', :verbose=>:mp, :range=>(1..25).to_a}; $method='final'; $col='trec'; $exp='document'; $remark='0920'; eval IO.read('run_prms.rb')
+
+$o = {:topic_id=>'train', :verbose=>:mp}; $method='final'; $col='trec'; $exp='perf'; $remark='0920'; eval IO.read('run_prms.rb')
+
