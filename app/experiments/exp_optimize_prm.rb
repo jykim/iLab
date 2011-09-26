@@ -16,7 +16,8 @@ $ptn_qry = $ptn_qry_title
 #    $mus = nil
 #  end
 #end
-$xvals = $fields ; info "$xvals : #{$xvals.inspect}"
+$xvals = (0..($fields.size-2)).to_a.shuffle#; $fields
+info "$xvals : #{$xvals.inspect}"
 $yvals = []
 
 o_opt = $o.dup

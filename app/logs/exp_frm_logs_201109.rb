@@ -62,9 +62,13 @@ mt = read.table('MP_monster_train.out')
 mr = lm(mt$V8 ~ mt$V3 + mt$V4 + mt$V5 + mt$V6 + mt$V7 )
 mr
 
-# Analyzing Performance
+# Analyzing Performance per Query
 
 $o = {:topic_id=>'train', :verbose=>:mp, :range=>(1..25).to_a}; $method='final'; $col='trec'; $exp='document'; $remark='0920'; eval IO.read('run_prms.rb')
 
 $o = {:topic_id=>'train', :verbose=>:mp}; $method='final'; $col='trec'; $exp='perf'; $remark='0920'; eval IO.read('run_prms.rb')
+
+# Random Restart in Mixture Weight Training
+
+$o = {:topic_id=>'train', :verbose=>:mp, :mode=>:map }; $method='golden' ; $col='trec'; $exp='optimize_prm'; $remark='0926'; eval IO.read('run_prms.rb')
 
