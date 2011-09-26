@@ -10,7 +10,8 @@ $mode = $o[:mode] || :smoothing
 $template_query = $o[:template] || :prm
 $ptn_qry = $ptn_qry_title
 
-$xvals = $mp_types #= [:cug, :rug, :cbg, :prior, :rbg ] ; info "$xvals : #{$xvals.inspect}"
+$xvals = (0...($mp_types.size)).to_a.shuffle;#$mp_types #= [:cug, :rug, :cbg, :prior, :rbg ]
+info "$xvals : #{$xvals.inspect}"
 $yvals = []
 
 o_opt = $o.dup
@@ -19,6 +20,7 @@ when :mix_weights
   $yvals << [0.5] * $xvals.size
   o_opt.merge!(:ymax=>1.0, :ymin=>0.01)
 end
+#p $yvals
 
 $qs = $i.crt_add_query_set("#{$query_prefix}_DQL" , :smoothing=>$sparam) if !$qs
 $rsflms = get_rsflms($qs) if !$rsflms
@@ -31,19 +33,19 @@ end
 
 #Run retrieval at given point
 def evaluate_at(xvals , yvals , o={})
-  $mpmix = $engine.get_mixture_mpset($queries, xvals ,yvals)
-  $mpmix_h = $mpmix.map{|e|$engine.marr2hash e}
-  klds = $engine.mpset_calc( $mprel, $mpmix_h ){|mp1,mp2|mp1.kld_s(mp2.to_p)}
-  cosims = $engine.mpset_calc( $mprel, $mpmix_h ){|mp1,mp2|mp1.cosim(mp2.to_p)}
+  $mpmix   = $engine.get_mixture_mpset($queries, $mp_types ,yvals)
+  #$mpmix_h = $mpmix.map{|e|$engine.marr2hash e}
+  #klds   = $engine.mpset_calc( $mprel, $mpmix_h ){|mp1,mp2|mp1.kld_s(mp2.to_p)}
+  #cosims = $engine.mpset_calc( $mprel, $mpmix_h ){|mp1,mp2|mp1.cosim(mp2.to_p)}
   case $opt_for
   when 'kld'
     {'kld'=>(-klds.avg)}
   when 'cosine'
     {'cosine'=>cosims.avg}
   when 'map'
-    qs = $i.create_query_set(get_opt_qry_name(xvals , yvals, o), o.merge(:template=>:tew, :mps=>$mpmix, :skip_result_set=>true, :smoothing=>( $o[:sparam] || $sparam_prm) ))
+    qs = $i.create_query_set(get_opt_qry_name( $mp_types, yvals, o), o.merge(:template=>:tew, :mps=>$mpmix, :skip_result_set=>true, :smoothing=>( $o[:sparam] || $sparam_prm) ))
     stats = qs.calc_stat($file_qrel)
-    info ["KLD/COS/MAP", yvals, -klds.avg, cosims.avg, stats['all']['map']].flatten.inspect if $o[:verbose]
+  #  info ["KLD/COS/MAP", yvals, -klds.avg, cosims.avg, stats['all']['map']].flatten.inspect if $o[:verbose]
     stats['all']
   end
 end

@@ -218,7 +218,7 @@ class GoldenSectionSearchMethod < SearchMethod
       results[i] = [] ; @yvals[i] = @yvals[i-1].dup
       #For each point j
       @xvals.each_with_index do |cur_x , j|
-        results[i][j] = {} #
+        results[i][cur_x] = {} #
         low_ys = [] ; high_ys = [] #lower & higher y points than cur_y
         low_ys << @ymin ; high_ys << @ymax ; k = 0 ; cur_y = -1
 
@@ -232,42 +232,42 @@ class GoldenSectionSearchMethod < SearchMethod
                   else get_next_point( low_ys , high_ys , cur_y ) #GOLDEN_RATIO*2 - GOLDEN_RATIO^2
                   end
 
-          @yvals[i][j] = cur_y
-          results[i][j][cur_y] = yield @xvals , @yvals[i]
-          cur_result = "[#{i}][#{j}] lambda[#{cur_y.round_at(3)}] = #{results[i][j][cur_y]}"
-          $lgr.info "#{i} #{j} #{cur_y.round_at(5)} #{results[i][j][cur_y]}"
+          @yvals[i][cur_x] = cur_y
+          results[i][cur_x][cur_y] = yield @xvals , @yvals[i]
+          cur_result = "[#{i}][#{cur_x}] lambda[#{cur_y.round_at(3)}] = #{results[i][cur_x][cur_y]}"
+          $lgr.info "#{i} #{cur_x} #{cur_y.round_at(5)} #{results[i][cur_x][cur_y]}"
 
           if k < 2 then k += 1 ; next end
           #low < cur & high < cur
-          if results[i][j][low_ys.last] < results[i][j][cur_y] && results[i][j][high_ys.last] < results[i][j][cur_y]
-            @yvals[i][j] = cur_y
+          if results[i][cur_x][low_ys.last] < results[i][cur_x][cur_y] && results[i][cur_x][high_ys.last] < results[i][cur_x][cur_y]
+            @yvals[i][cur_x] = cur_y
           #high < cur < low
-          elsif results[i][j][low_ys.last] >= results[i][j][cur_y] && results[i][j][high_ys.last] <= results[i][j][cur_y]
+          elsif results[i][cur_x][low_ys.last] >= results[i][cur_x][cur_y] && results[i][cur_x][high_ys.last] <= results[i][cur_x][cur_y]
             if k > 2
               high_ys << cur_y ; cur_y = low_ys.pop
             end
           #low < cur < high
-          elsif results[i][j][low_ys.last] <= results[i][j][cur_y] && results[i][j][high_ys.last] >= results[i][j][cur_y]
+          elsif results[i][cur_x][low_ys.last] <= results[i][cur_x][cur_y] && results[i][cur_x][high_ys.last] >= results[i][cur_x][cur_y]
             if k > 2
               low_ys << cur_y ; cur_y = high_ys.pop
             end
           #cur < high < low
-          elsif results[i][j][high_ys.last] < results[i][j][low_ys.last]
+          elsif results[i][cur_x][high_ys.last] < results[i][cur_x][low_ys.last]
             high_ys << cur_y ; cur_y = low_ys.pop
           #cur < low < high
-          elsif results[i][j][low_ys.last] <= results[i][j][high_ys.last]
+          elsif results[i][cur_x][low_ys.last] <= results[i][cur_x][high_ys.last]
             low_ys << cur_y ; cur_y = high_ys.pop
           end
 
           if low_ys.size == 0
-            puts "[#{i}][#{j}] reached lower end" ; break        
+            puts "[#{i}][#{cur_x}] reached lower end" ; break        
           elsif high_ys.size == 0
-            puts "[#{i}][#{j}] reached upper end" ; break
+            puts "[#{i}][#{cur_x}] reached upper end" ; break
           end
           puts "#{cur_result} -> #{low_ys.last.round_at(3)} - #{cur_y.round_at(3)} -  #{high_ys.last.round_at(3)}"
           k += 1
         end#while
-        @yvals[i][j] = results[i][j].max_pair[0]
+        @yvals[i][cur_x] = results[i][cur_x].max_pair[0]
       end#each point
     end#iteration
     results
