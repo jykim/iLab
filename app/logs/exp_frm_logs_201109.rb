@@ -70,5 +70,11 @@ $o = {:topic_id=>'train', :verbose=>:mp}; $method='final'; $col='trec'; $exp='pe
 
 # Random Restart in Mixture Weight Training
 
-$o = {:topic_id=>'train', :verbose=>:mp, :mode=>:map }; $method='golden' ; $col='trec'; $exp='optimize_prm'; $remark='0926'; eval IO.read('run_prms.rb')
+$o = {:topic_id=>'train', :verbose=>:mp, :mode=>:mix_weights, :opt_for=>'map' }; $method='golden' ; $col='trec'; $exp='optimize_mix'; $remark='0926'; eval IO.read('run_prms.rb')
+
+$o = {:topic_id=>'dtrain', :verbose=>:mp, :mode=>:mix_weights, :opt_for=>'map' }; $method='golden' ; $col='imdb'; $exp='optimize_mix'; $remark='0926'; eval IO.read('run_prms.rb')
+
+# BM25F Retraining
+
+$o = {:topic_id=>'train', :mode=>:bm25_bf }; $method='golden';  $col='monster'; $exp='optimize_prm'; $remark='0925'; eval IO.read('run_prms.rb')
 
