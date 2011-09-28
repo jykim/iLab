@@ -11,7 +11,7 @@ $template_query = $o[:template] || :prm
 $ptn_qry = $ptn_qry_title
 
 $xvals = (0...($mp_types.size)).to_a.shuffle;#$mp_types #= [:cug, :rug, :cbg, :prior, :rbg ]
-info "$xvals : #{$xvals.inspect}"
+info "$xvals : #{$xvals.inspect}" ; $o[:xvals] = $xvals
 $yvals = []
 
 o_opt = $o.dup
