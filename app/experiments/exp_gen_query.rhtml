@@ -2,5 +2,5 @@
 h3. Query : <%= cands[0][0] %>
 
 |Query|Fields|Length|Field|Position|Stopword|Sum|
-<%= cands.map{|c|c.to_tbl}.join("\n") %>
+<%= cands.map{|c|c.to_tbl(:round_at=>3)}.join("\n") %>
 <% end %>

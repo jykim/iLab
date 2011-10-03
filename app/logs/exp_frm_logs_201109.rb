@@ -66,7 +66,7 @@ mr
 
 $o = {:topic_id=>'train', :verbose=>:mp, :range=>(1..25).to_a}; $method='final'; $col='trec'; $exp='document'; $remark='0920'; eval IO.read('run_prms.rb')
 
-$o = {:topic_id=>'train', :verbose=>:mp}; $method='final'; $col='trec'; $exp='perf'; $remark='0920'; eval IO.read('run_prms.rb')
+$o = {:topic_id=>'test', :verbose=>:mp}; $method='final'; $col='trec'; $exp='perf'; $remark='0920'; eval IO.read('run_prms.rb')
 
 # Random Restart in Mixture Weight Training
 
@@ -77,4 +77,9 @@ $o = {:topic_id=>'dtrain', :verbose=>:mp, :mode=>:mix_weights, :opt_for=>'map' }
 # BM25F Retraining
 
 $o = {:topic_id=>'train', :mode=>:bm25_bf }; $method='golden';  $col='monster'; $exp='optimize_prm'; $remark='0925'; eval IO.read('run_prms.rb')
+
+# Query Generation
+
+$o = {:verbose=>nil, :topic_id=>'test', :new_topic_id=>'MKV0415', :no_cand=>3, :max_length=>2}; $method=nil; $col='trec'; $exp='gen_query'; $remark='0415'; eval IO.read('run_prms.rb')
+
 

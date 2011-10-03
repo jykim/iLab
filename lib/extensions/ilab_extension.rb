@@ -217,7 +217,15 @@ class Array
         else
           self
         end
-    "|"+style+a.join('|')+"|"
+    a_new = a.map{|e|
+      if(o[:round_at] && e.class.to_s == "Float")
+        e.round_at(o[:round_at])
+      else
+        e
+      end
+      }
+      
+    "|"+style+a_new.join('|')+"|"
   end
 
   #  combination of members
