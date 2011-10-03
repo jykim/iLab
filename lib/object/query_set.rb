@@ -31,6 +31,15 @@ class QuerySet
     @qh[query.qid] = query
   end
   
+  def export(filename)
+    output_str = @qrys.map{|q|
+      query_new = q.text.split(" ").map{|e|$engine.kstem(e)}.join(" ")
+      "<query id=\"#{q.qid}\">#{query_new}</query>"
+    }.join("\n")
+    File.open(to_path(filename), 'w'){|f|f.puts output_str}
+    output_str
+  end
+  
   def build(o = {})
     @engine.build_query( @qrys.map{|q|q.text} , @name , o.merge(:offset => @qrys[0].qid))
   end

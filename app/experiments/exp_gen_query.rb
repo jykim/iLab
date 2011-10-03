@@ -11,7 +11,7 @@ puts "Training weights..."
 $comb_weights = $engine.train_comb_weights($cand_set)
 puts "Weights trained : #{$comb_weights[-1][0].inspect}"
 $cand_set.each do |cands|
-  cands.map!{|c|c << c[2..-1].map_with_index{|score,j|score * $comb_weights[-1][0][j]}.sum}
+  cands.map!{|c|c << c[2..-1].map_with_index{|score,j|score * $comb_weights[-1][0][j]}.sum.r3}
 end
 
 file_topic = ["topic", $col_id , $o[:new_topic_id]].join("_")
