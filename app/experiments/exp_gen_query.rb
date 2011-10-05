@@ -10,8 +10,11 @@ $cand_set = $engine.generate_candidates($queries, $rlflms, $rlfvs, $o) #if !$can
 puts "Training weights..."
 $comb_weights = $engine.train_comb_weights($cand_set)
 puts "Weights trained : #{$comb_weights[-1][0].inspect}"
-$cand_set.each do |cands|
-  cands.map!{|c|c << c[2..-1].map_with_index{|score,j|score * $comb_weights[-1][0][j]}.sum.r3}
+$cand_set.map! do |cands|
+  cands_new = cands.map{|c|
+    c << c[2..-1].map_with_index{|score,j|
+      score * $comb_weights[-1][0][j]}.sum.r3}
+  cands_new[0..0].concat cands_new[1..-1].sort_by{|c|-c[-1]}
 end
 
 file_topic = ["topic", $col_id , $o[:new_topic_id]].join("_")
@@ -30,9 +33,10 @@ if $o[:verbose]
     #next if i > 3
     cands.each do |c|
       atext = $engine.annotate_text_with_query($rltxts[i][1], c[0], $fields)
-      afilename = to_path("doc_#{$rltxts[i][0]}-#{c[0].gsub(" ","_")}.txt")
-      c << "\"link\":#{afilename}"
-      File.open(afilename, "w") do |f|
+      afilename = "doc_#{$rltxts[i][0]}-#{c[0].gsub(" ","_")}.txt"
+      afilepath = to_path(afilename)
+      c << "\"link\":../../doc/#{afilename}"
+      File.open(afilepath, "w") do |f|
         f.puts "Query : #{c[0]}"
         $fields.each_with_index do |field,j|
           f.puts "<#{field}> #{atext[j]}"
