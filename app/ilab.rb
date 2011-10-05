@@ -56,7 +56,7 @@ class ILab
     Dir.mkdir( $work_path+"/data") if !File.exist?( $work_path+"/data" )
     Dir.mkdir( $work_path+"/plot") if !File.exist?( $work_path+"/plot" )
     Dir.mkdir( $work_path+"/rpt") if !File.exist?( $work_path+"/rpt" )
-    init_logger("#{get_expid_from_env()}.log" , :path=>$work_path+"/log")
+    init_logger("#{get_expid_from_env(o)}.log" , :path=>$work_path+"/log")
   end
 
   def crt_add_result_set(file , set_name , o = {}, &filter)
