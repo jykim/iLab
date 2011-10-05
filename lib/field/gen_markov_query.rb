@@ -70,9 +70,11 @@ module GenMarkovQuery
     end
   end
   
-  def calc_stopword_ratio(query)
+  def calc_stopword_feature(query)
     stopword_count = query.map{|q| $stopwords.has_key?(q)}.find_all{|e|e}.size
-    (query.size - stopword_count) / query.size.to_f
+    stopword_ratio = (stopword_count) / query.size.to_f
+    stopword_feature = (stopword_ratio < 0.5) ? 1.0 : (-2 * stopword_ratio + 2)
+    #puts ""
   end
     
   def generate_candidates(queries, rlflms, rlfvs, o = {})
@@ -85,13 +87,13 @@ module GenMarkovQuery
       cands = [[queries[i].split(/\s+/).map{|e|kstem(e)}, $mpset[i]]]
       1.upto(o[:no_cand] || 20){|j| cands << get_markov_query(flm, o)}
       scores = cands.map do |c|
-        #p c[0]
+        #p c[0], c[0].size, $ldist[c[0].size]
         pos_score = calc_pos_score(c, rlfvs[i])
-        stopword_ratio = (c[0].size > 0)? calc_stopword_ratio(c[0]) : 0
-        [$ldist[c[1].size] || 0.0, 1/$fdist.kld_s( c[1].to_dist.to_p ), pos_score.mean, stopword_ratio]
+        stopword_ratio = (c[0].size > 0)? calc_stopword_feature(c[0]) : 0
+        [$ldist[c[0].size] || 0.0, 1/$fdist.kld_s( c[1].to_dist.to_p ), pos_score.mean, stopword_ratio]
       end
       cands.map_with_index{|c,j| [c[0].join(" "), c[1].join(" "), scores[j].map{|e|e.to_f}].flatten}
-    end 
+    end
   end
   
   def train_comb_weights(cand_set)
