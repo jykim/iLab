@@ -166,7 +166,7 @@ def init_collection(col)
     $index_path = "#$exp_root/rexa/index_rexa"
     $i.config_path( :work_path=>File.join($exp_root,col) ,:index_path=>$index_path )
     puts "work_path : #$work_path"
-    $ptn_qry_title = /\<query(.*)\>\s(.*)\s\<\/query\>/
+    $ptn_qry_title = /\<query.*?\>\s(.*)\s\<\/query\>/
     $fields =  ['title','author','abstract','pages','year','journal','conference','booktitle','institution']
     if !File.exist?($index_path)
       $engine.build_index($col_id , "#$exp_root/rexa/rexa_docs" , $index_path , :fields=>$fields, :stemmer=>:krovetz, :stopword=>false)

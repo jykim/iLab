@@ -53,15 +53,19 @@ module IndriFieldHelper
     return $dfv[dno] if $dfv[dno]
     dno = to_dno(dno) if dno.class == String
     return nil if !dno
-    
-    dv = get_index_info("dv", dno).split(/--- .*? ---\n/)    
-    # Get the range of each field
-    fields = dv[1].split("\n").find_all{|l|!l.include?("document ")}.
-      map_hash{|l|e = l.split(" ") ; [(e[1].to_i...e[2].to_i) , e[0]]}
-    #return nil if fields.values.size !=  fields.values.uniq.size
-    $dfv[dno] = dv[2].split("\n").map{|l|l.split(" ")}.
-      group_by{|e|f = fields.find{|k,v|k === e[0].to_i} ; (f)? f[1] : nil }.
-      map_hash{|k,v|[k, v.map{|e|e[2]}]}
+    begin
+      dv = get_index_info("dv", dno).split(/--- .*? ---\n/)    
+      # Get the range of each field
+      fields = dv[1].split("\n").find_all{|l|!l.include?("document ")}.
+        map_hash{|l|e = l.split(" ") ; [(e[1].to_i...e[2].to_i) , e[0]]}
+      #return nil if fields.values.size !=  fields.values.uniq.size
+      $dfv[dno] = dv[2].split("\n").map{|l|l.split(" ")}.
+        group_by{|e|f = fields.find{|k,v|k === e[0].to_i} ; (f)? f[1] : nil }.
+        map_hash{|k,v|[k, v.map{|e|e[2]}]}      
+    rescue Exception => e
+      p dv
+      nil
+    end
   end
   
   
@@ -71,11 +75,11 @@ module IndriFieldHelper
     get_unigram_lm(words)
   end
   
-  
   def get_doc_field_lm(dno, n = 1)
     #return $dflm[dno] if $dflm[dno]
     results = {}
     field_terms = get_doc_field_vector(dno)
+    #return results if !field_terms
     1.upto(n) do |i|
       if i == 1
         results[i] = field_terms.map_hash{|k,v|[ k , get_unigram_lm(v) ]}
@@ -137,7 +141,7 @@ module IndriFieldHelper
     $dflms_rl = IO.read( to_path(file_qrel) ).split("\n").map{|l|
       e = l.split(" ")
       [e[0].to_i, get_doc_field_lm(e[2], 1)[1], e[3].to_f]
-    }.find_all{|e|e[2] > 0}
+    }.find_all{|e|e[1].size > 0 && e[2] > 0}
     results = $dflms_rl.group_by{|e|e[0]}.map_hash do |qid,flms|
       rflm = if flms.size == 1
         flms[0][1]
