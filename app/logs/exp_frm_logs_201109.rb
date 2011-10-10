@@ -95,6 +95,6 @@ $o = {:topic_id=>'all', :verbose=>nil}; $method='baseline'; $col='rexa'; $exp='p
 
 # Improving Term Weighting
 
-$o = {:topic_id=>'train', :verbose=>:mp, :range=>(1..10).to_a}; $method='final'; $col='trec'; $exp='document'; $remark='0920'; eval IO.read('run_prms.rb')
+$o = {:topic_id=>'train', :verbose=>:mp, :range=>(1..25).to_a, :topk=>5}; $method='baseline'; $col='trec'; $exp='document'; $remark='1009'; eval IO.read('run_prms.rb')
 
 $engine.debug_prm_query(9, ['lists-027-16405062', 'lists-080-9157092'], :prms, :op_comb=>:wsum)
