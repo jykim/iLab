@@ -30,16 +30,18 @@ write_qrel(to_path(file_qrel), IO.read( to_path($file_qrel) ).split("\n").map_ha
 if $o[:verbose]
   $rltxts = $engine.get_rel_texts($file_qrel) 
   $cand_set.each_with_index do |cands,i|
-    #next if i > 3
+    #next if i > 3 #RedCloth.new(
     cands.each do |c|
-      atext = $engine.annotate_text_with_query($rltxts[i][1], c[0], $fields)
-      afilename = "doc_#{$rltxts[i][0]}-#{c[0].gsub(" ","_")}.txt"
+      atext = $fields.map_with_index do |field,j|
+        $engine.annotate_text_with_query($rltxts[i][1][j], c[0])
+      end
+      afilename = "doc_#{$rltxts[i][0]}-#{c[0].gsub(" ","_")}.html"
       afilepath = to_path(afilename)
       c << "\"link\":../../doc/#{afilename}"
       File.open(afilepath, "w") do |f|
         f.puts "Query : #{c[0]}"
         $fields.each_with_index do |field,j|
-          f.puts "<#{field}> #{atext[j]}"
+          f.puts "<h3>#{field}: </h3> #{atext[j]}"
         end
       end
     end

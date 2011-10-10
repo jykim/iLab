@@ -14,7 +14,7 @@ data.each do |l|
     user_query = l[8..-1].join(" ")
   elsif l[7] == "Request:"
     if l[6] == user_IP && l[8] =~ /paperhomepage/
-      result << [user_IP, user_query, l[8]]
+      result << [user_IP, user_query, l[8]] if File.exist?("rexa_reldocs/#{e[2].split("/")[-1]}.xml")
     end
   end
 end
@@ -24,10 +24,10 @@ end
 result_q = result.map{|e|e[1]}.uniq.map_hash_with_index{|e,i|[e,i+1]}
 result_f = result.map{|e|[result_q[e[1]],0,e[2].split("/")[-1],1]}
 
-File.open("rexa_qrel.txt", "w"){|f|
+File.open("rexa_qrel", "w"){|f|
   f.puts result_f.uniq.sort_by{|e|e[0]}.map{|e|e.join(" ")}.join("\n")}
 
-File.open("rexa_query.txt", "w"){|f|
+File.open("rexa_query", "w"){|f|
   f.puts result_q.sort_by{|k,v|v}.map{|e|"<query id=\"#{e[1]}\"> #{e[0]} </query>"}.join("\n")}
 
 #result.group_by{|e|e[1]}.each{|k,v|p [k,v.size] if v.size > 10} ; nil
@@ -35,11 +35,12 @@ File.open("rexa_query.txt", "w"){|f|
 # Collection Documents 
 
 load 'app/ilab.rb'
+require 'fastercsv'
 $exp_root = "."
 $i = ILab.new("rexa")
 $i.config_path( :work_path=>$exp_root+'/rexa' )
 
-rp = IO.read('rexa/rexa-papers.csv') ; nil
+rp = IO.read('rexa/rexa-papers.txt') ; nil
 
 def convert_rexa_col(rp)
   rp.split("\n").each do |e| 

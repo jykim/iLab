@@ -147,7 +147,7 @@ module GenMarkovQuery
           p mps[j]
           #p rlflms[i][curf]
           p mflm[curf]
-        end        
+        end
       end
       total_result += result #puts "result = #{result}"
     end
