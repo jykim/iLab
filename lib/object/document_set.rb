@@ -71,7 +71,7 @@ class DocumentSet
     @docs.find_all{|d| (block_given?)? filter.call(d) : true }.each_with_index do |d,i|
       d.fetch_info(fetch_doc_data(d.did), @engine.title_field, o) if !d.dno
       #info "[export_docs] #{d.title} (#{i})"
-      doc_file_name = ["doc" , File.basename(d.did)].join('_') + '.' + 'txt' #( (d.type=~/pdf/i)? 'html' : 'xml' )
+      doc_file_name = ["doc" , File.basename(d.did)].join('_') + '.' + 'html' #( (d.type=~/pdf/i)? 'html' : 'xml' )
       if $exp != 'adhoc'
         doc_color = if d.relevance >  1 : "background:#222222" 
                     elsif d.relevance == 1 : "background:#444444" 
@@ -90,7 +90,7 @@ class DocumentSet
         doc_info << [ "\"Link\":"+d.text.find_tag("URL").first.strip ] if d.text.find_tag("URL").size > 0
       #end
       doc_list += (doc_info.to_tbl(:style=>doc_color)+"\n")
-      fwrite doc_file_name , clean_content(d) if !fcheck(doc_file_name)
+      fwrite doc_file_name , $engine.annotate_text_with_query(clean_content(d), o[:query]) if !fcheck(doc_file_name)
     end
     doc_list
   end

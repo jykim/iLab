@@ -80,6 +80,8 @@ $o = {:topic_id=>'train', :mode=>:bm25_bf }; $method='golden';  $col='monster'; 
 
 # Query Generation
 
+$o = {:verbose=>true, :topic_id=>'train', :new_topic_id=>'MKV1009', :no_cand=>1, :max_length=>5}; $method=nil; $col='trec'; $exp='gen_query'; $remark='1009'; eval IO.read('run_prms.rb')
+
 $o = {:verbose=>true, :topic_id=>'test', :new_topic_id=>'MKV1005', :no_cand=>3, :max_length=>5}; $method=nil; $col='trec'; $exp='gen_query'; $remark='1005'; eval IO.read('run_prms.rb')
 
 $o = {:verbose=>true, :topic_id=>'dtest', :new_topic_id=>'MKV1003', :no_cand=>3, :max_length=>4}; $method=nil; $col='imdb'; $exp='gen_query'; $remark='1003'; eval IO.read('run_prms.rb')
@@ -89,5 +91,10 @@ $o = {:verbose=>true, :topic_id=>'test', :new_topic_id=>'MKV1003', :no_cand=>3, 
 
 # Rexa 
 
-$o = {:topic_id=>'all', :verbose=>nil}; $method='final'; $col='rexa'; $exp='perf'; $remark='1005'; eval IO.read('run_prms.rb')
+$o = {:topic_id=>'all', :verbose=>nil}; $method='baseline'; $col='rexa'; $exp='perf'; $remark='1005'; eval IO.read('run_prms.rb')
 
+# Improving Term Weighting
+
+$o = {:topic_id=>'train', :verbose=>:mp, :range=>(1..10).to_a}; $method='final'; $col='trec'; $exp='document'; $remark='0920'; eval IO.read('run_prms.rb')
+
+$engine.debug_prm_query(9, ['lists-027-16405062', 'lists-080-9157092'], :prms, :op_comb=>:wsum)

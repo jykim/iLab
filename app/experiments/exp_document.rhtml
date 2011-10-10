@@ -11,7 +11,7 @@
 <% $i.rsa.each_with_index do |rs,i| %>
   <td>
 
-<%= rs.export_docs(:title_field=>$title_field, :order_by=>'rank'){|d|q == d.qid and d.rank <= $topk} %>
+<%= rs.export_docs(:title_field=>$title_field, :order_by=>'rank', :query=>$i.qsa[0].qh[q].text ){|d|q == d.qid and d.rank <= $topk} %>
 
   </td>
 <% end %>

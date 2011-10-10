@@ -145,4 +145,4 @@ $engine.run_prm_query_for(3, ['lists-026-11624171','lists-061-13977904'], :prms)
 $engine.debug_prm_query(8, ['lists-055-6139690','lists-036-9267146'], :prms, :op_comb=>:wsum)
 
 
-$engine.debug_prm_query(9, ['lists-023-6857404', 'lists-080-9157092'], :prms, :op_comb=>:wsum)
+$engine.debug_prm_query(9, ['lists-027-16405062', 'lists-080-9157092'], :prms, :op_comb=>:wsum)

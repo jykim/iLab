@@ -1,3 +1,19 @@
+$bgcolors = ['#FF0000',
+'#0000FF',
+'#0000A0',
+'#FF0080',
+'#800080',
+'#FF00FF',
+'#FFFFFF',
+'#C0C0C0',
+'#808080',
+'#000000',
+'#FFA500',
+'#A52A2A',
+'#800000',
+'#008000',
+'#808000']
+
 module IndriFieldHelper
   #Collection Frequency
   # o[:prob] : return probability instead
@@ -96,18 +112,17 @@ module IndriFieldHelper
     end
   end
   
-  def annotate_text_with_query(text, query, fields)
+  def annotate_text_with_query(text, query)
+    return text if !query
     query_s = query.scan(/\w+/).map_hash_with_index{|qw,i|[kstem(qw), i]}
-    fields.map_with_index do |field,i|
-      text[i].scan(/\W+|\w+/).map_with_index{|token, j|
-        word = token.scan(/\w+/)[0]
-        if word && (n_qw = query_s[kstem(word)])
-            "[#{n_qw}]#{token}"
-        else
-          token
-        end
-      }.join("")
-    end
+    text.gsub("<","&lt;").gsub(">","&gt;").scan(/\W+|\w+/).map_with_index{|token, j|
+      word = token.scan(/\w+/)[0]
+      if word && (n_qw = query_s[kstem(word)])
+          "<font color = 'white' style='background-color:#{$bgcolors[n_qw % 15]};'>[#{n_qw}] #{token}</font>"
+      else
+        token
+      end
+    }.join("").gsub("\n", "<br>\n")
   end
   
   def get_rel_flms( file_qrel, n = 1 )
