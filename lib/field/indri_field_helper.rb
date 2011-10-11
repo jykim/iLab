@@ -29,7 +29,7 @@ module IndriFieldHelper
       `#{cmd}`
     end
     parse_col_freq(cf_fn)
-    parse_col_freq(bgram_fn, :bgram=>true)
+    parse_col_freq(bgram_fn, :bgram=>true) if o[:bgram]
     #parse_col_freq(df_fn, :df=>true)
     $cf[o]
   end

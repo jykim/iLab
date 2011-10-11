@@ -91,7 +91,7 @@ $o = {:verbose=>true, :topic_id=>'test', :new_topic_id=>'MKV1003', :no_cand=>3, 
 
 # Rexa 
 
-$o = {:topic_id=>'all', :verbose=>nil}; $method='baseline'; $col='rexa'; $exp='perf'; $remark='1005'; eval IO.read('run_prms.rb')
+$o = {:topic_id=>'all', :verbose=>true}; $method='baseline'; $col='rexa'; $exp='perf'; $remark='1005'; eval IO.read('run_prms.rb')
 
 # Improving Term Weighting
 
