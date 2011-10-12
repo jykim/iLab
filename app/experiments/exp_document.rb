@@ -5,6 +5,12 @@ else
   test_qids = $i.qsa[0].qrys.find_all{|q| !$o[:range] || $o[:range].include?(q.qid)}.map{|q|q.qid}
 end
 
+if $rlflms1 && $rsflms
+  $rstypes = [:mflm, :prms, :mix, :ora]
+else
+  $rstypes = [:mflm, :prms]
+end
+
 
 =begin
 #Query-wise Analysis

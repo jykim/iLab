@@ -2,13 +2,17 @@
 # Get the Training Results
 $rlflms = $engine.get_rel_flms($file_qrel, 2) if !$rlflms
 $rlfvs = $engine.get_rel_fvs($file_qrel) if !$rlfvs
-#$engine.train_mixture_weights($queries, $rlflms)
+
+puts "Initializing parameters..."
+$engine.train_mixture_weights($queries, $rlflms)
 $engine.train_trans_probs($queries, $rlflms1) if !$trans
 
 puts "Generate candidates..."
-$cand_set = $engine.generate_candidates($queries, $rlflms, $rlfvs, $o) #if !$cand_set
-puts "Training weights..."
-$comb_weights = $engine.train_comb_weights($cand_set)
+$cand_set = $engine.get_markov_queries($queries, $rlflms, $rlfvs, $o) #if !$cand_set
+
+puts "Training feature weights..."
+$comb_weights = $engine.train_feature_weights($cand_set)
+
 puts "Weights trained : #{$comb_weights[-1][0].inspect}"
 $cand_set.map! do |cands|
   cands_new = cands.map{|c|

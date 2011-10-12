@@ -11,6 +11,12 @@ class Fixnum
   end
 end
 
+class Float
+  def norm(min, max)
+    (self - min) / (max - min)
+  end
+end
+
 def sample_ints(range, no)
   result = {} ; iter, max_iter = 0, 1000000
   while true do
