@@ -1,12 +1,7 @@
 module GenMarkovQuery
-  def conv_to_unigram(lm, prefix)
-    lm.map_hash{|k,v|
-      k =~ /^#{prefix}_(.*)/
-      [$1, v] if k
-    }.to_p
-  end
+  ######## PARAMETER INITIALIZATION #########
   
-  # 
+  # Build FLM for term selection
   def get_mixture_flm(flm, terms, fields, weights)
     bi_flm, tri_flm = {}, {}
     if fields.size > 1 && fields[-1] == fields[-2]
@@ -22,6 +17,13 @@ module GenMarkovQuery
     end
     #puts "[get_mixture_flm] tri_flm = #{tri_flm.inspect}" if tri_flm.size > 0
     result.to_p
+  end
+  
+  def conv_to_unigram(lm, prefix)
+    lm.map_hash{|k,v|
+      k =~ /^#{prefix}_(.*)/
+      [$1, v] if k
+    }.to_p
   end
   
   # Train transition probability from relevant documents
@@ -40,7 +42,31 @@ module GenMarkovQuery
     $trans
   end
   
-  def get_markov_query(dflms, o = {})
+  ######## QUERY GENERATION #########
+  
+  # Generate & evaluate markov queries
+  def get_markov_queries(queries, rlflms, rlfvs, o = {})
+    $mpset ||= get_mpset_from_flms(queries, rlflms.map{|e|e[1]}).
+      map{|e|mhash2arr e}.map{|mps|mps.map{|e|e[1][0][0]}}
+    $fdist ||= $mpset.flatten.to_dist.to_p
+    $ldist ||= queries.map{|e|e.split(/\s+/).size}.to_dist.to_p
+    
+    rlflms.map_with_index do |flm,i|
+      cands = [[queries[i].split(/\s+/).map{|e|kstem(e)}, $mpset[i]]]
+      1.upto(o[:no_cand] || 20){|j| cands << generate_candidate(flm, o)}
+      scores = cands.map do |c|
+        #p c[0], c[0].size, $ldist[c[0].size]
+        pos_score = calc_pos_score(c, rlfvs[i])
+        stopword_ratio = (c[0].size > 0)? calc_stopword_feature(c[0]) : 0
+        msngram_prob = calc_msngram_feature(c[0]).norm(-15, -5)
+        [$ldist[c[0].size] || 0.0, 1/$fdist.kld_s( c[1].to_dist.to_p ), pos_score.mean, stopword_ratio, msngram_prob]
+      end
+      cands.map_with_index{|c,j| [c[0].join(" "), c[1].join(" "), scores[j].map{|e|e.to_f}].flatten}
+    end
+  end
+  
+  # Generate a markov query as a candidate
+  def generate_candidate(dflms, o = {})
     terms, fields = [], []
     $doc_no ||= get_col_stat()[:doc_no]
     fields[0] = 'START'
@@ -52,12 +78,14 @@ module GenMarkovQuery
           mflm = get_mixture_flm(dflms, terms, fields[1..-1], (o[:mflm_weights] || [0.428, 0.142, 0.428]).to_p)
           terms << mflm.sample_pdist_except([terms,$stopwords.keys].flatten.uniq)[0]
         rescue Exception => e
-          warn "[get_markov_query] Unable to generate a query!s (#{e})"
+          warn "[generate_candidates] Unable to generate a query! (#{e})"
           next
         end
       end
     [terms, fields[1..-2]]
   end
+  
+  ######## QUERY FEATURE CALCULATION #########
   
   def calc_pos_score(query_fields, fv)
     query_fields[0].map_with_index do |qw,j|
@@ -76,28 +104,16 @@ module GenMarkovQuery
     stopword_feature = (stopword_ratio < 0.5) ? 1.0 : (-2 * stopword_ratio + 2)
     #puts ""
   end
-    
-  def generate_candidates(queries, rlflms, rlfvs, o = {})
-    $mpset ||= get_mpset_from_flms(queries, rlflms.map{|e|e[1]}).
-      map{|e|mhash2arr e}.map{|mps|mps.map{|e|e[1][0][0]}}
-    $fdist ||= $mpset.flatten.to_dist.to_p
-    $ldist ||= queries.map{|e|e.split(/\s+/).size}.to_dist.to_p
-    
-    rlflms.map_with_index do |flm,i|
-      cands = [[queries[i].split(/\s+/).map{|e|kstem(e)}, $mpset[i]]]
-      1.upto(o[:no_cand] || 20){|j| cands << get_markov_query(flm, o)}
-      scores = cands.map do |c|
-        #p c[0], c[0].size, $ldist[c[0].size]
-        pos_score = calc_pos_score(c, rlfvs[i])
-        stopword_ratio = (c[0].size > 0)? calc_stopword_feature(c[0]) : 0
-        [$ldist[c[0].size] || 0.0, 1/$fdist.kld_s( c[1].to_dist.to_p ), pos_score.mean, stopword_ratio]
-      end
-      cands.map_with_index{|c,j| [c[0].join(" "), c[1].join(" "), scores[j].map{|e|e.to_f}].flatten}
-    end
+  
+  def calc_msngram_feature(query)
+    request_str = query.map_cons(2).map{|e|e.join(" ")}.join("\n")
+    get_msngram("jp", request_str).avg
   end
   
-  def train_comb_weights(cand_set)
-    result = [0, 0.25, 0.5, 0.75, 1].get_weight_comb(4).map do |weights|
+  ########### 
+    
+  def train_feature_weights(cand_set)
+    result = [0, 0.25, 0.5, 0.75, 1].get_weight_comb(5).map do |weights|
       map = cand_set.map do |cands|
         recip_rank = nil
         begin
@@ -116,7 +132,9 @@ module GenMarkovQuery
     end
     result.sort_by{|e|e[1]}
   end
-
+  
+  ############ MIXTURE WEIGHT TRAINING ############
+  
   #load 'app/experiments/exp_optimize_method.rb'  
   def train_mixture_weights(queries, rlflms)
     results = []

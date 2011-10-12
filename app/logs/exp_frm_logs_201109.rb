@@ -93,6 +93,9 @@ $o = {:verbose=>true, :topic_id=>'test', :new_topic_id=>'MKV1003', :no_cand=>3, 
 
 $o = {:topic_id=>'all', :verbose=>true}; $method='baseline'; $col='rexa'; $exp='perf'; $remark='1005'; eval IO.read('run_prms.rb')
 
+$o = {:topic_id=>'all', :verbose=>:mp, :range=>(1..5).to_a, :topk=>5}; $method='baseline'; $col='rexa'; $exp='document'; $remark='1011'; eval IO.read('run_prms.rb')
+
+
 # Improving Term Weighting
 
 $o = {:topic_id=>'train', :verbose=>:mp, :range=>(1..25).to_a, :topk=>5}; $method='baseline'; $col='trec'; $exp='document'; $remark='1009'; eval IO.read('run_prms.rb')

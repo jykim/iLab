@@ -74,9 +74,9 @@ module CalcMapProb
     fields = o[:prm_fields] || $fields
     mps = [] ; prev_qw = nil
     query_arr = (query.class == String) ? query.split(" ").map{|e|[e, 1]} : query
+    #p types, flms
     query_arr.map_with_index do |qw,i|
       mp_flms = []
-      #debugger
       flms.each_with_index do |flm, j|
         if types[j] == :prior || types[j] == :uniform
           mp_flms << [[qw[0], fields.map_with_index{|f,k|[ f, flm[k] ]}]]
@@ -119,7 +119,7 @@ module CalcMapProb
       flms = []
       types.each_with_index do |type, j|
         case type
-        when :prior : flms << $hlm_weight
+        when :prior : flms << ($hlm_weight || [1.0 / $fields.size] * $fields.size)
         when :uniform : flms << [1.0 / $fields.size] * $fields.size
         when :cug   : flms << get_col_freq(:prob=>true)
         when :cbg   : flms << get_col_freq(:bgram=>true)

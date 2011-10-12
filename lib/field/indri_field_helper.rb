@@ -68,7 +68,6 @@ module IndriFieldHelper
     end
   end
   
-  
   def get_doc_lm(dno)
     dv = get_index_info("dv", dno).split(/--- .*? ---\n/)
     words = dv[2].split("\n").map{|l|l.split(" ")}.map{|e|e[2]}
