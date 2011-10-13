@@ -53,7 +53,10 @@ module GenMarkovQuery
     
     rlflms.map_with_index do |flm,i|
       cands = [[queries[i].split(/\s+/).map{|e|kstem(e)}, $mpset[i]]]
-      1.upto(o[:no_cand] || 20){|j| cands << generate_candidate(flm, o)}
+      1.upto(o[:no_cand] || 20){|j| 
+        cand = generate_candidate(flm, o)
+        cands << cand if cand[0].size < 2
+      }
       scores = cands.map do |c|
         #p c[0], c[0].size, $ldist[c[0].size]
         pos_score = calc_pos_score(c, rlfvs[i])
