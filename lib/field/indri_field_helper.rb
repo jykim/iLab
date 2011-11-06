@@ -118,7 +118,8 @@ module IndriFieldHelper
     return nil if !dno
     dt = get_index_info("dt", dno)
     fields.map do |field|
-      dt.find_tag(field)[0].clear_tags().strip
+      content = dt.find_tag(field)[0]
+      (content)? content.clear_tags().strip : ""
     end
   end
   
@@ -174,6 +175,7 @@ module IndriFieldHelper
   # Get the list and LM of relevant docs from TREC QRel
   def get_rel_texts( file_qrel)
     IO.read( to_path(file_qrel) ).split("\n").map do |l|
+      #p l
       qrel_finename = l.split(" ")[2]
       [qrel_finename, get_doc_field_text(qrel_finename , $fields)]
     end
