@@ -1,0 +1,6 @@
+graph G {
+	edge [color=grey];
+	overlap=false;
+  <% nodes.each do |e| %>
+    "<%=e[:from]%>" -- "<%=e[:to]%>" [len=<%= 10 / e[:weight] %>, label="<%=e[:label]%>"];<% end %>
+}

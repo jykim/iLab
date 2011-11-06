@@ -2,13 +2,27 @@
 # Get the Training Results
 $rlflms = $engine.get_rel_flms($file_qrel, 2) if !$rlflms
 $rlfvs = $engine.get_rel_fvs($file_qrel) if !$rlfvs
+$queries_a = $queries.map{|q|q.split(/\s+/).map{|e|$engine.kstem(e)}}
+$mpset ||= $engine.get_mpset_from_flms($queries, $rlflms.map{|e|e[1]}).
+  map{|e|$engine.mhash2arr e}.map{|mps|mps.map{|e|e[1][0][0]}}
 
-puts "Initializing parameters..."
-$engine.train_mixture_weights($queries, $rlflms)
-$engine.train_trans_probs($queries, $rlflms1) if !$trans
+case $method
+when 'memory'
+  $term_graphs = $engine.gen_term_graph $rlflms, :fweights=>$mpset.flatten.to_dist.to_p
+  $query_set = $term_graphs.map_with_index do |tg,i|
+    #$engine.export_term_graph("tg_#{i}",tg, 'dot')
+    $engine.gen_memory_query(tg, $o.merge(:qno=>i, :smooth_lm=>$queries_a[i].to_dist.to_p))
+  end
+when 'markov'
+  puts "Initializing parameters..."
+  $engine.train_mixture_weights($queries, $rlflms)
+  $engine.train_trans_probs($queries, $rlflms1) if !$trans
 
-puts "Generate candidates..."
-$cand_set = $engine.get_markov_queries($queries, $rlflms, $rlfvs, $o) #if !$cand_set
+  puts "Generate candidates..."
+  $query_set = $engine.get_markov_queries($queries, $rlflms, $o) #if !$cand_set
+end
+
+$cand_set = $engine.calc_feature_set($queries_a, $query_set, $rlfvs, $o)
 
 puts "Training feature weights..."
 $comb_weights = $engine.train_feature_weights($cand_set)
@@ -16,7 +30,7 @@ $comb_weights = $engine.train_feature_weights($cand_set)
 puts "Weights trained : #{$comb_weights[-1][0].inspect}"
 $cand_set.map! do |cands|
   cands_new = cands.map{|c|
-    c << c[2..-1].map_with_index{|score,j|
+    c << c[1..-1].map_with_index{|score,j|
       score * $comb_weights[-1][0][j]}.sum.r3}
   cands_new[0..0].concat cands_new[1..-1].sort_by{|c|-c[-1]}
 end

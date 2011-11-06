@@ -84,8 +84,6 @@ $o = {:verbose=>true, :topic_id=>'dtest', :new_topic_id=>'MKV1003', :no_cand=>3,
 
 $o = {:verbose=>true, :topic_id=>'test', :new_topic_id=>'MKV1003', :no_cand=>3, :max_length=>4}; $method=nil; $col='monster'; $exp='gen_query'; $remark='1003'; eval IO.read('run_prms.rb')
 
-$o = {:verbose=>true, :topic_id=>'train', :new_topic_id=>'MKV1009', :no_cand=>1, :max_length=>5}; $method=nil; $col='trec'; $exp='gen_query'; $remark='1009'; eval IO.read('run_prms.rb')
-
 $o = {:verbose=>true, :topic_id=>'test', :new_topic_id=>'MKV1012', :no_cand=>5, :max_length=>5}; $method=nil; $col='trec'; $exp='gen_query'; $remark='1012'; eval IO.read('run_prms.rb')
 
 # Rexa 

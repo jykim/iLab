@@ -19,13 +19,6 @@ module GenMarkovQuery
     result.to_p
   end
   
-  def conv_to_unigram(lm, prefix)
-    lm.map_hash{|k,v|
-      k =~ /^#{prefix}_(.*)/
-      [$1, v] if k
-    }.to_p
-  end
-  
   # Train transition probability from relevant documents
   def train_trans_probs(queries, rlflms1)
     $trans = {}
@@ -45,12 +38,7 @@ module GenMarkovQuery
   ######## QUERY GENERATION #########
   
   # Generate & evaluate markov queries
-  def get_markov_queries(queries, rlflms, rlfvs, o = {})
-    $mpset ||= get_mpset_from_flms(queries, rlflms.map{|e|e[1]}).
-      map{|e|mhash2arr e}.map{|mps|mps.map{|e|e[1][0][0]}}
-    $fdist ||= $mpset.flatten.to_dist.to_p
-    $ldist ||= queries.map{|e|e.split(/\s+/).size}.to_dist.to_p
-    
+  def get_markov_queries(queries, rlflms, o = {})    
     rlflms.map_with_index do |flm,i|
       cands = [[queries[i].split(/\s+/).map{|e|kstem(e)}, $mpset[i]]]
       #debugger
@@ -58,14 +46,7 @@ module GenMarkovQuery
         cand = generate_candidate(flm, o)
         cands << cand if cand[0].size >= 2
       end
-      scores = cands.map do |c|
-        #p c[0], c[0].size, $ldist[c[0].size]
-        pos_score = calc_pos_score(c, rlfvs[i])
-        stopword_ratio = (c[0].size > 0)? calc_stopword_feature(c[0]) : 0
-        msngram_prob = calc_msngram_feature(c[0]).norm(-15, -5)
-        [$ldist[c[0].size] || 0.0, 1/$fdist.kld_s( c[1].to_dist.to_p ), pos_score.mean, stopword_ratio, msngram_prob]
-      end
-      cands.map_with_index{|c,j| [c[0].join(" "), c[1].join(" "), scores[j].map{|e|e.to_f}].flatten}
+      cands
     end
   end
   
@@ -86,55 +67,7 @@ module GenMarkovQuery
           next
         end
       end
-    [terms, fields[1..-2]]
-  end
-  
-  ######## QUERY FEATURE CALCULATION #########
-  
-  def calc_pos_score(query_fields, fv)
-    query_fields[0].map_with_index do |qw,j|
-      if fv[query_fields[1][j]]
-        pos_vec = fv[query_fields[1][j]].map_with_index{|e,k|(e == qw)? k : nil}
-        pos_vec.find_all{|e|e}.map{|e|1.0 / (e+1)}.mean
-      else
-        0
-      end
-    end
-  end
-  
-  def calc_stopword_feature(query)
-    stopword_count = query.map{|q| $stopwords.has_key?(q)}.find_all{|e|e}.size
-    stopword_ratio = (stopword_count) / query.size.to_f
-    stopword_feature = (stopword_ratio < 0.5) ? 1.0 : (-2 * stopword_ratio + 2)
-    #puts ""
-  end
-  
-  def calc_msngram_feature(query)
-    request_str = query.map_cons(2).map{|e|e.join(" ")}.join("\n")
-    get_msngram("jp", request_str).avg
-  end
-  
-  ########### 
-    
-  def train_feature_weights(cand_set)
-    result = [0, 0.25, 0.5, 0.75, 1].get_weight_comb(5).map do |weights|
-      map = cand_set.map do |cands|
-        recip_rank = nil
-        begin
-          rank_list = cands.map_with_index{|c,i| 
-            [i , c[2..-1].map_with_index{|score,j|score * weights[j]}.sum]}.sort_by{|e|e[1]}.reverse          
-          rank_list.each_with_index{|e,i| recip_rank = 1.0 / (i+1) if e[0] == 0 }
-        rescue Exception => e
-          p [cands, e.to_s]
-          recip_rank = 0
-        end
-        #p [rank_list, recip_rank]
-        recip_rank
-      end
-      #p [weights, map.mean]
-      [weights, map.mean]
-    end
-    result.sort_by{|e|e[1]}
+    terms#[terms, fields[1..-2]]
   end
   
   ############ MIXTURE WEIGHT TRAINING ############

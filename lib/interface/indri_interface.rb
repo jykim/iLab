@@ -8,7 +8,7 @@ class IndriInterface
   attr_accessor :index_path, :title_field , :cf
   include ILabHelper , OptionHandler, Math
   include IndriFieldHelper, CalcMapProb, PRMHelper, PRMMulticolHelper
-  include GenQuery, GenMarkovQuery, GenCollection
+  include GenQuery, GenMarkovQuery, GenMemoryQuery, EvaluateGenQuery, GenCollection
   
   def initialize(name = "" , o={})
     @name = name
