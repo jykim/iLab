@@ -34,6 +34,13 @@ module IndriFieldHelper
     $cf[o]
   end
   
+  def conv_to_unigram(lm, prefix)
+    lm.map_hash{|k,v|
+      k =~ /^#{prefix}_(.*)/
+      [$1, v] if k
+    }.to_p
+  end
+  
   def parse_col_freq(filename, o = {})
     if !$cf[o]
       cf_raw = IO.read(to_path(filename)).split("\n").

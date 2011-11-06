@@ -1,0 +1,8 @@
+digraph G<%=filename%> {
+  <% nodes.each do |n| %>
+	<%= n %> [ color=black, style=filled, fontcolor=white ];
+  <% end %>
+  <% edges.each do |e| %>
+    <%=e[:from]%> -> <%=e[:to]%> [weight=<%=e[:weight]%>, label="<%=e[:label]%>"];
+  <% end %>
+}
