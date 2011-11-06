@@ -10,7 +10,7 @@ case $method
 when 'memory'
   $term_graphs = $engine.gen_term_graph $rlflms, :fweights=>$mpset.flatten.to_dist.to_p
   $query_set = $term_graphs.map_with_index do |tg,i|
-    #$engine.export_term_graph("tg_#{i}",tg, 'dot')
+    $engine.export_term_graph("tg_#{i}",tg, 'dot')
     $engine.gen_memory_query(tg, $o.merge(:qno=>i, :smooth_lm=>$queries_a[i].to_dist.to_p))
   end
 when 'markov'
