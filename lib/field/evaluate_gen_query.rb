@@ -27,7 +27,7 @@ module EvaluateGenQuery
         0.0
       end
     end
-    puts "POS#{postags.inspect}::#{gen_probs.avg.r3}/#{trans_probs.avg.r3} => #{gen_probs.map{|e|e.r3}.inspect} / #{trans_probs.map{|e|e.r3}.inspect}" if $o[:verbose]
+    puts "[#{o[:qid]}:POS:] #{postags.inspect} : #{gen_probs.avg.r3} : #{trans_probs.avg.r3} = #{gen_probs.map{|e|e.r3}.inspect} : #{trans_probs.map{|e|e.r3}.inspect}" if $o[:verbose]
     [trans_probs.first, trans_probs.last, gen_probs.avg, trans_probs.avg]
   end
   
@@ -36,13 +36,13 @@ module EvaluateGenQuery
     msngram_scores = get_msngram("jp", request_str)
     request_str2 = query.map_cons(2).map{|e|e.join(" ")}.join("\n")
     msngram_scores2 = get_msngram("jp", request_str2)
-    puts "MSN#{query.inspect}::#{msngram_scores.avg.r3}/#{msngram_scores2.avg.r3} => #{msngram_scores.map{|e|e.r3}.inspect} / #{msngram_scores2.map{|e|e.r3}.inspect}" if $o[:verbose]
+    puts "[#{o[:qid]}:MSN:] #{query.inspect} : #{msngram_scores.avg.r3} : #{msngram_scores2.avg.r3} = #{msngram_scores.map{|e|e.r3}.inspect} : #{msngram_scores2.map{|e|e.r3}.inspect}" if $o[:verbose]
     [msngram_scores.first, msngram_scores2.first]
   end
   
   def calc_idf_feature(query , o={})
     idfs = query.map{|q|$idfh[q]}.find_all{|e|e}
-    puts "[/] #{query.join(" ")} : #{idfs.avg} = #{idfs.inspect}" if $o[:verbose]
+    puts "[#{o[:qid]}:IDF:] #{query.join(" ")} : #{idfs.avg.r3} = #{idfs.map{|e|e.r3}.inspect}" if $o[:verbose]
     idfs.avg
   end
   
@@ -57,12 +57,12 @@ module EvaluateGenQuery
       else
         features = cands_new.map_with_index do |c,j|
           #p c[0], c[0].size, $ldist[c[0].size]
-          pos_score = calc_pos_score(c, rlfvs[i], :qid=>j)
+          pos_score = calc_pos_score(c, rlfvs[i])
           #stopword_ratio = (c.size > 0)? calc_stopword_feature(c) : 0
           idf_score = calc_idf_feature(c, :qid=>j)
           msn_prob = calc_msngram_feature(c, :qid=>j)
           postags = (j == 0)? $pos_queries[i] : $pos_cands[i*$o[:no_cand]+j-1]
-          postag_score = calc_postag_score(c, postags)
+          postag_score = calc_postag_score(c, postags, :qid=>j)
           [$ldist[c.size] || 0.0, pos_score.mean, idf_score/3, msn_prob[0].norm(-6, -2), msn_prob[1].norm(-10, -5), postag_score].flatten
         end
       end
