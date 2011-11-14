@@ -1,4 +1,4 @@
-POS_PATH = "/app/stanford-postagger"
+POS_PATH = ENV['POSTAG']
 MODEL_FILE = "models/bidirectional-distsim-wsj-0-18.tagger"
 
 def run_postagger(input_file, o = {})
