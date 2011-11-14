@@ -21,4 +21,4 @@ $o = {:verbose=>false, :topic_id=>'cv1', :new_topic_id=>'MEM1111b', :no_cand=>5,
 
 $o = {:verbose=>true, :topic_id=>'cv1', :new_topic_id=>'MEM1114', :no_cand=>5, :skip_feature=>false}; $method='memory'; $col='trec'; $exp='gen_query'; $remark='1114'; eval IO.read('run_prms.rb')
 
-$o = {:verbose=>true, :topic_id=>'cv1', :new_topic_id=>'MEM1114', :no_cand=>5, :smooth_ratio=>0.5}; $method='memory'; $col='trec'; $exp='gen_query'; $remark='1114'; eval IO.read('run_prms.rb')
+$o = {:verbose=>true, :topic_id=>'cv1', :new_topic_id=>'MEM1114', :no_cand=>9, :smooth_ratio=>0.3}; $method='memory'; $col='trec'; $exp='gen_query'; $remark='1114'; eval IO.read('run_prms.rb')
