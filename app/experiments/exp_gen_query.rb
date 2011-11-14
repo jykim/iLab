@@ -1,34 +1,60 @@
+load 'app/experiments/exp_optimize_method.rb'
 
 # Get the Training Results
-$rlflms = $engine.get_rel_flms($file_qrel, 2) if !$rlflms
-$rlfvs = $engine.get_rel_fvs($file_qrel) if !$rlfvs
 $queries_a = $queries.map{|q|q.split(/\s+/).map{|e|$engine.kstem(e)}}
-$mpset ||= $engine.get_mpset_from_flms($queries, $rlflms.map{|e|e[1]}).
+$rlflms = $engine.get_rel_flms($file_qrel, 2, :freq=>true) if !$rlflms
+$rlfvs = $engine.get_rel_fvs($file_qrel) if !$rlfvs
+File.open(to_path("#{$file_topic}.in"), "w"){|f|f.puts $queries.map{|e|e+" ."}.join("\n")}
+$pos_queries = run_postagger(to_path("#{$file_topic}.in"))
+$features = ["Length", "Position", "IDF", "MSNgram", "MSNgram2", "PosTagF", "PosTagL", "PosTag", "PosTag2"]
+
+# Estimate Statistics of Training Queries
+$queries_train_a = $queries_train.map{|q|q.split(/\s+/).map{|e|$engine.kstem(e)}}
+$rlflms_train = $engine.get_rel_flms($file_qrel_train, 2) if !$rlflms_train
+$pos_queries_train = run_postagger(to_path("#{$file_topic_train}.in"))
+$prob_restart = 0.2# $engine.estimate_prob_restart($queries_train_a, $rlflms_train)
+
+$doc_no = $engine.get_col_stat()[:doc_no]
+$idfh = $engine.get_df().map_hash{|k,v|[k, Math.log($doc_no.to_f / v)]}
+
+$ldist ||= $queries_train_a.map{|e|e.size}.to_dist.to_p
+$field_set_train ||= $engine.get_mpset_from_flms($queries_train, $rlflms_train.map{|e|e[1]}).
   map{|e|$engine.mhash2arr e}.map{|mps|mps.map{|e|e[1][0][0]}}
+File.open(to_path("#{$file_topic_train}.in"), "w"){|f|f.puts $queries.map{|e|e+" ."}.join("\n")}
+$pos_queries_train = run_postagger(to_path("#{$file_topic_train}.in"))
+$gen_pos = $pos_queries_train.map{|e|e.split(/\s+/).map{|e|e.split("_")[1]}[0..-2]}.flatten.to_pdist
+$trans_pos = train_trans_probs($pos_queries_train)
 
-case $method
-when 'memory'
-  $term_graphs = $engine.gen_term_graph $rlflms, :fweights=>$mpset.flatten.to_dist.to_p
-  $query_set = $term_graphs.map_with_index do |tg,i|
-    #$engine.export_term_graph("tg_#{i}",tg, 'dot')
-    $engine.gen_memory_query(tg, $o.merge(:qno=>i, :smooth_lm=>$queries_a[i].to_dist.to_p))
+unless $o[:skip_gen]
+  case $method
+  when 'memory'
+    $mem_models = $engine.gen_mem_model $rlflms, :fweights=>$field_set_train.flatten.to_dist.to_p
+    $query_set = $mem_models.map_with_index do |tg,i|
+      #$engine.export_mem_model("tg_#{i}",tg, 'dot')
+      $engine.gen_memory_query(tg, $o.merge(:qno=>i, :smooth_lm=>$queries_a[i].to_dist.to_p))
+    end
+  when 'markov'
+    puts "Initializing parameters..."
+    $engine.train_mixture_weights($queries, $rlflms)
+    $engine.train_trans_probs($queries, $rlflms1) if !$trans
+  
+    puts "Generate candidates..."
+    $query_set = $engine.get_markov_queries($queries, $rlflms, $o) #if !$cand_set
   end
-when 'markov'
-  puts "Initializing parameters..."
-  $engine.train_mixture_weights($queries, $rlflms)
-  $engine.train_trans_probs($queries, $rlflms1) if !$trans
-
-  puts "Generate candidates..."
-  $query_set = $engine.get_markov_queries($queries, $rlflms, $o) #if !$cand_set
 end
 
-$cand_set = $engine.calc_feature_set($queries_a, $query_set, $rlfvs, $o)
+#unless $o[:skip_feature]
+  File.open(to_path("cand_#{$file_topic}.in"), "w"){|f|
+    f.puts $query_set.map{|e|e.map{|e2|e2.join(" ")+" ."}}.collapse.join("\n")}
+  $pos_cands = run_postagger(to_path("cand_#{$file_topic}.in"), :force=>true)
+  $cand_set = $engine.calc_feature_set($queries_a, $query_set, $rlfvs, $o)
+#end
 
 puts "Training feature weights..."
-$comb_weights = $engine.train_feature_weights($cand_set)
+$comb_weights = $engine.train_weights_by_cascent($cand_set)
 
 puts "Weights trained : #{$comb_weights[-1][0].inspect}"
-$cand_set.map! do |cands|
+$cand_set_score = $cand_set.map do |cands|
   cands_new = cands.map{|c|
     c << c[1..-1].map_with_index{|score,j|
       score * $comb_weights[-1][0][j]}.sum.r3}
@@ -38,7 +64,7 @@ end
 file_topic = ["topic", $col_id , $o[:new_topic_id]].join("_")
 file_qrel =  ["qrel" , $col_id , $o[:new_topic_id]].join("_")
 
-$best_cand = $cand_set.map{|cands|cands[1..-1].max{|c1,c2|c1[-1]<=>c2[-1]}[0]}
+$best_cand = $cand_set_score.map{|cands|cands[1..-1].max{|c1,c2|c1[-1]<=>c2[-1]}[0]}
 
 write_topic(to_path(file_topic), $best_cand.map{|e|{:title=>e}})
 write_qrel(to_path(file_qrel), IO.read( to_path($file_qrel) ).split("\n").map_hash_with_index{|e,i|did = e.split(" ")[2] ; [i+1,{did=>1}]})
@@ -47,7 +73,7 @@ write_qrel(to_path(file_qrel), IO.read( to_path($file_qrel) ).split("\n").map_ha
 
 if $o[:verbose]
   $rltxts = $engine.get_rel_texts($file_qrel) 
-  $cand_set.each_with_index do |cands,i|
+  $cand_set_score.each_with_index do |cands,i|
     #next if i > 3 #RedCloth.new(
     cands.each do |c|
       atext = $fields.map_with_index do |field,j|

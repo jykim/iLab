@@ -104,9 +104,15 @@ def init_collection(col)
       when 'train'
         $offset, $count = 1, 25
         $file_topic ,$file_qrel = 'ent05.known-item.training-topics' , 'ent05.known-item.training-qrels'
+        $file_topic_train ,$file_qrel_train = 'ent05.known-item-topics', 'ent05.known-item-qrels'
       when 'test'
         $offset, $count = 26, 125
         $file_topic ,$file_qrel = 'ent05.known-item-topics', 'ent05.known-item-qrels'
+        $file_topic_train ,$file_qrel_train = 'ent05.known-item.training-topics' , 'ent05.known-item.training-qrels'
+      when 'cv1'
+        $offset, $count = 1, 75
+        $file_topic ,$file_qrel = 'ent05.topics.cv1', 'ent05.qrels.cv1'
+        $file_topic_train ,$file_qrel_train = 'ent05.topics.cv2', 'ent05.qrels.cv2'
       else
         $offset = 1
       #when 'MKV'
@@ -237,6 +243,8 @@ def init_collection(col)
   $engine.init_kstem($file_topic)
   $rlflms1 = $engine.get_rel_flms_multi($file_qrel)if !$rlflms1
   $queries =  $i.parse_topic_file($file_topic, $ptn_qry_title)
+  $engine.init_kstem($file_topic_train) if $file_topic_train
+  $queries_train =  $i.parse_topic_file($file_topic_train, $ptn_qry_title) if $file_topic_train
 end
 
 
