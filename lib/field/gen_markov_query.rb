@@ -40,7 +40,7 @@ module GenMarkovQuery
   # Generate & evaluate markov queries
   def get_markov_queries(queries, rlflms, o = {})    
     rlflms.map_with_index do |flm,i|
-      cands = [[queries[i].split(/\s+/).map{|e|kstem(e)}, $mpset[i]]]
+      cands = [[queries[i].split(/\s+/).map{|e|kstem(e)}, $field_set[i]]]
       #debugger
       while (cands.size - 1) < (o[:no_cand] || 20)
         cand = generate_candidate(flm, o)

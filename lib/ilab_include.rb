@@ -46,6 +46,7 @@ load 'lib/interface/yahoo_interface.rb'
 load 'lib/interface/lda_interface.rb'
 load 'lib/interface/cluster_interface.rb'
 load 'lib/interface/msngram_interface.rb'
+load 'lib/interface/postagger_interface.rb'
 
 load 'lib/object/document_set.rb'
 load 'lib/object/result_document_set.rb'

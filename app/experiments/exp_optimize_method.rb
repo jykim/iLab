@@ -218,6 +218,7 @@ class GoldenSectionSearchMethod < SearchMethod
       results[i] = [] ; @yvals[i] = @yvals[i-1].dup
       #For each point j
       @xvals.each_with_index do |cur_x , j|
+        #debugger
         results[i][cur_x] = {} #
         low_ys = [] ; high_ys = [] #lower & higher y points than cur_y
         low_ys << @ymin ; high_ys << @ymax ; k = 0 ; cur_y = -1

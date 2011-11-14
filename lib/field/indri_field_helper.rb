@@ -75,20 +75,21 @@ module IndriFieldHelper
     end
   end
   
-  def get_doc_lm(dno)
+  def get_doc_lm(dno, o = {})
+    dno = to_dno(dno) if dno.class == String
     dv = get_index_info("dv", dno).split(/--- .*? ---\n/)
     words = dv[2].split("\n").map{|l|l.split(" ")}.map{|e|e[2]}
-    get_unigram_lm(words)
+    get_unigram_lm(words, o)
   end
   
-  def get_doc_field_lm(dno, n = 1)
+  def get_doc_field_lm(dno, n = 1, o = {})
     #return $dflm[dno] if $dflm[dno]
     results = {}
     field_terms = get_doc_field_vector(dno)
     #return results if !field_terms
     1.upto(n) do |i|
       if i == 1
-        results[i] = field_terms.map_hash{|k,v|[ k , get_unigram_lm(v) ]}
+        results[i] = field_terms.map_hash{|k,v|[ k , get_unigram_lm(v, o) ]}
       else
         results[i] = field_terms.map_hash{|k,v|[ k , get_ngram_lm(v, i) ]}
       end
@@ -103,8 +104,9 @@ module IndriFieldHelper
     field_terms.map_hash{|k,v|[ k , v.size ]}
   end
   
-  def get_unigram_lm(words)
-    words.find_all{|e|e != "[OOV]"}.to_pdist
+  def get_unigram_lm(words, o = {})
+    lm = words.find_all{|e|e != "[OOV]"}
+    o[:freq] ? lm.to_dist : lm.to_pdist
   end
   
   def get_ngram_lm(words, n)
@@ -136,9 +138,9 @@ module IndriFieldHelper
     }.join("").gsub("\n", "<br>\n")
   end
   
-  def get_rel_flms( file_qrel, n = 1 )
+  def get_rel_flms( file_qrel, n = 1 , o ={})
     IO.read( to_path(file_qrel) ).split("\n").map do |l|
-      get_doc_field_lm(l.split(" ")[2], n)
+      get_doc_field_lm(l.split(" ")[2], n, o)
     end
   end
   
