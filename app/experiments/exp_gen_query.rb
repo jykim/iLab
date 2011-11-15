@@ -43,20 +43,28 @@ unless $o[:skip_gen]
   end
 end
 
-#unless $o[:skip_feature]
+puts "Canculating query features..."
+
+unless $o[:skip_feature]
   File.open(to_path("cand_#{$file_topic}.in"), "w"){|f|
     f.puts $query_set.map{|e|e.map{|e2|e2.join(" ")+" ."}}.collapse.join("\n")}
   $pos_cands = run_postagger(to_path("cand_#{$file_topic}.in"), :force=>true)
   $cand_set = $engine.calc_feature_set($queries_a, $query_set, $rlfvs, $o)
-#end
+end
 
 puts "Training feature weights..."
-$comb_weights = $engine.train_weights_by_cascent($cand_set)
+$qrange_train, $qrange_test = 0..49, 50..99
 
-puts "Weights trained : #{$comb_weights[-1][0].inspect}"
+$comb_weights = $engine.train_weights_by_cascent($cand_set[$qrange_train])
+$comb_weights_svm = $engine.train_weights_by_ranksvm($cand_set[$qrange_train])
+
+$perf_test = $engine.evaluate_cand_set($cand_set[$qrange_test], $comb_weights[-1][0])
+$perf_test_svm = $engine.evaluate_cand_set($cand_set[$qrange_test], $comb_weights_svm)
+
+puts "Weights trained : #{$comb_weights[-1][0].inspect} (Train : #{$comb_weights[-1][1]} Test : #{$perf_test.mean} / #{$perf_test_svm.mean} )"
 $cand_set_score = $cand_set.map do |cands|
   cands_new = cands.map{|c|
-    c << c[1..-1].map_with_index{|score,j|
+    c_new = c.dup << c[1..-1].map_with_index{|score,j|
       score * $comb_weights[-1][0][j]}.sum.r3}
   cands_new[0..0].concat cands_new[1..-1].sort_by{|c|-c[-1]}
 end
@@ -68,7 +76,7 @@ $best_cand = $cand_set_score.map{|cands|cands[1..-1].max{|c1,c2|c1[-1]<=>c2[-1]}
 
 write_topic(to_path(file_topic), $best_cand.map{|e|{:title=>e}})
 write_qrel(to_path(file_qrel), IO.read( to_path($file_qrel) ).split("\n").map_hash_with_index{|e,i|did = e.split(" ")[2] ; [i+1,{did=>1}]})
-#}`cp #{to_path($file_qrel)} #{to_path(file_qrel)}`
+#}`cp #{to_path($file_qrel)} #{to_pathth(file_qrel)}`
 # Text extraction
 
 if $o[:verbose]

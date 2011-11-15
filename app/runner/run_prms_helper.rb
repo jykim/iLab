@@ -109,10 +109,15 @@ def init_collection(col)
         $offset, $count = 26, 125
         $file_topic ,$file_qrel = 'ent05.known-item-topics', 'ent05.known-item-qrels'
         $file_topic_train ,$file_qrel_train = 'ent05.known-item.training-topics' , 'ent05.known-item.training-qrels'
-      when 'cv1'
+      when 'cv21'
         $offset, $count = 1, 75
         $file_topic ,$file_qrel = 'ent05.topics.cv1', 'ent05.qrels.cv1'
         $file_topic_train ,$file_qrel_train = 'ent05.topics.cv2', 'ent05.qrels.cv2'
+      when 'cv31'
+        $offset, $count = 1, 100
+        $file_topic ,$file_qrel = 'ent05.topics.cv312', 'ent05.qrels.cv312'
+        $file_topic_train ,$file_qrel_train = 'ent05.topics.cv33', 'ent05.qrels.cv33'
+        #$file_topic_valid ,$file_qrel_valid = 'ent05.topics.cv33', 'ent05.qrels.cv33'
       else
         $offset = 1
       #when 'MKV'

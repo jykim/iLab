@@ -3,8 +3,8 @@ MODEL_FILE = "models/bidirectional-distsim-wsj-0-18.tagger"
 
 def run_postagger(input_file, o = {})
   cmd = "java -mx1000m -cp '#{POS_PATH}/stanford-postagger.jar:' edu.stanford.nlp.tagger.maxent.MaxentTagger -model #{POS_PATH}/#{MODEL_FILE} -textFile #{input_file} > #{input_file}.out"
-  puts cmd
   system(cmd) if !File.exists?("#{input_file}.out") || o[:force] == true
+  #puts cmd
   IO.read("#{input_file}.out").split("\n")
 end
 

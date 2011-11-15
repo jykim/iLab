@@ -76,10 +76,13 @@ module EvaluateGenQuery
       recip_rank = nil
       begin
         rank_list = cands.map_with_index{|c,i| 
-          [i , c[1..-1].map_with_index{|score,j|score * weights[j]}.sum]}.sort_by{|e|e[1]}.reverse          
-        rank_list.each_with_index{|e,i| recip_rank = 1.0 / (i+1) if e[0] == 0 }
+          #p c[1..-1], weights
+          [i , c[1..-1].map_with_index{|score,j|score * weights[j]}.sum]}
+        #p rank_list
+        rank_list_sort = rank_list.sort_by{|e|e[1]}.reverse          
+        rank_list_sort.each_with_index{|e,i| recip_rank = 1.0 / (i+1) if e[0] == 0 }
       rescue Exception => e
-        p [cands, e.to_s]
+        #p [cands, e.to_s]
         recip_rank = 0
       end
       #p [rank_list, recip_rank]
@@ -87,16 +90,14 @@ module EvaluateGenQuery
     end
   end
   
-  
   def train_weights_by_grid(cand_set)
     result = [0, 0.25, 0.5, 0.75, 1].get_weight_comb($features.size).map do |weights|
-      map = evaluate_cand_set(cand_set, weights)
+      perf = evaluate_cand_set(cand_set, weights)
       #p [weights, map.mean]
-      [weights, map.mean]
+      [weights, perf.mean]
     end
     result.sort_by{|e|e[1]}
   end
-  
   
   # @param <Array> : input_data (same as evaluate_sim_search_with)
   # @param <String> output : output file
@@ -112,5 +113,31 @@ module EvaluateGenQuery
     end
     #debugger
     results_str = results.sort_by{|e|e[1]}
+  end
+  
+  def generate_input_ranksvm(cand_set, file_name)
+    File.open(file_name, 'w') do |f|
+      cand_set.map_with_index{|cand,i|
+        cand.map_with_index{|c,j|
+          f.puts "#{(j==0)? 2 : 1} qid:#{i+$offset} #{c[1..-1].map_with_index{|e,k|"#{k+1}:#{e}"}.join(" ")} # #{c[0]}"
+          }
+        }
+    end
+  end
+  
+  def train_weights_by_ranksvm(cand_set)
+    filename = to_path("svm_train_#{$query_prefix}_#{$o[:new_topic_id]}.in")
+    $engine.generate_input_ranksvm(cand_set, filename)
+    cmd = "#{ENV['SVMRANK']}/svm_rank_learn -c 0.01 #{filename} #{filename}.out"
+    puts cmd
+    system(cmd)
+    weights = (1..$features.size).to_a.map_hash{|e|[e, 0.0]}
+    IO.read("#{filename}.out").split("\n")[-1].split(" ")[1..-2].map{|e|
+      weights[e.split(":")[0].to_i] = e.split(":")[1].to_f}
+    weights.sort_by{|k,v|k}.map{|e|e[1]}
+  end
+  
+  def evaluate_cands_by_ranksvm(cand_set)
+    
   end
 end
