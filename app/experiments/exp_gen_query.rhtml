@@ -1,10 +1,11 @@
 h3. Weights
 
-|<%= $features.join("|") %>|
-|<%= $comb_weights[-1][0].join("|") %>|
+|<%= $features.join("|") %>|RecipRank(test)|
+|<%= $comb_weights[-1][0].join("|") %>|<%= $perf_test.mean %>|
+|<%= $comb_weights_svm[-1][0].join("|") %>|<%= $perf_test_svm.mean %>|
 
 <% $cand_set_score.each_with_index do |cands,i| %>
-h3. Query : <%= cands[0][0] %>
+h3. Query <%= i+$offset %> : <%= cands[0][0] %>
 
 |Query|<%= $features.join("|") %>|Sum|
 <%= cands.map{|c|c.to_tbl(:round_at=>3)}.join("\n") %>
