@@ -52,6 +52,8 @@ unless $o[:skip_feature]
   $cand_set = $engine.calc_feature_set($queries_a, $query_set, $rlfvs, $o)
 end
 
+#unless $o[:skip_train]
+
 puts "Training feature weights..."
 $qrange_train, $qrange_test = 0..49, 50..99
 
@@ -79,6 +81,8 @@ write_qrel(to_path(file_qrel), IO.read( to_path($file_qrel) ).split("\n").map_ha
 #}`cp #{to_path($file_qrel)} #{to_pathth(file_qrel)}`
 # Text extraction
 
+
+
 if $o[:verbose]
   $rltxts = $engine.get_rel_texts($file_qrel) 
   $cand_set_score.each_with_index do |cands,i|
@@ -96,6 +100,22 @@ if $o[:verbose]
           f.puts "<h3>#{field}: </h3> #{atext[j]}"
         end
       end
+    end
+  end
+end
+
+if $o[:export]
+  require 'CSV'
+  CSV.open(to_path("eval_genquery_#{$query_prefix}_#{$o[:new_topic_id]}.csv"), 'w') do |csv|
+    csv << [$fields, "query1", "query2"].flatten
+    $cand_set.each_with_index do |cand, i|
+      if rand() > 0.5
+        q1, q2 = cand[0][0], cand[1][0]
+      else
+        q1, q2 = cand[1][0], cand[0][0]
+      end
+      text = $fields.map_with_index{|field,j| "#{$rltxts[i][1][j].gsub("\"", "'").gsub(/^[a-z]+?=\'.*?\'\s*?/im,"")[0..2000]}"}
+      csv << [text, q1, q2].flatten
     end
   end
 end

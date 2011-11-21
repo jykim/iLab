@@ -115,29 +115,12 @@ module EvaluateGenQuery
     results_str = results.sort_by{|e|e[1]}
   end
   
-  def generate_input_ranksvm(cand_set, file_name)
-    File.open(file_name, 'w') do |f|
-      cand_set.map_with_index{|cand,i|
-        cand.map_with_index{|c,j|
-          f.puts "#{(j==0)? 2 : 1} qid:#{i+$offset} #{c[1..-1].map_with_index{|e,k|"#{k+1}:#{e}"}.join(" ")} # #{c[0]}"
-          }
-        }
-    end
-  end
   
-  def train_weights_by_ranksvm(cand_set)
+  def train_weights_by_ranksvm(cand_set, o = {})
     filename = to_path("svm_train_#{$query_prefix}_#{$o[:new_topic_id]}.in")
-    $engine.generate_input_ranksvm(cand_set, filename)
-    cmd = "#{ENV['SVMRANK']}/svm_rank_learn -c 0.01 #{filename} #{filename}.out"
-    puts cmd
-    system(cmd)
-    weights = (1..$features.size).to_a.map_hash{|e|[e, 0.0]}
-    IO.read("#{filename}.out").split("\n")[-1].split(" ")[1..-2].map{|e|
-      weights[e.split(":")[0].to_i] = e.split(":")[1].to_f}
-    weights.sort_by{|k,v|k}.map{|e|e[1]}
-  end
-  
-  def evaluate_cands_by_ranksvm(cand_set)
-    
+    generate_input_ranksvm(cand_set, filename)
+    best_params = $engine.train_parameter(filename,:folds=>10)
+    puts "[train_weights_by_ranksvm] best_params = #{best_params.inspect}"
+    run_ranksvm(filename, :tradeoff=>best_params.sort_by{|k,v|v}[-1][0])
   end
 end
