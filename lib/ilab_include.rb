@@ -39,6 +39,7 @@ load 'lib/field/indri_field_helper.rb'
 
 load 'lib/interface/gnuplot_interface.rb'
 load 'lib/interface/crf_interface.rb'
+load 'lib/interface/ranksvm_interface.rb'
 load 'lib/interface/indri_interface.rb'
 load 'lib/interface/galago_interface.rb'
 load 'lib/interface/r_interface.rb'
