@@ -27,4 +27,4 @@ $o = {:export=>true, :topic_id=>'cv31', :new_topic_id=>'MEM1121', :no_cand=>5, :
 
 $o = {:export=>true, :topic_id=>'cv31', :new_topic_id=>'MEM1121', :no_cand=>5, :smooth_ratio=>0.5, :skip_gen=>true, :skip_feature=>true}; $method='memory'; $col='trec'; $exp='gen_query'; $remark='1121'; eval IO.read('run_prms.rb')
 
-p $engine.train_parameter("trec/in/svm_train_trec_cv31_MEM1121.in",:folds=>10)
+$o = {:export=>true, :verbose=>true, :topic_id=>'cv31', :new_topic_id=>'MEM1121', :no_cand=>9, :smooth_ratio=>0.5}; $method='memory'; $col='trec'; $exp='gen_query'; $remark='1121'; eval IO.read('run_prms.rb')
