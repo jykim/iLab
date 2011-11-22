@@ -1,8 +1,8 @@
 h3. Weights
 
 |<%= $features.join("|") %>|RecipRank(test)|
-|<%= $comb_weights[-1][0].join("|") %>|<%= $perf_test.mean %>|
-|<%= $comb_weights_svm.join("|") %>|<%= $perf_test_svm.mean %>|
+|<%= $comb_weights_grid[-1][0].map{|e|e.r3}.join("|") %>|<%= $perf_test_grid.mean %>|
+|<%= $comb_weights_svm.map{|e|e.r3}.join("|") %>|<%= $perf_test_svm.mean %>|
 
 <% $cand_set_score.each_with_index do |cands,i| %>
 h3. Query <%= i+$offset %> : <%= cands[0][0] %>

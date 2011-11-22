@@ -55,21 +55,31 @@ end
 #unless $o[:skip_train]
 
 puts "Training feature weights..."
+
 $qrange_train, $qrange_test = 0..49, 50..99
 
-$comb_weights = $engine.train_weights_by_cascent($cand_set[$qrange_train])
+$comb_weights_grid = $engine.train_weights_by_cascent($cand_set[$qrange_train])
 $comb_weights_svm = $engine.train_weights_by_ranksvm($cand_set[$qrange_train])
 
-$perf_test = $engine.evaluate_cand_set($cand_set[$qrange_test], $comb_weights[-1][0])
+$perf_test_grid = $engine.evaluate_cand_set($cand_set[$qrange_test], $comb_weights_grid[-1][0])
 $perf_test_svm = $engine.evaluate_cand_set($cand_set[$qrange_test], $comb_weights_svm)
 
-puts "Weights trained : #{$comb_weights[-1][0].inspect} (Train : #{$comb_weights[-1][1]} Test : #{$perf_test.mean} / #{$perf_test_svm.mean} )"
+puts "Weights trained : #{$comb_weights_grid[-1][0].inspect} (Train : #{$comb_weights_grid[-1][1]} Test : #{$perf_test_grid.mean} / #{$perf_test_svm.mean} )"
+
+if $perf_test_grid.mean > $perf_test_svm.mean
+  $comb_weights = $comb_weights_grid[-1][0]
+else
+  $comb_weights = $comb_weights_svm
+end
+
 $cand_set_score = $cand_set.map do |cands|
   cands_new = cands.map{|c|
     c_new = c.dup << c[1..-1].map_with_index{|score,j|
-      score * $comb_weights[-1][0][j]}.sum.r3}
+      score * $comb_weights[j]}.sum.r3}
   cands_new[0..0].concat cands_new[1..-1].sort_by{|c|-c[-1]}
 end
+
+puts "Generating outputs..."
 
 file_topic = ["topic", $col_id , $o[:new_topic_id]].join("_")
 file_qrel =  ["qrel" , $col_id , $o[:new_topic_id]].join("_")
@@ -80,8 +90,6 @@ write_topic(to_path(file_topic), $best_cand.map{|e|{:title=>e}})
 write_qrel(to_path(file_qrel), IO.read( to_path($file_qrel) ).split("\n").map_hash_with_index{|e,i|did = e.split(" ")[2] ; [i+1,{did=>1}]})
 #}`cp #{to_path($file_qrel)} #{to_pathth(file_qrel)}`
 # Text extraction
-
-
 
 if $o[:verbose]
   $rltxts = $engine.get_rel_texts($file_qrel) 
@@ -105,7 +113,7 @@ if $o[:verbose]
 end
 
 if $o[:export]
-  require 'CSV'
+  require 'csv'
   CSV.open(to_path("eval_genquery_#{$query_prefix}_#{$o[:new_topic_id]}.csv"), 'w') do |csv|
     csv << [$fields, "query1", "query2"].flatten
     $cand_set.each_with_index do |cand, i|
