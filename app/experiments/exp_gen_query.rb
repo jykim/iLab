@@ -37,7 +37,6 @@ unless $o[:skip_gen]
     puts "Initializing parameters..."
     $engine.train_mixture_weights($queries, $rlflms)
     $engine.train_trans_probs($queries, $rlflms1) if !$trans
-  
     puts "Generate candidates..."
     $query_set = $engine.get_markov_queries($queries, $rlflms, $o) #if !$cand_set
   end
@@ -59,7 +58,7 @@ puts "Training feature weights..."
 $qrange_train, $qrange_test = 0..49, 50..99
 
 $comb_weights_grid = $engine.train_weights_by_cascent($cand_set[$qrange_train])
-$comb_weights_svm = $engine.train_weights_by_ranksvm($cand_set[$qrange_train])
+$comb_weights_svm = $engine.train_weights_by_ranksvm($cand_set[$qrange_train], o = {})
 
 $perf_test_grid = $engine.evaluate_cand_set($cand_set[$qrange_test], $comb_weights_grid[-1][0])
 $perf_test_svm = $engine.evaluate_cand_set($cand_set[$qrange_test], $comb_weights_svm)
@@ -115,15 +114,15 @@ end
 if $o[:export]
   require 'csv'
   CSV.open(to_path("eval_genquery_#{$query_prefix}_#{$o[:new_topic_id]}.csv"), 'w') do |csv|
-    csv << [$fields, "query1", "query2"].flatten
+    csv << [$fields, "query1", "query2", "pos_man"].flatten
     $cand_set.each_with_index do |cand, i|
       if rand() > 0.5
-        q1, q2 = cand[0][0], cand[1][0]
+        q1, q2, pos_man = cand[0][0], cand[1][0], 1
       else
-        q1, q2 = cand[1][0], cand[0][0]
+        q1, q2, pos_man = cand[1][0], cand[0][0], 2
       end
       text = $fields.map_with_index{|field,j| "#{$rltxts[i][1][j].gsub("\"", "'").gsub(/^[a-z]+?=\'.*?\'\s*?/im,"")[0..2000]}"}
-      csv << [text, q1, q2].flatten
+      csv << [text, q1, q2, pos_man].flatten
     end
   end
 end

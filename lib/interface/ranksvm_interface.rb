@@ -3,7 +3,7 @@ module RanksvmInterface
     File.open(file_name, 'w') do |f|
       cand_set.map_with_index{|cand,i|
         cand.map_with_index{|c,j|
-          f.puts "#{(j==0)? 2 : 1} qid:#{i+$offset} #{c[1..-1].map_with_index{|e,k|"#{k+1}:#{e}"}.join(" ")} # #{c[0]}"
+          f.puts "#{(j==0)? 2 : 1} qid:#{i+$offset} #{c[1..-1].map_with_index{|e,k|"#{k+1}:#{e}"}.join(" ")} # \"#{c[0]}\""
           }
         }
     end
