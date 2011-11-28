@@ -58,7 +58,7 @@ puts "Training feature weights..."
 $qrange_train, $qrange_test = 0..49, 50..99
 
 $comb_weights_grid = $engine.train_weights_by_cascent($cand_set[$qrange_train])
-$comb_weights_svm = $engine.train_weights_by_ranksvm($cand_set[$qrange_train], o = {})
+$comb_weights_svm = $engine.train_weights_by_ranksvm($cand_set[$qrange_train], $o)
 
 $perf_test_grid = $engine.evaluate_cand_set($cand_set[$qrange_test], $comb_weights_grid[-1][0])
 $perf_test_svm = $engine.evaluate_cand_set($cand_set[$qrange_test], $comb_weights_svm)

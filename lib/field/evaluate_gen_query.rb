@@ -117,8 +117,12 @@ module EvaluateGenQuery
   
   
   def train_weights_by_ranksvm(cand_set, o = {})
-    filename = to_path("svm_train_#{$query_prefix}_#{$o[:new_topic_id]}.in")
-    generate_input_ranksvm(cand_set, filename)
+    if o[:train_file]
+      filename = o[:train_file]
+    else
+      filename = to_path("svm_train_#{$query_prefix}_#{$o[:new_topic_id]}.in")
+      generate_input_ranksvm(cand_set, filename)
+    end
     best_params = $engine.train_parameter(filename,:folds=>10)
     puts "[train_weights_by_ranksvm] best_params = #{best_params.inspect}"
     run_ranksvm(filename, :tradeoff=>best_params.sort_by{|k,v|v}[-1][0])
