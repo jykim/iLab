@@ -131,7 +131,7 @@ def init_collection(col)
     $index_path = "#$exp_root/facebook/index_fb2"
     $i.config_path( :work_path=>File.join($exp_root,col) ,:index_path=>$index_path )
     puts "work_path : #$work_path"
-    $ptn_qry_title = /\[0-9]+\s(.*)/
+    $ptn_qry_title = /[0-9]+\s(.*)/
     $fields =  ["username", "message", "postctime", "postutime", "cmtname", "cmtmessage", "cmttime", "likename", "link", "description", "caption", "olink", "photoname", "albumname", "type", "count", "likes"]
     if !File.exist?($index_path)
       $engine.build_index($col_id , "#$exp_root/facebook/Facebook-541120474-xmldoc" , $index_path , :fields=>$fields, :stemmer=>false, :stopword=>false)
