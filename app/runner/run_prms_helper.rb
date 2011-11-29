@@ -128,7 +128,7 @@ def init_collection(col)
     # Get Rdoc list (needed for oracle MP calculation)
     
   when 'facebook'
-    $index_path = "#$exp_root/facebook/index_fb"
+    $index_path = "#$exp_root/facebook/index_fb2"
     $i.config_path( :work_path=>File.join($exp_root,col) ,:index_path=>$index_path )
     puts "work_path : #$work_path"
     $ptn_qry_title = /\[0-9]+\s(.*)/
@@ -139,7 +139,7 @@ def init_collection(col)
     case $o[:topic_id]
     when 'fb2'
       $offset, $count = 1, 36
-      $file_topic ,$file_qrel = 'fbuser2.qry' , 'fbuser2.qrel'
+      $file_topic ,$file_qrel = 'fbuser2.topic' , 'fbuser2.qrel'
     end
     $sparam = get_sparam('jm',0.1)
     $title_field = "message"
