@@ -138,7 +138,7 @@ def init_collection(col)
     end
     case $o[:topic_id]
     when 'fb2'
-      $offset, $count = 1, 36
+      $offset, $count = 2001, 36
       $file_topic ,$file_qrel = 'fbuser2.topic' , 'qrel.fbuser2'
     end
     $sparam = get_sparam('jm',0.1)

@@ -48,9 +48,9 @@ module IndriFieldHelper
       puts "[parse_col_freq] reading #{filename} (#{o.inspect})..."
       #puts "[parse_col_freq] Fields read : #{cf_raw.keys.inspect}"
       $cf[o.merge(:whole_doc=>true)] = cf_raw['document']
-      $cf[o.merge(:whole_doc=>true,:prob=>true)] = cf_raw['document'].to_p
+      $cf[o.merge(:whole_doc=>true,:prob=>true)] = (cf_raw['document'])? cf_raw['document'].to_p : {}
       cf_raw.delete('document')
-      $cf[o.merge(:prob=>true)] = cf_raw.map_hash{|k,v|[k,v.to_p]}
+      $cf[o.merge(:prob=>true)] = cf_raw.map_hash{|k,v|[k,(v ? v.to_p : {})]}
       $cf[o] = cf_raw
     end
   end
