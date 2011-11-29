@@ -128,7 +128,7 @@ def init_collection(col)
     # Get Rdoc list (needed for oracle MP calculation)
     
   when 'facebook'
-    $index_path = "#$exp_root/facebook/index_fb2"
+    $index_path = "#$exp_root/facebook/index_fb"
     $i.config_path( :work_path=>File.join($exp_root,col) ,:index_path=>$index_path )
     puts "work_path : #$work_path"
     $ptn_qry_title = /[0-9]+\s(.*)/
