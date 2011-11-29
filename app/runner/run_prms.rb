@@ -181,8 +181,10 @@ begin
       [:field].each do |op_smt|
         [:wsum].each do |op_comb|
           o.merge!(:op_smt=>op_smt, :op_comb=>op_comb)
-          $i.crt_add_query_set("#{$query_prefix}_MFLM_#{op_smt}_#{op_comb}_l#{lambda}" , o.merge(:template=>:hlm, :hlm_weights=>($hlm_weight || [0.1]*($fields.size))))
-          $i.crt_add_query_set("#{$query_prefix}_PRM_#{op_smt}_#{op_comb}_l#{lambda}", o.merge(:template=>:prm))    
+          $i.crt_add_query_set("#{$query_prefix}_MFLM_#{op_smt}_#{op_comb}_l#{lambda}" , 
+            o.merge(:template=>:hlm, :hlm_weights=>($hlm_weight || [0.1]*($fields.size))))
+          $i.crt_add_query_set("#{$query_prefix}_PRM_#{op_smt}_#{op_comb}_l#{lambda}", 
+            o.merge(:template=>:prm))    
         end
       end
     end
