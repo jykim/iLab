@@ -146,7 +146,7 @@ def init_collection(col)
     end
     $i.config_path( :work_path=>File.join($exp_root,col) ,:index_path=>$index_path )
     if !File.exist?($index_path)
-      $engine.build_index($col_id , $col_path , $index_path , :fields=>$fields, :stemmer=>false, :stopword=>false)
+      $engine.build_index($col_id , $col_path , $index_path , :fields=>$fields, :stemmer=>'krovetz', :stopword=>false)
     end
     $sparam = get_sparam('jm',0.1)
     $title_field = "message"
@@ -169,7 +169,7 @@ def init_collection(col)
     end
     $i.config_path( :work_path=>File.join($exp_root,col) ,:index_path=>$index_path )
     if !File.exist?($index_path)
-      $engine.build_index($col_id , $col_path , $index_path , :fields=>$fields, :stemmer=>false, :stopword=>false)
+      $engine.build_index($col_id , $col_path , $index_path , :fields=>$fields, :stemmer=>'krovetz', :stopword=>false)
     end
     $sparam = get_sparam('jm',0.1)
     $title_field = "message"
