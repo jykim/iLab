@@ -132,15 +132,15 @@ def init_collection(col)
     $ptn_qry_title = /[0-9]+\s(.*)/
     case $o[:topic_id]
     when 'fb2'
-      $col_path, $index_path = "#$exp_root/facebook/Facebook-541120474-xmldoc", "#$exp_root/facebook/index_fb2"
+      $col_path, $index_path = "#$exp_root/facebook/Facebook-541120474-xmldoc", "#$exp_root/facebook/fb-user2"# "#$exp_root/facebook/index_fb2"
       $offset, $count = 2001, 36
       $file_topic ,$file_qrel = 'fbuser2.topic' , 'fbuser2.qrel'
     when 'fb3'
-      $col_path, $index_path = "#$exp_root/facebook/Facebook-michael413-xmldoc", "#$exp_root/facebook/index_fb3"
+      $col_path, $index_path = "#$exp_root/facebook/Facebook-michael413-xmldoc", "#$exp_root/facebook/fb-user3"# "#$exp_root/facebook/index_fb3"
       $offset, $count = 3001, 62
       $file_topic ,$file_qrel = 'fbuser3.topic' , 'fbuser3.qrel'
     when 'fb4'
-      $col_path, $index_path = "#$exp_root/facebook/Facebook-mcartright-xmldoc", "#$exp_root/facebook/index_fb4"
+      $col_path, $index_path = "#$exp_root/facebook/Facebook-mcartright-xmldoc", "#$exp_root/facebook/fb-user4"# "#$exp_root/facebook/index_fb4"
       $offset, $count = 4001, 60
       $file_topic ,$file_qrel = 'fbuser4.topic' , 'fbuser4.qrel'
     end
@@ -155,15 +155,15 @@ def init_collection(col)
     $ptn_qry_title = /[0-9]+\s(.*)/
     case $o[:topic_id]
     when 'tw1'
-      $col_path, $index_path = "#$exp_root/twitter/Twitter-ldipillo89-xmldoc", "#$exp_root/twitter/index_tw1"
+      $col_path, $index_path = "#$exp_root/twitter/Twitter-ldipillo89-xmldoc", "#$exp_root/facebook/tw-user1"# "#$exp_root/twitter/index_tw1"
       $offset, $count = 1101, 58
       $file_topic ,$file_qrel = 'twuser1.topic' , 'twuser1.qrel'
     when 'tw5'
-      $col_path, $index_path = "#$exp_root/twitter/Twitter-JamieZieder-xmldoc", "#$exp_root/twitter/index_tw5"
+      $col_path, $index_path = "#$exp_root/twitter/Twitter-JamieZieder-xmldoc", "#$exp_root/facebook/tw-user5"# "#$exp_root/twitter/index_tw5"
       $offset, $count = 5101, 50
       $file_topic ,$file_qrel = 'twuser5.topic' , 'twuser5.qrel'
     when 'tw6'
-      $col_path, $index_path = "#$exp_root/twitter/Twitter-ronyar99-xmldoc", "#$exp_root/twitter/index_tw6"
+      $col_path, $index_path = "#$exp_root/twitter/Twitter-ronyar99-xmldoc", "#$exp_root/facebook/tw-user6"# "#$exp_root/twitter/index_tw6"
       $offset, $count = 6101, 62
       $file_topic ,$file_qrel = 'twuser6.topic' , 'twuser6.qrel'
     end
