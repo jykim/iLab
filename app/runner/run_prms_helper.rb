@@ -128,18 +128,25 @@ def init_collection(col)
     # Get Rdoc list (needed for oracle MP calculation)
     
   when 'facebook'
-    $index_path = "#$exp_root/facebook/index_fb"
-    $i.config_path( :work_path=>File.join($exp_root,col) ,:index_path=>$index_path )
-    puts "work_path : #$work_path"
     $ptn_qry_title = /[0-9]+\s(.*)/
     $fields =  ["username", "message", "postctime", "postutime", "cmtname", "cmtmessage", "cmttime", "likename", "link", "description", "caption", "olink", "photoname", "albumname", "type", "count", "likes"]
-    if !File.exist?($index_path)
-      $engine.build_index($col_id , "#$exp_root/facebook/Facebook-541120474-xmldoc" , $index_path , :fields=>$fields, :stemmer=>false, :stopword=>false)
-    end
     case $o[:topic_id]
     when 'fb2'
+      $col_path, $index_path = "#$exp_root/facebook/Facebook-541120474-xmldoc", "#$exp_root/facebook/index_fb3"
       $offset, $count = 2001, 36
-      $file_topic ,$file_qrel = 'fbuser2.topic' , 'qrel.fbuser2'
+      $file_topic ,$file_qrel = 'fbuser2.topic' , 'fbuser2.qrel'
+    when 'fb3'
+      $col_path, $index_path = "#$exp_root/facebook/Facebook-mcartright-xmldoc", "#$exp_root/facebook/index_fb3"
+      $offset, $count = 3001, 62
+      $file_topic ,$file_qrel = 'fbuser3.topic' , 'fbuser3.qrel'
+    when 'fb4'
+      $col_path, $index_path = "#$exp_root/facebook/Facebook-michael413-xmldoc", "#$exp_root/facebook/index_fb4"
+      $offset, $count = 4001, 60
+      $file_topic ,$file_qrel = 'fbuser4.topic' , 'fbuser4.qrel'
+    end
+    $i.config_path( :work_path=>File.join($exp_root,col) ,:index_path=>$index_path )
+    if !File.exist?($index_path)
+      $engine.build_index($col_id , $col_path , $index_path , :fields=>$fields, :stemmer=>false, :stopword=>false)
     end
     $sparam = get_sparam('jm',0.1)
     $title_field = "message"
