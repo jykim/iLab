@@ -159,11 +159,11 @@ def init_collection(col)
       $offset, $count = 1101, 58
       $file_topic ,$file_qrel = 'twuser1.topic' , 'twuser1.qrel'
     when 'tw5'
-      $col_path, $index_path = "#$exp_root/facebook/Twitter-JamieZieder-xmldoc", "#$exp_root/twitter/index_tw5"
+      $col_path, $index_path = "#$exp_root/twitter/Twitter-JamieZieder-xmldoc", "#$exp_root/twitter/index_tw5"
       $offset, $count = 5101, 50
       $file_topic ,$file_qrel = 'twuser5.topic' , 'twuser5.qrel'
     when 'tw6'
-      $col_path, $index_path = "#$exp_root/facebook/Twitter-ronyar99-xmldoc", "#$exp_root/twitter/index_tw6"
+      $col_path, $index_path = "#$exp_root/twitter/Twitter-ronyar99-xmldoc", "#$exp_root/twitter/index_tw6"
       $offset, $count = 6101, 62
       $file_topic ,$file_qrel = 'twuser6.topic' , 'twuser6.qrel'
     end
