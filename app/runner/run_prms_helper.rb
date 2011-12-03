@@ -128,19 +128,19 @@ def init_collection(col)
     # Get Rdoc list (needed for oracle MP calculation)
     
   when 'facebook'
-    $ptn_qry_title = /[0-9]+\s(.*)/
     $fields =  ["username", "message", "postctime", "postutime", "cmtname", "cmtmessage", "cmttime", "likename", "link", "description", "caption", "olink", "photoname", "albumname", "type", "count", "likes"]
+    $ptn_qry_title = /[0-9]+\s(.*)/
     case $o[:topic_id]
     when 'fb2'
       $col_path, $index_path = "#$exp_root/facebook/Facebook-541120474-xmldoc", "#$exp_root/facebook/index_fb3"
       $offset, $count = 2001, 36
       $file_topic ,$file_qrel = 'fbuser2.topic' , 'fbuser2.qrel'
     when 'fb3'
-      $col_path, $index_path = "#$exp_root/facebook/Facebook-mcartright-xmldoc", "#$exp_root/facebook/index_fb3"
+      $col_path, $index_path = "#$exp_root/facebook/Facebook-michael413-xmldoc", "#$exp_root/facebook/index_fb3"
       $offset, $count = 3001, 62
       $file_topic ,$file_qrel = 'fbuser3.topic' , 'fbuser3.qrel'
     when 'fb4'
-      $col_path, $index_path = "#$exp_root/facebook/Facebook-michael413-xmldoc", "#$exp_root/facebook/index_fb4"
+      $col_path, $index_path = "#$exp_root/facebook/Facebook-mcartright-xmldoc", "#$exp_root/facebook/index_fb4"
       $offset, $count = 4001, 60
       $file_topic ,$file_qrel = 'fbuser4.topic' , 'fbuser4.qrel'
     end
@@ -152,6 +152,27 @@ def init_collection(col)
     $title_field = "message"
   when 'twitter'
     $fields= ["cur_text", "cur_user", "cur_replyto", "cur_src", "cur_time", "olink", "re_text", "re_user", "re_replyto", "re_src", "re_time"]
+    $ptn_qry_title = /[0-9]+\s(.*)/
+    case $o[:topic_id]
+    when 'tw1'
+      $col_path, $index_path = "#$exp_root/twitter/Twitter-ldipillo89-xmldoc", "#$exp_root/twitter/index_fw1"
+      $offset, $count = 1101, 58
+      $file_topic ,$file_qrel = 'twuser1.topic' , 'twuser1.qrel'
+    when 'tw5'
+      $col_path, $index_path = "#$exp_root/facebook/Twitter-JamieZieder-xmldoc", "#$exp_root/twitter/index_fb5"
+      $offset, $count = 5101, 50
+      $file_topic ,$file_qrel = 'twuser5.topic' , 'twuser5.qrel'
+    when 'tw6'
+      $col_path, $index_path = "#$exp_root/facebook/Twitter-ronyar99-xmldoc", "#$exp_root/twitter/index_tw6"
+      $offset, $count = 6101, 62
+      $file_topic ,$file_qrel = 'twuser6.topic' , 'twuser6.qrel'
+    end
+    $i.config_path( :work_path=>File.join($exp_root,col) ,:index_path=>$index_path )
+    if !File.exist?($index_path)
+      $engine.build_index($col_id , $col_path , $index_path , :fields=>$fields, :stemmer=>false, :stopword=>false)
+    end
+    $sparam = get_sparam('jm',0.1)
+    $title_field = "message"
   when 'enron'
     $index_path = "#$exp_root/enron/index_enron"
     $i.config_path( :work_path=>File.join($exp_root,col) ,:index_path=>$index_path )
