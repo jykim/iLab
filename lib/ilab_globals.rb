@@ -118,7 +118,7 @@ def to_path(file_name , arg_path = nil)
              path_rpt = File.join( path , "rpt/#{get_expid_from_env()}")
              (File.exists?(path_rpt))? `touch #{path_rpt}` : Dir.mkdir( path_rpt )
              File.join( path , "rpt/#{get_expid_from_env()}/#{file_name}")
-           when /\.(prior|txt|out|doclist|qrel)$/
+           when /\.(prior|txt|out|doclist)$/
              File.join( path , "out/#{file_name}")
            when /\.(qry|res|eval)/
              File.join( path , "query/#{file_name}")
