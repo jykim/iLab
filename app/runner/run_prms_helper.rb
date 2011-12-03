@@ -132,7 +132,7 @@ def init_collection(col)
     $ptn_qry_title = /[0-9]+\s(.*)/
     case $o[:topic_id]
     when 'fb2'
-      $col_path, $index_path = "#$exp_root/facebook/Facebook-541120474-xmldoc", "#$exp_root/facebook/index_fb3"
+      $col_path, $index_path = "#$exp_root/facebook/Facebook-541120474-xmldoc", "#$exp_root/facebook/index_fb2"
       $offset, $count = 2001, 36
       $file_topic ,$file_qrel = 'fbuser2.topic' , 'fbuser2.qrel'
     when 'fb3'
