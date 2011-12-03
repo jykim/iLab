@@ -174,8 +174,9 @@ begin
   
   # Retrieval parameter sweep
   when 'param_smt'
-    #[0.1, 0.3, 0.5, 0.7, 0.8, 0.9, 5,10,25,50,100,250,500,1000].each do |lambda|
-    [5,10,25,50,100,250,500,1000].each do |lambda|
+    #[5,10,25,50,100,250,500,1000].each do |lambda|
+    [0.1, 0.3, 0.5, 0.7, 0.8, 0.9, 5, 10, 25, 50, 100, 250, 500, 1000].each do |lambda|
+      puts "lambda : #{lambda}"
       o.merge!(:smoothing=>get_sparam((lambda > 1)? "dirichlet" : "jm", lambda))
       $i.crt_add_query_set("#{$query_prefix}_DQL_l#{lambda}", o.merge(:template=>:ql))
       [:field].each do |op_smt|
@@ -184,7 +185,7 @@ begin
           $i.crt_add_query_set("#{$query_prefix}_MFLM_#{op_smt}_#{op_comb}_l#{lambda}" , 
             o.merge(:template=>:hlm, :hlm_weights=>($hlm_weight || [0.1]*($fields.size))))
           $i.crt_add_query_set("#{$query_prefix}_PRM_#{op_smt}_#{op_comb}_l#{lambda}", 
-            o.merge(:template=>:prm))    
+            o.merge(:template=>:prm))
         end
       end
     end

@@ -155,11 +155,11 @@ def init_collection(col)
     $ptn_qry_title = /[0-9]+\s(.*)/
     case $o[:topic_id]
     when 'tw1'
-      $col_path, $index_path = "#$exp_root/twitter/Twitter-ldipillo89-xmldoc", "#$exp_root/twitter/index_fw1"
+      $col_path, $index_path = "#$exp_root/twitter/Twitter-ldipillo89-xmldoc", "#$exp_root/twitter/index_tw1"
       $offset, $count = 1101, 58
       $file_topic ,$file_qrel = 'twuser1.topic' , 'twuser1.qrel'
     when 'tw5'
-      $col_path, $index_path = "#$exp_root/facebook/Twitter-JamieZieder-xmldoc", "#$exp_root/twitter/index_fb5"
+      $col_path, $index_path = "#$exp_root/facebook/Twitter-JamieZieder-xmldoc", "#$exp_root/twitter/index_tw5"
       $offset, $count = 5101, 50
       $file_topic ,$file_qrel = 'twuser5.topic' , 'twuser5.qrel'
     when 'tw6'
