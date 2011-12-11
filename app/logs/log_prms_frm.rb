@@ -9,3 +9,5 @@ $o = {:verbose=>true, :topic_id=>'tw1'}; $method='param_smt'; $col='twitter'; $e
 $o = {:verbose=>true, :topic_id=>'tw5'}; $method='param_smt'; $col='twitter'; $exp='perf'; $remark='1202_CJ'; eval IO.read('run_prms.rb')
 
 $o = {:verbose=>true, :topic_id=>'tw6'}; $method='param_smt'; $col='twitter'; $exp='perf'; $remark='1202_CJ'; eval IO.read('run_prms.rb')
+
+$o = {:verbose=>true, :topic_id=>'test'}; $method='param_smt'; $col='imdbx'; $exp='perf'; $remark='1212'; eval IO.read('run_prms.rb')

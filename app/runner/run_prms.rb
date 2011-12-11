@@ -126,7 +126,7 @@ begin
     $i.crt_add_query_set("#{$query_prefix}_PRMS", o.merge(:smoothing=>$sparam_prm))
     $i.crt_add_query_set("#{$query_prefix}_PRMS_all", o.merge(:smoothing=>$sparam_prm,:mp_all_fields=>true))
     $i.crt_add_query_set("#{$query_prefix}_PRMSrl", o.merge(:flms=>$rlflms1, :smoothing=>$sparam_prm))
-
+    
   when 'param_prmd'
     $rsflms = get_rsflms() if !$rsflms
     $mpmix = $engine.get_mixture_mpset($queries, $mp_types, $mix_weights)
@@ -135,13 +135,13 @@ begin
       $i.crt_add_query_set("#{$query_prefix}_PRMDmx5_l#{lambda}", :template=>:tew_ql,
                               :smoothing=>$sparam_prm, :lambda=>lambda, :mps=>$mpmix)
     end
-    
+  
   when 'noise'
     [0.5,1.0,2.0,5.0].each do |mp_noise|
       o = o.dup.merge(:flms=>$rlflms1, :op_comb=>op_comb, :mp_noise=>mp_noise, :mp_all_fields=>true)
       $i.crt_add_query_set("#{$query_prefix}_oPRMS_#{op_comb}_n#{mp_noise}", o)
     end
-    
+  
   when 'mp_oracle'
     $i.crt_add_query_set("#{$query_prefix}_PRMSora", o.merge(:flms=>$rlflms1, :smoothing=>$sparam_prm))
     [:wsum].each do |op_comb|
@@ -154,7 +154,6 @@ begin
         $i.crt_add_query_set("#{$query_prefix}_oPRMS_#{op_comb}_u#{mp_unsmooth}", o)
       end
     end
-    
   
   # Vary Mapping Probabilities
   when 'mp_oracle_topk'

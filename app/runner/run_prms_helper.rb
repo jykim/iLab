@@ -269,6 +269,22 @@ def init_collection(col)
     end
     $title_field = 'title'
     
+  when 'imdbx'
+    $index_path = "#$exp_root/imdbx/#{$o[:index_path] || 'index'}"
+    $i.config_path( :work_path=>$exp_root+'/imdbx' ,:index_path=>$index_path )
+    $ptn_qry_title = /\<title\>(.*)\<\/title\>/
+    $fields = ['title','releasedates','director','genre','actors','overview','cast','additional_details','fun_stuff', 'name','year','overview','filmography','additional_details'] #
+    if !File.exist?($index_path)
+      $engine.build_index($col_id , "#$exp_root/imdbx" , $index_path , 
+        :fields=>$fields, :stemmer=>:krovetz, :stopword=>false)
+    end
+    case $o[:topic_id]
+    when 'test'
+      $offset, $count = 1, 45
+      $file_topic ,$file_qrel = '2011-dc-topics-adhocsearch-v3.xml', '2011-dc-article-v2.qrels.txt'
+    end
+    $title_field = 'title'
+  
   when 'monster'
     $index_path = "#$exp_root/monster/#{$o[:index_path] || 'index'}"
     $i.config_path( :work_path=>$exp_root+'/monster' ,:index_path=>$index_path )
