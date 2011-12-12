@@ -8,3 +8,4 @@ end
 
 # Command
 # ruby -I /prj/dih/iLab/ -I /prj/dih/iLab/rubylib /prj/dih/iLab/app/adhoc/imdbx_conv.rb col
+# ruby -I $IL -I $IL/rubylib $IL/app/adhoc/imdbx_conv.rb raw_col

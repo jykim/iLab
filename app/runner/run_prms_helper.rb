@@ -273,14 +273,15 @@ def init_collection(col)
     $index_path = "#$exp_root/imdbx/#{$o[:index_path] || 'index'}"
     $i.config_path( :work_path=>$exp_root+'/imdbx' ,:index_path=>$index_path )
     $ptn_qry_title = /\<title\>(.*)\<\/title\>/
-    $fields = ['title','releasedates','director','genre','actors','overview','cast','additional_details','fun_stuff', 'name','year','overview','filmography','additional_details'] #
+    $fields = ['title','releasedates','director','genre','actors','overview','cast',
+      'additional_details', 'fun_stuff', 'name','year','overview','filmography'] #
     if !File.exist?($index_path)
-      $engine.build_index($col_id , "#$exp_root/imdbx" , $index_path , 
+      $engine.build_index($col_id , "#$exp_root/imdbx/col_new" , $index_path , 
         :fields=>$fields, :stemmer=>:krovetz, :stopword=>false)
     end
     case $o[:topic_id]
     when 'test'
-      $offset, $count = 1, 45
+      $offset, $count = 2011101, 45
       $file_topic ,$file_qrel = '2011-dc-topics-adhocsearch-v3.xml', '2011-dc-article-v2.qrels.txt'
     end
     $title_field = 'title'
@@ -308,7 +309,7 @@ def init_collection(col)
   end#case
   $bm25f_path = to_path("#{$query_prefix}_bm25f.in")
   $engine.init_kstem($file_topic)
-  $rlflms1 = $engine.get_rel_flms_multi($file_qrel)if !$rlflms1
+  $rlflms1 = $engine.get_rel_flms_multi($file_qrel, 10) if !$rlflms1
   $queries =  $i.parse_topic_file($file_topic, $ptn_qry_title)
   $engine.init_kstem($file_topic_train) if $file_topic_train
   $queries_train =  $i.parse_topic_file($file_topic_train, $ptn_qry_title) if $file_topic_train
