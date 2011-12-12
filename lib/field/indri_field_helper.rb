@@ -146,23 +146,28 @@ module IndriFieldHelper
   
   
   # Get the list and LM of relevant docs from TREC QRel
-  def get_rel_flms_multi( file_qrel, n = 1 )
+  def get_rel_flms_multi( file_qrel, max_docs )
     $dflms_rl = IO.read( to_path(file_qrel) ).split("\n").map{|l|
-      e = l.split(" ")
-      [e[0].to_i, get_doc_field_lm(e[2], 1)[1], e[3].to_f]
-    }.find_all{|e|e[1].size > 0 && e[2] > 0}
-    results = $dflms_rl.group_by{|e|e[0]}.map_hash do |qid,flms|
-      rflm = if flms.size == 1
-        flms[0][1]
+      e = l.split(" ") ; [e[0].to_i, e[2], e[3].to_f]
+    }.find_all{|e| e[2] > 0}
+    #flm = (e[3].to_f > 0) ? : nil
+    
+    results = $dflms_rl.group_by{|e|e[0]}.map_hash do |qid,rows|
+      rrow = if rows.size == 1
+        get_doc_field_lm(rows[0][1], 1)[1]
       else
-        #puts "Merging flms : \n #{flms.inspect}"
-        rflm_t = flms[0][1]
-        flms[1..-1].each do |flm|
-          rflm_t = rflm_t.map_hash{|k,v| [k, v.sum_prob(flm[1][k] || {})]}
+        #puts "Merging rows : \n #{rows.inspect}"
+        flm_t = $fields.map_hash{|e|[e, {}]}
+        
+        # Add subsequent rows to initial FLM
+        rows[0..(max_docs || -1)].each do |row|
+          flm = get_doc_field_lm(row[1], 1)[1]
+          next if !flm
+          flm_t = flm.map_hash{|k,v| [k, v.sum_prob(flm[k] || {})]}
         end
-        rflm_t
+        flm_t
       end#if
-      [qid, rflm]
+      [qid, flm_t]
     end#group_by
     results.sort_by{|k,v|k}.map{|e|e[1]}
   end
