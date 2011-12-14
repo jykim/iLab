@@ -84,7 +84,7 @@ def init_collection(col)
     $gindex_path = "#$exp_root/trec/gindex_lists"
     $i.config_path( :work_path=>File.join($exp_root,col) ,:index_path=>$index_path )
     $ptn_qry_title = /\<title\> (.*) \<\/title\>/
-    $fields =  ['sent','name','email','subject','to','text']
+    $fields =  $o[:fields] || ['sent','name','email','subject','to','text']
     if !File.exist?($index_path)#"#$exp_root/trec/raw_doc"
       $engine.build_index($col_id , col_path , $index_path , :fields=>$fields, :stemmer=>'krovetz' , :stopword=>false)
     end

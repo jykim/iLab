@@ -45,9 +45,9 @@ begin
     
     # Relevance Feedback
     $rsflms = get_rsflms(qs) if !$rsflms
-    $mprug = $engine.get_mixture_mpset($queries, [:rug], [1.0])
-    $i.crt_add_query_set("#{$query_prefix}_PRMS_rug", 
-      o.merge(:template=>:tew, :mps=>$mprug, :smoothing=>$sparam_prm ))
+    #$mprug = $engine.get_mixture_mpset($queries, [:rug], [1.0])
+    #$i.crt_add_query_set("#{$query_prefix}_PRMS_rug", 
+    #  o.merge(:template=>:tew, :mps=>$mprug, :smoothing=>$sparam_prm ))
     $mpmix = $engine.get_mixture_mpset($queries, $mp_types, $mix_weights)
     $i.crt_add_query_set("#{$query_prefix}_PRMSmx_#{$o[:mp_types]}", 
       o.merge(:template=>:tew, :mps=>$mpmix, :smoothing=>$sparam_prm ))
@@ -177,14 +177,14 @@ begin
     [0.1, 0.3, 0.5, 0.7, 0.8, 0.9, 5, 10, 25, 50, 100, 250, 500, 1000].each do |lambda|
       puts "lambda : #{lambda}"
       o.merge!(:smoothing=>get_sparam((lambda > 1)? "dirichlet" : "jm", lambda))
-      $i.crt_add_query_set("#{$query_prefix}_DQL_l#{lambda}", o.merge(:template=>:ql))
+#      $i.crt_add_query_set("#{$query_prefix}_DQL_l#{lambda}", o.merge(:template=>:ql))
       [:field].each do |op_smt|
         [:wsum].each do |op_comb|
           o.merge!(:op_smt=>op_smt, :op_comb=>op_comb)
           $i.crt_add_query_set("#{$query_prefix}_MFLM_#{op_smt}_#{op_comb}_l#{lambda}" , 
             o.merge(:template=>:hlm, :hlm_weights=>($hlm_weight || [0.1]*($fields.size))))
-          $i.crt_add_query_set("#{$query_prefix}_PRM_#{op_smt}_#{op_comb}_l#{lambda}", 
-            o.merge(:template=>:prm))
+          #$i.crt_add_query_set("#{$query_prefix}_PRM_#{op_smt}_#{op_comb}_l#{lambda}", 
+#            o.merge(:template=>:prm))
         end
       end
     end
