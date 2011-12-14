@@ -22,5 +22,5 @@ $o = {:topic_id=>'test', :verbose=>:mp, :mode=>:mix_weights, :opt_for=>'map' }; 
 $o = {:topic_id=>'test', :verbose=>:mp, :range=>[125,138,36,83,29,31,122,27,62,70], :topk=>5}; $method='baseline'; $col='trec'; $exp='document'; $remark='1213'; eval IO.read('run_prms.rb')
 
 ['sent','name','email','subject','to','text'].each do |field|
-  $o = {:verbose=>true, :topic_id=>'train', :fields=>[field]}; $method='param_smt'; $col='trec'; $exp='perf'; $remark="1212_smt_#{field}"; eval IO.read('run_prms.rb')
+  $o = {:verbose=>true, :topic_id=>'train', :hlm_weight=>[1.0], :fields=>[field]}; $method='param_smt'; $col='trec'; $exp='perf'; $remark="1212_smt_#{field}"; eval IO.read('run_prms.rb')
 end
