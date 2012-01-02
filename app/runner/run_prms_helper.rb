@@ -109,6 +109,10 @@ def init_collection(col)
         $offset, $count = 26, 125
         $file_topic ,$file_qrel = 'ent05.known-item-topics', 'ent05.known-item-qrels'
         $file_topic_train ,$file_qrel_train = 'ent05.known-item.training-topics' , 'ent05.known-item.training-qrels'
+      when 'all'
+        $offset, $count = 1, 150
+        $file_topic ,$file_qrel = 'ent05.known-item.topics.all' , 'ent05.known-item.qrels.all'
+        $file_topic_train ,$file_qrel_train = $file_topic ,$file_qrel
       when 'cv21'
         $offset, $count = 1, 75
         $file_topic ,$file_qrel = 'ent05.topics.cv1', 'ent05.qrels.cv1'

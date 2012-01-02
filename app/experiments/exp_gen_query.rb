@@ -1,21 +1,22 @@
 load 'app/experiments/exp_optimize_method.rb'
 
-# Get the Training Results
+
+$features = ["Length", "Position", "IDF", "MSNgram", "MSNgram2", "PosTagF", "PosTagL", "PosTag", "PosTag2"]
+$prob_restart = 0.2# $engine.estimate_prob_restart($queries_train_a, $rlflms_train)
+$doc_no = $engine.get_col_stat()[:doc_no]
+$idfh = $engine.get_df().map_hash{|k,v|[k, Math.log($doc_no.to_f / v)]}
+
+# Process Test Queries
 $queries_a = $queries.map{|q|q.split(/\s+/).map{|e|$engine.kstem(e)}}
 $rlflms = $engine.get_rel_flms($file_qrel, 2, :freq=>true) if !$rlflms
 $rlfvs = $engine.get_rel_fvs($file_qrel) if !$rlfvs
 File.open(to_path("#{$file_topic}.in"), "w"){|f|f.puts $queries.map{|e|e+" ."}.join("\n")}
 $pos_queries = run_postagger(to_path("#{$file_topic}.in"))
-$features = ["Length", "Position", "IDF", "MSNgram", "MSNgram2", "PosTagF", "PosTagL", "PosTag", "PosTag2"]
 
 # Estimate Statistics of Training Queries
 $queries_train_a = $queries_train.map{|q|q.split(/\s+/).map{|e|$engine.kstem(e)}}
 $rlflms_train = $engine.get_rel_flms($file_qrel_train, 2) if !$rlflms_train
 $pos_queries_train = run_postagger(to_path("#{$file_topic_train}.in"))
-$prob_restart = 0.2# $engine.estimate_prob_restart($queries_train_a, $rlflms_train)
-
-$doc_no = $engine.get_col_stat()[:doc_no]
-$idfh = $engine.get_df().map_hash{|k,v|[k, Math.log($doc_no.to_f / v)]}
 
 $ldist ||= $queries_train_a.map{|e|e.size}.to_dist.to_p
 $field_set_train ||= $engine.get_mpset_from_flms($queries_train, $rlflms_train.map{|e|e[1]}).
