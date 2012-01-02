@@ -56,7 +56,12 @@ end
 
 puts "Training feature weights..."
 
-$qrange_train, $qrange_test = 0..49, 50..99
+case $o[:topic_id]
+when 'all'
+  $qrange_train, $qrange_test = 0..75, 76..150
+else
+  $qrange_train, $qrange_test = 0..49, 50..99
+end
 
 $comb_weights_grid = $engine.train_weights_by_cascent($cand_set[$qrange_train])
 $comb_weights_svm = $engine.train_weights_by_ranksvm($cand_set[$qrange_train], $o)
