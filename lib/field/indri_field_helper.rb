@@ -138,17 +138,21 @@ module IndriFieldHelper
     }.join("").gsub("\n", "<br>\n")
   end
   
+  def read_qrel(file_qrel)
+    IO.read( to_path(file_qrel) ).split("\n").map{|l|l.split(" ")}
+  end
+  
   def get_rel_flms( file_qrel, n = 1 , o ={})
-    IO.read( to_path(file_qrel) ).split("\n").map do |l|
-      get_doc_field_lm(l.split(" ")[2], n, o)
+    read_qrel(file_qrel).map do |l|
+      get_doc_field_lm(l[2], n, o)
     end
   end
   
   
   # Get the list and LM of relevant docs from TREC QRel
   def get_rel_flms_multi( file_qrel, max_docs )
-    $dflms_rl = IO.read( to_path(file_qrel) ).split("\n").map{|l|
-      e = l.split(" ") ; [e[0].to_i, e[2], e[3].to_f]
+    $dflms_rl = read_qrel(file_qrel).map{|e|
+      [e[0].to_i, e[2], e[3].to_f]
     }.find_all{|e| e[2] > 0}
     #flm = (e[3].to_f > 0) ? : nil
     
@@ -174,16 +178,16 @@ module IndriFieldHelper
   
   # Get the list and term vectors of relevant docs from TREC QRel
   def get_rel_fvs( file_qrel)
-    IO.read( to_path(file_qrel) ).split("\n").map do |l|
-      get_doc_field_vector(l.split(" ")[2])
+    read_qrel(file_qrel).map do |l|
+      get_doc_field_vector(l[2])
     end
   end
   
   # Get the list and LM of relevant docs from TREC QRel
   def get_rel_texts( file_qrel)
-    IO.read( to_path(file_qrel) ).split("\n").map do |l|
+    read_qrel(file_qrel).map do |l|
       #p l
-      qrel_finename = l.split(" ")[2]
+      qrel_finename = l[2]
       [qrel_finename, get_doc_field_text(qrel_finename , $fields)]
     end
   end

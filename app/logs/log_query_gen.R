@@ -17,3 +17,7 @@ plot(density(d[d$qtype=='G' & d$ftype=='MSN',]$uni1))
 lines(density(d[d$qtype=='M' & d$ftype=='MSN',]$uni1), lty=2)
 plot(density(d[d$qtype=='G' & d$ftype=='MSN',]$bi1))
 lines(density(d[d$qtype=='M' & d$ftype=='MSN',]$bi1), lty=2)
+
+
+dt = read.table('features_0102.tsv',header=T)
+cor(dt)

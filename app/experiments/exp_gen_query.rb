@@ -3,11 +3,13 @@ load 'app/experiments/exp_optimize_method.rb'
 
 $features = ["Length", "Position", "IDF", "MSNgram", "MSNgram2", "PosTagF", "PosTagL", "PosTag", "PosTag2"]
 $prob_restart = 0.2# $engine.estimate_prob_restart($queries_train_a, $rlflms_train)
+$max_length = 5
 $doc_no = $engine.get_col_stat()[:doc_no]
 $idfh = $engine.get_df().map_hash{|k,v|[k, Math.log($doc_no.to_f / v)]}
 
 # Process Test Queries
 $queries_a = $queries.map{|q|q.split(/\s+/).map{|e|$engine.kstem(e)}}
+$rldids = $engine.read_qrel($file_qrel).map{|e|e[2]}
 $rlflms = $engine.get_rel_flms($file_qrel, 2, :freq=>true) if !$rlflms
 $rlfvs = $engine.get_rel_fvs($file_qrel) if !$rlfvs
 File.open(to_path("#{$file_topic}.in"), "w"){|f|f.puts $queries.map{|e|e+" ."}.join("\n")}
@@ -15,10 +17,11 @@ $pos_queries = run_postagger(to_path("#{$file_topic}.in"))
 
 # Estimate Statistics of Training Queries
 $queries_train_a = $queries_train.map{|q|q.split(/\s+/).map{|e|$engine.kstem(e)}}
+#$rldids_train = $engine.read_qrel($file_qrel_train).map{|e|e[2]}
 $rlflms_train = $engine.get_rel_flms($file_qrel_train, 2) if !$rlflms_train
 $pos_queries_train = run_postagger(to_path("#{$file_topic_train}.in"))
 
-$ldist ||= $queries_train_a.map{|e|e.size}.to_dist.to_p
+$ldist ||= $queries_train_a.map{|e|e.size}.find_all{|e|e <= $max_length }.to_dist.to_p
 $field_set_train ||= $engine.get_mpset_from_flms($queries_train, $rlflms_train.map{|e|e[1]}).
   map{|e|$engine.mhash2arr e}.map{|mps|mps.map{|e|e[1][0][0]}}
 File.open(to_path("#{$file_topic_train}.in"), "w"){|f|f.puts $queries.map{|e|e+" ."}.join("\n")}
@@ -49,7 +52,7 @@ unless $o[:skip_feature]
   File.open(to_path("cand_#{$file_topic}.in"), "w"){|f|
     f.puts $query_set.map{|e|e.map{|e2|e2.join(" ")+" ."}}.collapse.join("\n")}
   $pos_cands = run_postagger(to_path("cand_#{$file_topic}.in"), :force=>true)
-  $cand_set = $engine.calc_feature_set($queries_a, $query_set, $rlfvs, $o)
+  $cand_set = $engine.calc_feature_set($queries_a, $query_set, $rlfvs, $rldids, $o)
 end
 
 #unless $o[:skip_train]
@@ -79,7 +82,7 @@ end
 
 $cand_set_score = $cand_set.map do |cands|
   cands_new = cands.map{|c|
-    c_new = c.dup << c[1..-1].map_with_index{|score,j|
+    c_new = c.dup << c[2..-1].map_with_index{|score,j|
       score * $comb_weights[j]}.sum.r3}
   cands_new[0..0].concat cands_new[1..-1].sort_by{|c|-c[-1]}
 end
@@ -120,15 +123,15 @@ end
 if $o[:export]
   require 'csv'
   CSV.open(to_path("eval_genquery_#{$query_prefix}_#{$o[:new_topic_id]}.csv"), 'w') do |csv|
-    csv << [$fields, "query1", "query2", "pos_man"].flatten
+    csv << [$fields, 'did' , "query1", "query2", "label", "label_reason"].flatten
     $cand_set.each_with_index do |cand, i|
       if rand() > 0.5
-        q1, q2, pos_man = cand[0][0], cand[1][0], 1
+        did, q1, q2, pos_man = cand[0][1] ,cand[0][0], cand[1][0], cand[0][0]
       else
-        q1, q2, pos_man = cand[1][0], cand[0][0], 2
+        did, q1, q2, pos_man = cand[0][1], cand[1][0], cand[0][0], cand[0][0]
       end
       text = $fields.map_with_index{|field,j| "#{$rltxts[i][1][j].gsub("\"", "'").gsub(/^[a-z]+?=\'.*?\'\s*?/im,"")[0..2000]}"}
-      csv << [text, q1, q2, pos_man].flatten
+      csv << [text, did, q1, q2, pos_man].flatten
     end
   end
 end

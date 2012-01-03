@@ -56,12 +56,14 @@ module GenMemoryQuery
   def gen_memory_query(mem_model, o = {})
     start_prob = {}
     prob_restart = o[:prob_restart] || $prob_restart
+    #max_length = o[:max_length] || 5
     results = []
     #clm = get_col_freq(:whole_doc=>true, :prob=>true)
     #bclm = get_col_freq(:whole_doc=>true,:bgram=>true)
 
     0.upto((o[:no_cand] || 20)-1) do |i|
       qry_length = o[:qry_length] || $ldist.sample_pdist.first
+      #qry_length = (qry_length > max_length)? max_length : qry_length
       results[i] = []
       while(true)
         next_term = mem_model[:base].smooth(o[:smooth_ratio] || 0.0, o[:smooth_lm]).sample_pdist[0]

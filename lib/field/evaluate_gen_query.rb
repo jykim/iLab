@@ -46,7 +46,7 @@ module EvaluateGenQuery
     idfs.avg
   end
   
-  def calc_feature_set(queries_a, cand_set, rlfvs, o = {})
+  def calc_feature_set(queries_a, cand_set, rlfvs, rldids, o = {})
     #1/$fdist.kld_s( c[1].to_dist.to_p ), 
     cand_set.map_with_index do |cands,i|
       cands_new = [queries_a[i]].concat cands
@@ -66,7 +66,7 @@ module EvaluateGenQuery
           [$ldist[c.size] || 0.0, pos_score.mean, idf_score/3, msn_prob[0].norm(-6, -2), msn_prob[1].norm(-10, -5), postag_score].flatten
         end
       end
-      cands_new.map_with_index{|c,j| [c.join(" "), features[j].map{|e|e.to_f}].flatten}
+      cands_new.map_with_index{|c,j| [c.join(" "), rldids[i] ,features[j].map{|e|e.to_f}].flatten}
     end
   end
   
@@ -77,7 +77,7 @@ module EvaluateGenQuery
       begin
         rank_list = cands.map_with_index{|c,i| 
           #p c[1..-1], weights
-          [i , c[1..-1].map_with_index{|score,j|score * weights[j]}.sum]}
+          [i , c[2..-1].map_with_index{|score,j|score * weights[j]}.sum]}
         #p rank_list
         rank_list_sort = rank_list.sort_by{|e|e[1]}.reverse          
         rank_list_sort.each_with_index{|e,i| recip_rank = 1.0 / (i+1) if e[0] == 0 }
