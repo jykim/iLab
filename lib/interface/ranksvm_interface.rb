@@ -3,10 +3,22 @@ module RanksvmInterface
     File.open(file_name, 'w') do |f|
       cand_set.map_with_index{|cand,i|
         cand.map_with_index{|c,j|
-          f.puts "#{(j==0)? 2 : 1} qid:#{i+$offset} #{c[1..-1].map_with_index{|e,k|"#{k+1}:#{e}"}.join(" ")} # \"#{c[0]}\""
+          f.puts "#{(j==0)? 2 : 1} qid:#{i+$offset} #{c[2..-1].map_with_index{|e,k|"#{k+1}:#{e}"}.join(" ")} # \"#{c[0]}\""
           }
         }
     end
+    export_input_as_tsv(file_name)
+  end
+  
+  def export_input_as_tsv(filename)
+    str = IO.read(filename)
+    File.open(filename+'.tsv','w'){|f|
+      f.puts ['Label', $features].flatten.join("\t")
+      f.puts str.split("\n").map{|l|
+        e = l.split(" ");
+        [e[0],e[2..-1].map{|e2|e2.split(":")[1]}].flatten.join("\t")
+      }.join("\n")
+    }
   end
   
   # RansSVM input file => candidate set array
