@@ -34,6 +34,7 @@ load 'lib/field/evaluate_gen_query.rb'
 load 'lib/field/gen_query.rb'
 load 'lib/field/gen_markov_query.rb'
 load 'lib/field/gen_memory_query.rb'
+load 'lib/field/gen_crowd_query.rb'
 load 'lib/field/gen_collection.rb'
 load 'lib/field/indri_field_helper.rb'
 

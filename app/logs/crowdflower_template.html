@@ -1,6 +1,6 @@
-Identifying Human-written Query
+Identifying Human-written Queries
 
-You will be provided with two queries, one written by a human, the other written by a machine. The goal of this task is to identify which one is written by a human.
+You will be provided with two queries, one written by a human, the other written by a machine to find a given email. The goal of this task is to identify which one was written by a human.
 
 <strong>Subject</strong> :&nbsp;
 {{subject}}<br>
@@ -12,9 +12,8 @@ You will be provided with two queries, one written by a human, the other written
 <p><textarea id="" style="margin-left: 2px; margin-right: 2px; width: 700px; margin-top: 2px; margin-bottom: 2px; height: 220px; ">{{text}}
 </textarea></p>
 
-
-One of these queries was written by a human. Can you identify which query is it?
-
-If you need to find this document using a search engine, what would you use as a query?
-
-Why did you decide that way? Any other comments?
+<cml:radios label="One of these queries was written by a human. Can you identify which query is it? " class="" validates="required" name="label" gold="true">
+    <cml:radio label="{{query1}}"/>
+    <cml:radio label="{{query2}}"/>
+  </cml:radios>
+  <cml:text label="Why did you decide that way? " class=""/>
