@@ -1,4 +1,4 @@
-require 'CSV'
+#require 'CSV'
 
 def gen_crowd_query(topic_id, filename ,given_queries, o = {})
   dt = CSV.parse(IO.read(filename))

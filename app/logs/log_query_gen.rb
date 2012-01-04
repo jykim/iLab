@@ -43,4 +43,6 @@ gen_crowd_query("MEM0103","trec/in/a77918_merged.csv", $queries_a.map{|e|e.join(
 
 File.open('queries_stemmed.csv','w'){|f|$queries_a.map{|e|f.puts e.join(" ")}}
 
+$o = {:export=>true, :verbose=>false, :topic_id=>'cv31', :new_topic_id=>'MEM0104', :no_cand=>9, :smooth_ratio=>0.5}; $method='memory'; $col='trec'; $exp='gen_query'; $remark='0104'; eval IO.read('run_prms.rb')
+
 $o = {:export=>true, :verbose=>false, :topic_id=>'all', :new_topic_id=>'MEM0104a', :no_cand=>9, :smooth_ratio=>0.5}; $method='memory'; $col='trec'; $exp='gen_query'; $remark='0104a'; eval IO.read('run_prms.rb')
