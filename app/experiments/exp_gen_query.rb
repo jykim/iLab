@@ -97,7 +97,7 @@ file_qrel =  ["qrel" , $col_id , $o[:new_topic_id]].join("_")
 $best_cand = $cand_set_score.map{|cands|cands[1..-1].max{|c1,c2|c1[-1]<=>c2[-1]}[0]}
 
 write_topic(to_path(file_topic), $best_cand.map{|e|{:title=>e}})
-write_qrel(to_path(file_qrel), read_qrel($file_qrel).map_hash_with_index{|e,i|[i+1,{e[2]=>1}]})
+write_qrel(to_path(file_qrel), $engine.read_qrel($file_qrel).map_hash_with_index{|e,i|[i+1,{e[2]=>1}]})
 #}`cp #{to_path($file_qrel)} #{to_pathth(file_qrel)}`
 # Text extraction
 
