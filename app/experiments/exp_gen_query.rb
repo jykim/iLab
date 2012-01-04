@@ -64,7 +64,8 @@ when 'all'
   $qrange_train, $qrange_test = 0..149, 0..149
   #$qrange_train, $qrange_test = 0..75, 76..149
 else
-  $qrange_train, $qrange_test = 0..49, 50..99
+  $qrange_train, $qrange_test = 0..99, 0..99
+  #$qrange_train, $qrange_test = 0..49, 50..99
 end
 
 $comb_weights_grid = $engine.train_weights_by_cascent($cand_set[$qrange_train])
