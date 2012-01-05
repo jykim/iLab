@@ -9,6 +9,6 @@ def gen_crowd_query(topic_id, filename ,given_queries, o = {})
     map{|e|[((e[16]==e[5])? e[17] : e[16]) ,e[11]]}
   
   File.open(to_path("#{topic_id}_topic_invalid"),'w'){|f|invalid_queries.each{|e|f.puts e.join("\t")}}
-  write_topic(to_path("#{topic_id}_topic"), valid_queries)
-  write_qrel(to_path("#{topic_id}_qrel"), valid_queries.map_hash_with_index{|e,i|[i+1,{e[:did]=>1}]})
+  write_topic(to_path("topic/#{topic_id}_topic"), valid_queries)
+  write_qrel(to_path("qrel/#{topic_id}_qrel"), valid_queries.map_hash_with_index{|e,i|[i+1,{e[:did]=>1}]})
 end
