@@ -115,13 +115,16 @@ def init_collection(col)
         $file_topic_train ,$file_qrel_train = $file_topic ,$file_qrel
       when 'cv21'
         $offset, $count = 1, 75
-        $file_topic ,$file_qrel = 'ent05.topics.cv1', 'ent05.qrels.cv1'
-        $file_topic_train ,$file_qrel_train = 'ent05.topics.cv2', 'ent05.qrels.cv2'
+        $file_topic ,$file_qrel = 'topic/ent05.topics.cv1', 'qrel/ent05.qrels.cv1'
+        $file_topic_train ,$file_qrel_train = 'topic/ent05.topics.cv2', 'qrel/ent05.qrels.cv2'
       when 'cv31'
         $offset, $count = 1, 100
-        $file_topic ,$file_qrel = 'ent05.topics.cv312', 'ent05.qrels.cv312'
-        $file_topic_train ,$file_qrel_train = 'ent05.topics.cv33', 'ent05.qrels.cv33'
+        $file_topic ,$file_qrel = 'topic/ent05.topics.cv312', 'qrel/ent05.qrels.cv312'
+        $file_topic_train ,$file_qrel_train = 'topic/ent05.topics.cv33', 'qrel/ent05.qrels.cv33'
         #$file_topic_valid ,$file_qrel_valid = 'ent05.topics.cv33', 'ent05.qrels.cv33'
+      when 'crowd'
+        $offset, $count = 1, 33
+        $file_topic ,$file_qrel = 'MEM0103_topic', 'MEM0103_qrel'
       else
         $offset = 1
       #when 'MKV'
