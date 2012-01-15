@@ -4,10 +4,13 @@ require 'nokogiri'
 def parse_doc(filename)
   nk = Nokogiri::HTML(IO.read(filename))
   nk.xpath("//div[@id='vt-header']").map{|e|e.parent = nk.at_css "html"}
-  text = nk.xpath("//div[@id='toadjaw-article']").map{|e|e.text()}.join("\n")
-  title = nk.xpath("//h1[@id='vt-title']").first.text()
-  url = nk.xpath("//div/a[text()='Original']").first['href']
-  {:title=>title, :text=>text, :url=>url}
+  begin
+    text = nk.xpath("//div[@id='toadjaw-article']").map{|e|e.text()}.join("\n")
+    title = nk.xpath("//h1[@id='vt-title']").first.text()
+    url = nk.xpath("//div/a[text()='Original']").first['href']    
+  rescue Exception => e
+  end
+  {:title=>(title || ""), :text=>(text || ""), :url=>(url || "")}
 end
 
 def index_doc(id, did, doc_hash)
@@ -59,10 +62,3 @@ def process_input(file, ofile = nil)
   end
 end
 
-=begin
-$docs = index_path('html')
-
-process_input('TcUrl.list.resolve.10')
-=end
-
-#dt = IO.read('TcUrl.list.resolve.10').split("\n").map{|e|e.split("\t")}
