@@ -8,7 +8,7 @@
                 <rule><%= rule %></rule>
 <% end %>
         <queryOffset><%= query_offset %></queryOffset>
-<% topics.each do |query| %>
-        <query> #combine (<%= prior_clause%><%= query %>) </query>
+<% topics.each_with_index do |query,i| %>
+        <query><%= filters[i] %> #combine (<%= prior_clause%><%= query %>) </query>
 <% end  %>
 </parameters>

@@ -130,7 +130,7 @@ class ILab
     qs.qrys = qs.qrys.each{|e| e.text = "" if  o[:ex_range] === e.qid} if o[:ex_range] && o[:ex_range].class == Range
     qs.qrys = qs.qrys.each{|e| e.text = "" if  o[:ex_range].find_all{|r|r === e.qid}.size > 0} if o[:ex_range] && o[:ex_range].class == Array    
     
-    qs.build(o) if !fcheck(set_name+'.qry') || $o[:redo] || o[:redo]
+    qs.build(o.merge(:filters=>o[:filters])) if !fcheck(set_name+'.qry') || $o[:redo] || o[:redo]
     qs.run(o) if !fcheck(set_name+'.res') || $o[:redo] || o[:redo]
     
     if !o[:skip_eval]

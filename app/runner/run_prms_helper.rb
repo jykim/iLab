@@ -157,6 +157,24 @@ def init_collection(col)
     end
     $sparam = get_sparam('jm',0.1)
     $title_field = "message"
+    
+  when 'twir'
+    $index_path = "#$exp_root/twir/twir_idx"
+    $i.config_path( :work_path=>$exp_root+'/twir' ,:index_path=>$index_path )
+    $ptn_qry_title = /\<query\>(.*)\<\/query\>/
+    $ptn_qry_filter = /\<qtime\>(.*)\<\/qtime\>/
+    $fields = ['content','qtime'] #
+    if !File.exist?($index_path)
+      $engine.build_index($col_id , "#$exp_root/twir/twir_docs" , $index_path , 
+        :fields=>$fields, :stemmer=>:krovetz, :stopword=>false)
+    end
+    case $o[:topic_id]
+    when 'test'
+      $offset, $count = 1, 50
+      $file_topic ,$file_qrel = "topic_twir_all.raw.qry", "qrel_microblog11_indri"
+    end
+    $title_field = 'title'
+    
   when 'twitter'
     $fields= ["cur_text", "cur_user", "cur_replyto", "cur_src", "cur_time", "olink", "re_text", "re_user", "re_replyto", "re_src", "re_time"]
     $ptn_qry_title = /[0-9]+\s(.*)/
@@ -179,7 +197,8 @@ def init_collection(col)
       $engine.build_index($col_id , $col_path , $index_path , :fields=>$fields, :stemmer=>'krovetz', :stopword=>false)
     end
     $sparam = get_sparam('jm',0.1)
-    $title_field = "message"
+    $title_field = "content"
+    
   when 'enron'
     $index_path = "#$exp_root/enron/index_enron"
     $i.config_path( :work_path=>File.join($exp_root,col) ,:index_path=>$index_path )
@@ -314,12 +333,14 @@ def init_collection(col)
     end
     $title_field = 'resumetitle'
   end#case
-  $bm25f_path = to_path("#{$query_prefix}_bm25f.in")
-  $engine.init_kstem($file_topic)
-  $rlflms1 = $engine.get_rel_flms_multi($file_qrel, 10) if !$rlflms1
-  $queries =  $i.parse_topic_file($file_topic, $ptn_qry_title)
-  $engine.init_kstem($file_topic_train) if $file_topic_train
-  $queries_train =  $i.parse_topic_file($file_topic_train, $ptn_qry_title) if $file_topic_train
+  unless $col == "twir"
+    $bm25f_path = to_path("#{$query_prefix}_bm25f.in")
+    $engine.init_kstem($file_topic)
+    $rlflms1 = $engine.get_rel_flms_multi($file_qrel, 10) if !$rlflms1
+    $queries =  $i.parse_topic_file($file_topic, $ptn_qry_title)
+    $engine.init_kstem($file_topic_train) if $file_topic_train
+    $queries_train =  $i.parse_topic_file($file_topic_train, $ptn_qry_title) if $file_topic_train
+  end
 end
 
 
