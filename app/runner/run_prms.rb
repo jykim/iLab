@@ -86,7 +86,7 @@ begin
       $i.crt_add_query_set("#{$query_prefix}_PRMSmxRM_#{$o[:mp_types]}_l#{lambda}", 
         o.merge(:template=>:tew_rm, :mps=>$mpmix, :mps_rm=>$mpmix_rm, :smoothing=>$sparam_prm, :lambda=>lambda ))
     end
-
+    
   when 'param_rm'
     qs = $i.crt_add_query_set("#{$query_prefix}_DQL" , :smoothing=>$sparam)
     $queries_rm = get_rm_queries(get_rslms(qs)) if !$queries_rm
@@ -187,7 +187,16 @@ begin
         end
       end
     end
-  
+
+    # Retrieval parameter sweep
+    when 'twir_smt'
+      filters = IO.read(to_path($file_topic)).scan($ptn_qry_filter).map{|e|"#less(qtime #{e})"}
+      [0.1, 0.3, 0.5, 0.7, 0.8, 0.9, 5, 10, 25, 50, 100, 250, 500, 1000].each do |lambda|
+        puts "lambda : #{lambda}"
+        o.merge!(:smoothing=>get_sparam((lambda > 1)? "dirichlet" : "jm", lambda))
+  #      $i.crt_add_query_set("#{$query_prefix}_DQL_l#{lambda}", o.merge(:template=>:ql))
+        $i.crt_add_query_set("#{$query_prefix}_DQL_#{lambda}" , o.merge(:template=>:ql, :filters=>filters))
+      end
   ################################### Deprecated 
   
   when 'gprms_mix'
