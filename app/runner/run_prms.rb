@@ -195,7 +195,7 @@ begin
         puts "lambda : #{lambda}"
         o.merge!(:smoothing=>get_sparam((lambda > 1)? "dirichlet" : "jm", lambda))
   #      $i.crt_add_query_set("#{$query_prefix}_DQL_l#{lambda}", o.merge(:template=>:ql))
-        $i.crt_add_query_set("#{$query_prefix}_DQL_#{lambda}" , o.merge(:template=>:ql, :filters=>filters))
+        $i.crt_add_query_set("#{$query_prefix}_DQL_#{lambda}" , o.merge(:template=>:ql_twir, :filters=>filters))
       end
   ################################### Deprecated 
   
