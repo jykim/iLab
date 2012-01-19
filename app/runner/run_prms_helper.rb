@@ -159,7 +159,7 @@ def init_collection(col)
     $title_field = "message"
     
   when 'twir'
-    $index_path = "#$exp_root/twir/twir_idx_nostem"
+    $index_path = "#$exp_root/twir/twir_idx"
     $i.config_path( :work_path=>$exp_root+'/twir' ,:index_path=>$index_path )
     $ptn_qry_title = /\<query\>(.*)\<\/query\>/
     $ptn_qry_filter = /\<qtime\>(.*)\<\/qtime\>/
@@ -173,7 +173,7 @@ def init_collection(col)
       $offset, $count = 1, 50
       $file_topic ,$file_qrel = "topic_twir_all.raw.qry", "qrel_microblog11_indri"
     end
-    $title_field = 'title'
+    $title_field = 'content'
     
   when 'twitter'
     $fields= ["cur_text", "cur_user", "cur_replyto", "cur_src", "cur_time", "olink", "re_text", "re_user", "re_replyto", "re_src", "re_time"]
