@@ -6,7 +6,7 @@ $i.config_path( :work_path=>$exp_root+'/twir' )
 
 def convert_twir_col(filename)
   File.open(filename,"r") do |f|
-    File.open(filename+'.filter',"w") do |of|
+    File.open(filename+'.output',"w") do |of|
       while line = f.gets
         begin
           l = line.split("\t")
