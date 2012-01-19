@@ -188,15 +188,24 @@ begin
         end
       end
     end
-
+    
+    when'twir_baseline'
+      filters = IO.read(to_path($file_topic)).scan($ptn_qry_filter).map{|e|"#less(qtime #{e})"}
+      lambda = 250
+      o.merge!(:smoothing=>get_sparam((lambda > 1)? "dirichlet" : "jm", lambda))
+#      $i.crt_add_query_set("#{$query_prefix}_DQL_l#{lambda}", o.merge(:template=>:ql))
+      #$i.crt_add_query_set("#{$query_prefix}_DQL_nostem_#{lambda}" , o.merge(:template=>:ql_twir, :filters=>filters))
+      $i.crt_add_query_set("#{$query_prefix}_DQL_#{lambda}" , o.merge(:template=>:ql_twir, :filters=>filters))
+    
     # Retrieval parameter sweep
     when 'twir_smt'
       filters = IO.read(to_path($file_topic)).scan($ptn_qry_filter).map{|e|"#less(qtime #{e})"}
-      [0.1, 0.3, 0.5, 0.7, 0.8, 0.9, 5, 10, 25, 50, 100, 250, 500, 1000].each do |lambda|
+      [250, 500, 750, 1000, 1500].each do |lambda|
         puts "lambda : #{lambda}"
         o.merge!(:smoothing=>get_sparam((lambda > 1)? "dirichlet" : "jm", lambda))
   #      $i.crt_add_query_set("#{$query_prefix}_DQL_l#{lambda}", o.merge(:template=>:ql))
-        $i.crt_add_query_set("#{$query_prefix}_DQL_nostem_#{lambda}" , o.merge(:template=>:ql_twir, :filters=>filters))
+        #$i.crt_add_query_set("#{$query_prefix}_DQL_nostem_#{lambda}" , o.merge(:template=>:ql_twir, :filters=>filters))
+        $i.crt_add_query_set("#{$query_prefix}_DQL_#{lambda}" , o.merge(:template=>:ql_twir, :filters=>filters))
       end
   ################################### Deprecated 
   
