@@ -4,6 +4,9 @@ module GenCollection
   # @param Array fields : {:tag=>, :content=>}
   def generate_doc(path, doc_id, fields , o = {})
     template = ERB.new(IO.read(to_path("doc_trectext.xml.erb")))
+    if o[:as_string]
+      return template.result(binding)
+    end
     File.open("#{path}/#{doc_id}.xml", "w"){|f| f.puts template.result(binding)}
     puts "[gen_doc] #{doc_id} file created"
   end

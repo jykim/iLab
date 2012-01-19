@@ -6,13 +6,15 @@ $i.config_path( :work_path=>$exp_root+'/twir' )
 
 def convert_twir_col(filename)
   File.open(filename,"r") do |f|
-    while line = f.gets
-      begin
-        l = line.split("\t")
-        data = [["content",l[2]], ["qtime",l[0]]]
-        $engine.generate_doc("twir/twir_docs", l[5], data.map{|e|{:tag=>e[0], :content=>e[1]}})
-      rescue Exception => e
-        puts e
+    File.open(filename+'.filter',"w") do |of|
+      while line = f.gets
+        begin
+          l = line.split("\t")
+          data = [["content",l[2]], ["qtime",l[0]]]
+          of.puts $engine.generate_doc("twir/twir_docs", l[5], data.map{|e|{:tag=>e[0], :content=>e[1]}}, :as_string=>true)
+        rescue Exception => e
+          puts e
+        end
       end
     end
   end
