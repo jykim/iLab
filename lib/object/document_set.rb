@@ -63,24 +63,26 @@ class DocumentSet
   #Export doc list to html
   def export_docs( o = {} , &filter )
     return "" if @docs.size == 0
+    info "[export_docs] === START === "
     doc_list = "|Rank|Title|"
     doc_list += "Score|" if $exp == 'adhoc'
     doc_list += "Qid|Did|" if $exp == 'qrel'
     doc_list += "Query|Relevance|Length|Type|Remark|" if o[:verbose]
     doc_list += "\n"
     @docs.find_all{|d| (block_given?)? filter.call(d) : true }.each_with_index do |d,i|
+      info "[export_docs] #{d.did} (#{i})"
       d.fetch_info(fetch_doc_data(d.did), @engine.title_field, o) if !d.dno
-      #info "[export_docs] #{d.title} (#{i})"
+      info "[export_docs] #{d.title} (#{i})"
       doc_file_name = ["doc" , File.basename(d.did)].join('_') + '.' + 'html' #( (d.type=~/pdf/i)? 'html' : 'xml' )
       if $exp != 'adhoc'
-        doc_color = if d.relevance >  1 : "background:#222222" 
-                    elsif d.relevance == 1 : "background:#444444" 
+        doc_color = if d.relevance >  1 : "background:#444444" 
+                    elsif d.relevance == 1 : "background:#888888" 
                     elsif d.relevance == 0 : "background:#ffffff"
                     elsif d.relevance == -1 : "background:#cccccc"
                     else "background:#aaaaaa"
                     end
       end
-      doc_info = [ (defined?(d.rank))? d.rank : 'N/A' ,"\"#{d.title[0..50].gsub(/\W+/," ").strip}\":../../doc/#{doc_file_name}" ]
+      doc_info = [ (defined?(d.rank))? d.rank : 'N/A' ,"\"#{d.title.gsub(/\W+/," ").strip}\":../../doc/#{doc_file_name}" ]
       #if block_given?
       #  doc_info.concat yield d
       #else
@@ -91,7 +93,9 @@ class DocumentSet
       #end
       doc_list += (doc_info.to_tbl(:style=>doc_color)+"\n")
       fwrite doc_file_name , $engine.annotate_text_with_query(clean_content(d), o[:query]) if !fcheck(doc_file_name)
+      #info "[export_docs] #{d.did} (#{i}) complete!"
     end
+    info "[export_docs] === END === "
     doc_list
   end
   
