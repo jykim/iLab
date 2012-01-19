@@ -159,7 +159,7 @@ def init_collection(col)
     $title_field = "message"
     
   when 'twir'
-    $index_path = "#$exp_root/twir/twir_idx"
+    $index_path = "#$exp_root/twir/twir_idx_nostem"
     $i.config_path( :work_path=>$exp_root+'/twir' ,:index_path=>$index_path )
     $ptn_qry_title = /\<query\>(.*)\<\/query\>/
     $ptn_qry_filter = /\<qtime\>(.*)\<\/qtime\>/
