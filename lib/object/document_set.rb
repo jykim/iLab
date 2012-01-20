@@ -68,12 +68,12 @@ class DocumentSet
     doc_list += "Score|" if $exp == 'adhoc'
     doc_list += "Qid|Did|" if $exp == 'qrel'
     doc_list += "Query|Relevance|Length|Type|Remark|" if o[:verbose]
+    doc_list += "HRS|Length|DiffT|URL|RT|QTol|" if $col == 'twir'
     doc_list += "\n"
     @docs.find_all{|d| (block_given?)? filter.call(d) : true }.each_with_index do |d,i|
-      #info "[export_docs] #{d.did} (#{i})"
       d.fetch_info(fetch_doc_data(d.did), @engine.title_field, o) if !d.dno
       #info "[export_docs] #{d.title} (#{i})"
-      doc_file_name = ["doc" , File.basename(d.did)].join('_') + '.' + 'html' #( (d.type=~/pdf/i)? 'html' : 'xml' )
+      doc_file_name = ["doc" , File.basename(d.did)].join('_') + '.' + 'html' 
       if $exp != 'adhoc'
         doc_color = if d.relevance >  1 : "background:#444444" 
                     elsif d.relevance == 1 : "background:#888888" 
@@ -83,19 +83,19 @@ class DocumentSet
                     end
       end
       doc_info = [ (defined?(d.rank))? d.rank : 'N/A' ,"\"#{d.title.gsub(/\W+/," ").strip}\":../../doc/#{doc_file_name}" ]
-      #if block_given?
-      #  doc_info.concat yield d
-      #else
-        doc_info << [ d.qid , d.relevance, d.size , d.type , d.remark  ] if o[:verbose]
-        doc_info << [ d.qid , d.did  ] if $exp == 'qrel'
-        doc_info << [ d.score ] if $exp == 'adhoc'
-        doc_info << [ "\"Link\":"+d.text.find_tag("URL").first.strip ] if d.text.find_tag("URL").size > 0
-      #end
+      #puts Time.parse($qtime_filters[d.qid-1].scan(/\d+/)[0]), Time.parse(d.text.find_tag("qtime")[0])
+      difft = (Time.parse($qtime_filters[d.qid-1].scan(/\d+/)[0]) - Time.parse(d.text.find_tag("qtime")[0])) / 86400
+      query_a, doc_a = $i.qsa[0].qh[d.qid].text.scan(/\w+/), d.text.scan(/\w+/)
+      #p query_a, doc_a
+      qtol = query_a.map{|q|(doc_a.include?(q))? 1 : 0 }.sum / query_a.size.to_f
+      doc_info << [ d.relevance, doc_a.size, difft.r3, d.text.scan("http").size, d.text.scan("RT").size, qtol.r3 ] if $col == 'twir'
+      doc_info << [ d.qid , d.relevance, d.size , d.type , d.remark  ] if o[:verbose]
+      doc_info << [ d.qid , d.did  ] if $exp == 'qrel'
+      doc_info << [ d.score ] if $exp == 'adhoc'
+      doc_info << [ "\"Link\":"+d.text.find_tag("URL").first.strip ] if d.text.find_tag("URL").size > 0
       doc_list += (doc_info.to_tbl(:style=>doc_color)+"\n")
       fwrite doc_file_name , $engine.annotate_text_with_query(clean_content(d), o[:query]) if !fcheck(doc_file_name)
-      #info "[export_docs] #{d.did} (#{i}) complete!"
     end
-    #info "[export_docs] === END === "
     doc_list
   end
   

@@ -199,13 +199,13 @@ begin
     
     # Retrieval parameter sweep
     when 'twir_smt'
-      filters = IO.read(to_path($file_topic)).scan($ptn_qry_filter).map{|e|"#less(qtime #{e})"}
+      $qtime_filters = IO.read(to_path($file_topic)).scan($ptn_qry_filter).map{|e|"#less(qtime #{e})"}
       [500].each do |lambda|
         puts "lambda : #{lambda}"
         o.merge!(:smoothing=>get_sparam((lambda > 1)? "dirichlet" : "jm", lambda))
   #      $i.crt_add_query_set("#{$query_prefix}_DQL_l#{lambda}", o.merge(:template=>:ql))
         #$i.crt_add_query_set("#{$query_prefix}_DQL_nostem_#{lambda}" , o.merge(:template=>:ql_twir, :filters=>filters))
-        $i.crt_add_query_set("#{$query_prefix}_DQL_#{lambda}" , o.merge(:template=>:ql_twir, :filters=>filters))
+        $i.crt_add_query_set("#{$query_prefix}_DQL_#{lambda}" , o.merge(:template=>:ql_twir, :filters=>$qtime_filters))
       end
   ################################### Deprecated 
   
