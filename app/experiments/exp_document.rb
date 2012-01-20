@@ -1,4 +1,4 @@
-
+require 'time'
 if $method=='test'
   test_qids = [702]
 else
