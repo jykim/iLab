@@ -8,4 +8,4 @@ $o = {:verbose=>true, :topic_id=>'test'}; $method='twir_smt'; $col='twir'; $exp=
 
 $o = {:verbose=>true, :topic_id=>'test'}; $method='twir_smt'; $col='twir'; $exp='perf'; $remark='0119_new'; eval IO.read('run_prms.rb')
 
-$o = {:verbose=>true, :topic_id=>'test',:topk=>30}; $method='twir_smt'; $col='twir'; $exp='document'; $remark='0120'; eval IO.read('run_prms.rb')
+$o = {:verbose=>true, :topic_id=>'test',:topk=>50}; $method='twir_smt'; $col='twir'; $exp='document'; $remark='0120'; eval IO.read('run_prms.rb')

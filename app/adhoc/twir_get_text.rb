@@ -7,23 +7,29 @@ def get_text( file , ofile, format )
     File.open( ofile, 'w' ) do |of|
       while line = f.gets
         begin
-          id, hash, url =* line.split(/\s+/)
-          puts "#{id}, #{hash}, #{url}"
+          #id, hash, url =* line.split(/\s+/)
+          dt = line.split(/\t/)
+          hash, url = dt[6], dt[7]
+          Dir.mkdir(format) if !File.exist?(format)
+          if File.exist?("#{format}/#{hash}.#{format}")
+            puts "#{hash}, #{url} already found!"
+            next
+          end
+          puts "#{hash}, #{url}"
           api_url = "http://viewtext.org/api/text?url=#{url}&format=#{format}"
           content = Net::HTTP.get(URI.parse(api_url))
           of.puts "#{hash}\t#{content.size}"
-          Dir.mkdir(format) if !File.exist?(format)
           File.open( "#{format}/#{hash}.#{format}",'w'){|of2|of2.puts content}
         rescue Exception => e
           puts "Error in [#{line}]",e
         end
-        sleep(1)
+        sleep(0.5)
       end
     end
   end
 end
 
-#get_text( ARGV[0], ARGV[0]+'.out', 'html')
+get_text( ARGV[0], ARGV[0]+'.out', 'html')
 #get_text( ARGV[0], ARGV[0]+'.out', 'xml')
 
 def get_tags( file , ofile, format )
@@ -76,5 +82,5 @@ def get_clicks( file , ofile, format )
   end
 end
 
-get_clicks( ARGV[0], ARGV[0]+'.clicks', 'xml')
+#get_clicks( ARGV[0], ARGV[0]+'.clicks', 'xml')
 
