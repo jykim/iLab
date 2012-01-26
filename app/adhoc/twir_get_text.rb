@@ -23,6 +23,8 @@ def get_text( file , ofile, format )
             of.puts "#{hash}\t#{content.size}"
           end
           File.open( "#{format}/#{hash}.#{format}",'w'){|of2|of2.puts content}
+        rescue TimeoutError
+          puts "Timeout in [#{line}]"
         rescue Exception => e
           puts "Error in [#{line}]",e
         end
