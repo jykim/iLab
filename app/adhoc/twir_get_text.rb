@@ -1,6 +1,7 @@
 #require 'rubygems'
 #require 'json'
 require 'net/http'
+require 'timeout.rb'
 
 def get_text( file , ofile, format )
   File.open( file ) do |f|
@@ -17,8 +18,10 @@ def get_text( file , ofile, format )
           end
           puts "#{hash}, #{url}"
           api_url = "http://viewtext.org/api/text?url=#{url}&format=#{format}"
-          content = Net::HTTP.get(URI.parse(api_url))
-          of.puts "#{hash}\t#{content.size}"
+          timeout(7) do
+            content = Net::HTTP.get(URI.parse(api_url))
+            of.puts "#{hash}\t#{content.size}"
+          end
           File.open( "#{format}/#{hash}.#{format}",'w'){|of2|of2.puts content}
         rescue Exception => e
           puts "Error in [#{line}]",e
