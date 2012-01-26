@@ -21,8 +21,8 @@ def get_text( file , ofile, format )
           timeout(7) do
             content = Net::HTTP.get(URI.parse(api_url))
             of.puts "#{hash}\t#{content.size}"
+            File.open( "#{format}/#{hash}.#{format}",'w'){|of2|of2.puts content}
           end
-          File.open( "#{format}/#{hash}.#{format}",'w'){|of2|of2.puts content}
         rescue TimeoutError
           puts "Timeout in [#{line}]"
         rescue Exception => e
