@@ -40,7 +40,7 @@ end
 
 def process_input(file, ofile = nil)
   File.open( file ) do |f|
-    File.open( ofile || file+'.out', 'w' ) do |of|
+    File.open( ofile || file+'.feature', 'w' ) do |of|
       while line = f.gets
         begin
           e = line.split("\t")
