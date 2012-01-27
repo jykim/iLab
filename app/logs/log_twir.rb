@@ -3,7 +3,7 @@ load 'app/adhoc/twir_feature.rb'
 
 
 
-$docs = index_path('html')
+$docs = index_path('html', $docs)
 process_input('TcUrl.list.resolve')
 
 #dt = IO.read('TcUrl.list.resolve.10').split("\n").map{|e|e.split("\t")}

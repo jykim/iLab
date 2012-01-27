@@ -18,11 +18,10 @@ def index_doc(id, did, doc_hash)
 end
 
 
-def index_path(path)
-  docs = {}
+def index_path(path, docs)
   Dir.entries(path).each_with_index do |fn,i| 
     next if ['.','..'].include?(fn)
-    #puts fn
+    next if docs[File.basename(fn, ".html")]
     docs[File.basename(fn, ".html")] = index_doc(i, File.basename(fn, ".html"), parse_doc(File.join(path,fn)))
   end
   docs

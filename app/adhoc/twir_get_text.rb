@@ -16,7 +16,7 @@ def get_text( file , ofile, format )
             puts "#{hash}, #{url} already found!"
             next
           end
-          puts "#{hash}, #{url}"
+          puts "#{hash}, #{url}" #URL filter? 
           api_url = "http://viewtext.org/api/text?url=#{url}&format=#{format}"
           timeout(7) do
             content = Net::HTTP.get(URI.parse(api_url))
