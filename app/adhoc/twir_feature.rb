@@ -45,11 +45,11 @@ def process_input(file, ofile = nil)
         begin
           e = line.split("\t")
           #qid, query, tid, url_hash, tweet = e[0], e[1], e[3], e[7], e[12]
-          qid, query, tid, url_hash, tweet = e[0], e[1], e[2], e[6], e[9]
+          qid, query, tid, url_hash, url, tweet = e[0], e[1], e[2], e[6], e[7], e[9]
           outrow = [qid, tid, url_hash]
           doc = $docs[url_hash]
           next if !doc
-          qwords, twords = parse_query(query), parse_query(tweet)
+          qwords, twords = parse_query(query), parse_query(tweet.gsub(url,""))
           outrow.concat doc.flm.map{|k,v| calc_overlap(qwords,v.f).r3 }
           outrow.concat doc.flm.map{|k,v| calc_overlap(twords,v.f).r3 }
           of.puts outrow.join("\t")
