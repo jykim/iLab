@@ -18,11 +18,10 @@ def index_doc(id, did, doc_hash)
 end
 
 
-def index_path(path)
-  docs = {}
+def index_path(path, docs)
   Dir.entries(path).each_with_index do |fn,i| 
     next if ['.','..'].include?(fn)
-    #puts fn
+    next if docs[File.basename(fn, ".html")]
     docs[File.basename(fn, ".html")] = index_doc(i, File.basename(fn, ".html"), parse_doc(File.join(path,fn)))
   end
   docs
@@ -41,15 +40,16 @@ end
 
 def process_input(file, ofile = nil)
   File.open( file ) do |f|
-    File.open( ofile || file+'.out', 'w' ) do |of|
+    File.open( ofile || file+'.feature', 'w' ) do |of|
       while line = f.gets
         begin
           e = line.split("\t")
-          qid, query, tid, url_hash, tweet = e[0], e[1], e[3], e[7], e[12]
+          #qid, query, tid, url_hash, tweet = e[0], e[1], e[3], e[7], e[12]
+          qid, query, tid, url_hash, url, tweet = e[0], e[1], e[2], e[6], e[7], e[9]
           outrow = [qid, tid, url_hash]
           doc = $docs[url_hash]
           next if !doc
-          qwords, twords = parse_query(query), parse_query(tweet)
+          qwords, twords = parse_query(query), parse_query(tweet.gsub(url,""))
           outrow.concat doc.flm.map{|k,v| calc_overlap(qwords,v.f).r3 }
           outrow.concat doc.flm.map{|k,v| calc_overlap(twords,v.f).r3 }
           of.puts outrow.join("\t")
