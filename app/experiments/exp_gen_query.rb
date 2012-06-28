@@ -125,7 +125,7 @@ end
 if $o[:export]
   require 'csv'
   CSV.open(to_path("mturk/eval_genquery_#{$query_prefix}_#{$o[:new_topic_id]}.csv"), 'w') do |csv|
-    csv << [$fields, 'did' , "query1", "query2", "label", "label_reason"].flatten
+    csv << [$fields, 'did' , "query1", "query2", "label", "label_reason","_golden","nil"].flatten
     $cand_set.each_with_index do |cand, i|
       if rand() > 0.5
         did, q1, q2, pos_man = cand[0][1] ,cand[0][0], cand[1][0], cand[0][0]
